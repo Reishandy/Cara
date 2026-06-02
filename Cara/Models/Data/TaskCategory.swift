@@ -13,12 +13,14 @@ class TaskCategory: Hashable, Equatable {
 	var id: UUID
 	
 	var categoryName: String
+	var isDefault: Bool
 	
 	@Relationship(deleteRule: .nullify, inverse: \RoutineTask.category)
 	var tasks: [RoutineTask] = []
 	
-	init(categoryName: String) {
+	init(categoryName: String, isDefault: Bool = false) {
 		self.id = UUID()
 		self.categoryName = categoryName
+		self.isDefault = isDefault
 	}
 }
