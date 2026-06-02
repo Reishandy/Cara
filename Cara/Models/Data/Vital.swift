@@ -17,6 +17,7 @@ nonisolated struct BloodPressure: Codable {
 class Vital: Hashable, Equatable {
 	var id: UUID
 	
+	// FIXME: Check what field is actualy used
 	var bloodPressure: BloodPressure
 	var heartRate: Int
 	var oxygenSaturation: Int

@@ -62,9 +62,8 @@ class HomeViewModel {
 		let currentHistoryPredicate = #Predicate<History> { history in
 			history.date >= startOfDay && history.date < endOfDay
 		}
-		let currentHistoryDescriptor = FetchDescriptor<History>(predicate: currentHistoryPredicate)
+		let fetchedHistories = try modelContext.fetch(FetchDescriptor<History>(predicate: currentHistoryPredicate))
 		
-		let fetchedHistories = try modelContext.fetch(currentHistoryDescriptor)
 		var historyDictionary = Dictionary(
 			uniqueKeysWithValues: fetchedHistories.map { ($0.routine.id, $0) }
 		)
