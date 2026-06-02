@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class TaskCategory: Hashable, Equatable {
+class TaskCategory{
 	var id: UUID
 	
 	var categoryName: String
