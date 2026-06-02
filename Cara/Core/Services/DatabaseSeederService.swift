@@ -15,7 +15,7 @@ struct DatabaseSeederService {
 		self.modelContext = modelContext
 	}
 	
-	/// Seed an array of SwitData models.
+	/// Seed an array of SwiftData models.
 	///
 	/// Use this function to seed an array of SwiftData models by providing an array of SwiftData class type that implemented the Seedable protocol.
 	///

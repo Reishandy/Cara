@@ -35,7 +35,7 @@ final class RoutineTask: Hashable, Equatable, Seedable {
 		let oral = TaskCategory(categoryName: "Swallowing & Oral Exercises", isDefault: true)
 		let daily = TaskCategory(categoryName: "Daily Care Essentials", isDefault: true)
 		
-		// FIXME: Provie default image for each of these tasks
+		// FIXME: Provide default image for each of these tasks
 		return [
 			// MARK: - Category 1: Physical Rehab
 			RoutineTask(
