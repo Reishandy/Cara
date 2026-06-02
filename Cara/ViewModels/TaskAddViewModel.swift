@@ -16,12 +16,25 @@ class TaskAddViewModel {
 	private var modelContext: ModelContext
 	private var cancellables = Set<AnyCancellable>()
 	
-	// FIXME: Make only read
-	// FIXME: Docs for each public facing element
-	var categories: [TaskCategory] = []
+	/// Collection of stored categories.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var categories: [TaskCategory] = []
+	
+	/// Task Name in which to be set to a new Task.
 	var taskName: String = ""
+	
+	/// Task How Tos in which to be set to a new Task.
+	///
+	/// Set the How Tos by adding or deleting String from this variable Array.
 	var taskHowTo: [String] = []
+	
+	/// Routine Image in which to be set to a new Task.
+	///
+	/// > Tip: use PhotosUI to get the desired photo
 	var taskImage: Data? = nil
+	
+	/// Selected Categoru in which to be added to a new Task.
 	var selectedCategory: TaskCategory? = nil
 	
 	init(modelContext: ModelContext) {
@@ -37,6 +50,9 @@ class TaskAddViewModel {
 			.store(in: &cancellables)
 	}
 	
+	/// Saves a new task.
+	///
+	/// Use this function to save a new task based on the set variables inside this class, when saved it will reset those variables.
 	func saveTask() {
 		// FIXME: optimize image here
 		let newTask = RoutineTask(

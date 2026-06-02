@@ -16,11 +16,27 @@ class LearnViewModel {
 	private var cancellables = Set<AnyCancellable>()
 	
 	// FIXME: ReEvaluate filters, add new field or delete
-	// FIXME: Make only read
-	// FIXME: Docs for each public facing element
-	var tasks: [RoutineTask] = []
-	var categories: [TaskCategory] = []
-	var searchTerm: String = "" { didSet { self.fetchData() } } // FIXME: Add warning on the doc to use bounce search
+	
+	/// Collection of stored tasks.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var tasks: [RoutineTask] = []
+	
+	/// Collection of stored categories.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var categories: [TaskCategory] = []
+	
+	/// Search term used to filter tasks by it's name.
+	///
+	/// To apply search / update tasks variable, update this variable with the desired search term.
+	///
+	/// > Tip: It is advised to use debounced search on the search field to improve performance.
+	var searchTerm: String = "" { didSet { self.fetchData() } }
+	
+	/// Category filter used to filter tasks by it's category.
+	///
+	/// To apply search / update tasks variable, update this variable by adding or deleting TaskCategory inside.
 	var categoryFilter: [TaskCategory] = [] { didSet { self.fetchData() } }
 	
 	init(modelContext: ModelContext) {

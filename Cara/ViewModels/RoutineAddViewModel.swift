@@ -15,11 +15,18 @@ class RoutineAddViewModel {
 	private var modelContext: ModelContext
 	private var cancellables = Set<AnyCancellable>()
 	
-	// FIXME: Make only read
-	// FIXME: Docs for each public facing element
-	var tasks: [RoutineTask] = []
+	/// Collection of stored tasks.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var tasks: [RoutineTask] = []
+	
+	/// Selected Tasks in which to be added to a new Routine.
 	var selectedTask: [RoutineTask] = []
+	
+	/// Routine Name in which to be set to a new Routine.
 	var routineName: String = ""
+	
+	/// Routine Description in which to be set to a new Routine.
 	var routineDescription: String = ""
 	
 	init(modelContext: ModelContext) {
@@ -35,6 +42,9 @@ class RoutineAddViewModel {
 			.store(in: &cancellables)
 	}
 	
+	/// Saves a new routine.
+	///
+	/// Use this function to save a new routine based on the set variables inside this class, when saved it will reset those variables.
 	func saveRoutine() {
 		let newRoutine = Routine(
 			routineName: self.routineName,

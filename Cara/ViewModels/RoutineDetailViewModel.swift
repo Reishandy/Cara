@@ -14,9 +14,15 @@ import Combine
 class RoutineDetailViewModel {
 	private var modelContext: ModelContext
 	
-	// FIXME: Docs for each public facing element
+	/// Selected routine for the current detail view.
+	///
+	/// When a routine is set, this class will populate itself with the routine's today's taskProgress and vitals.
 	var selectedRoutine: Routine? = nil { didSet { self.populateHistory() } }
+	
+	/// The current progress of selected routine.
 	var routineTaskProgress: TaskProgress? = nil
+	
+	/// The current vitals of the selected routine.
 	var vital: Vital? = nil
 	
 	init(modelContext: ModelContext) {

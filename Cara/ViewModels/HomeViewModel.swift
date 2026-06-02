@@ -15,10 +15,15 @@ class HomeViewModel {
 	private var modelContext: ModelContext
 	private var cancellables = Set<AnyCancellable>()
 	
-	// FIXME: make routine and historiesDict only read
-	// FIXME: Docs for each public facing element
-	var routines: [Routine] = []
-	var historiesDict: [UUID: History] = [:]
+	/// Collection of stored routines.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var routines: [Routine] = []
+	
+	/// Mapping of History by the Routine's ID.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var historiesDict: [UUID: History] = [:]
 	
 	private var selectedDay: Date = .now
 	
@@ -35,9 +40,19 @@ class HomeViewModel {
 			.store(in: &cancellables)
 	}
 	
+	/// Changes selected day for displaying history
+	///
+	/// Use this to change the desired day of the history to view of the routintes, this will update the historiesDict variable.
+	///
+	/// - Parameters:
+	///   * date: The date of the desired history to view.
 	func changeSelectedDay(date: Date) {
-		self.selectedDay = date
-		self.fetchData()
+		do {
+			self.selectedDay = date
+			self.historiesDict = try fetchHistoriesDict()
+		} catch {
+			print("ERROR > Failed to fetch histories: \(error)")
+		}
 	}
 	
 	// FIXME: Possible routine deletion here?
