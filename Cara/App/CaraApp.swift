@@ -10,6 +10,8 @@ import SwiftData
 
 @main
 struct CaraApp: App {
+	@State private var databaseSeeder: DatabaseSeederService
+	
 	@State private var homeViewModel: HomeViewModel
 	@State private var learnViewModel: LearnViewModel
 	@State private var routineDetailViewModel: RoutineDetailViewModel
@@ -21,11 +23,15 @@ struct CaraApp: App {
 			let modelContainer = try ModelContainer(for: Schema([TaskCategory.self, History.self, Routine.self, RoutineTask.self, Vital.self]))
 			let modelContext = modelContainer.mainContext
 			
+			self._databaseSeeder = State(initialValue: DatabaseSeederService(modelContext: modelContext))
+			
 			self._homeViewModel = State(initialValue: HomeViewModel(modelContext: modelContext))
 			self._learnViewModel = State(initialValue: LearnViewModel(modelContext: modelContext))
 			self._routineDetailViewModel = State(initialValue: RoutineDetailViewModel(modelContext: modelContext))
 			self._routineAddViewModel = State(initialValue: RoutineAddViewModel(modelContext: modelContext))
 			self._taskAddViewModel = State(initialValue: TaskAddViewModel(modelContext: modelContext))
+			
+			self.databaseSeeder.seedIfEmpty([Routine.self, RoutineTask.self])
 		} catch {
 			fatalError("FATAL_ERROR > Failed to initialize SwiftData: \(error)")
 		}

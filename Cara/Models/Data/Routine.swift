@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Routine: Hashable, Equatable {
+final class Routine: Hashable, Equatable, Seedable {
 	var id: UUID
 	
 	var routineName: String
@@ -26,5 +26,13 @@ class Routine: Hashable, Equatable {
 		self.routineName = routineName
 		self.routineDescription = routineDescription
 		self.tasks = tasks
+	}
+	
+	static var defaultData: [Routine] {
+		return [
+			Routine(routineName: "Morning", routineDescription: "Routines to do in the morning."),
+			Routine(routineName: "Afternoon", routineDescription: "Routines to do in the afternoon."),
+			Routine(routineName: "Night", routineDescription: "Routines to do in the night.")
+		]
 	}
 }
