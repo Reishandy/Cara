@@ -16,7 +16,7 @@ class HomeViewModel {
 	private var cancellables = Set<AnyCancellable>()
 	
 	var routines: [Routine] = []
-	var histories: [UUID: History] = [:]
+	var historiesDict: [UUID: History] = [:]
 	private var selectedDay: Date = .now
 	
 	init(modelContext: ModelContext) {
@@ -40,7 +40,7 @@ class HomeViewModel {
 	private func fetchData() {
 		do {
 			self.routines = try fetchRoutines()
-			self.histories = try fetchHistories()
+			self.historiesDict = try fetchHistoriesDict()
 		} catch {
 			print("ERROR > Failed to fetch routines or histories: \(error)")
 		}
@@ -50,7 +50,7 @@ class HomeViewModel {
 		return try modelContext.fetch(FetchDescriptor<Routine>())
 	}
 	
-	private func fetchHistories() throws -> [UUID: History] {
+	private func fetchHistoriesDict() throws -> [UUID: History] {
 		let startOfDay = Calendar.current.startOfDay(for: selectedDay)
 		let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 		
