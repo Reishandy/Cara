@@ -15,6 +15,8 @@ class HomeViewModel {
 	private var modelContext: ModelContext
 	private var cancellables = Set<AnyCancellable>()
 	
+	// FIXME: make routine and historiesDict only read
+	// FIXME: Docs for each public facing element
 	var routines: [Routine] = []
 	var historiesDict: [UUID: History] = [:]
 	private var selectedDay: Date = .now

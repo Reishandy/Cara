@@ -14,8 +14,8 @@ class Category: Hashable, Equatable {
 	
 	var categoryName: String
 	
-	@Relationship(deleteRule: .nullify, inverse: \Task.category)
-	var tasks: [Task] = []
+	@Relationship(deleteRule: .nullify, inverse: \RoutineTask.category)
+	var tasks: [RoutineTask] = []
 	
 	init(categoryName: String) {
 		self.id = UUID()

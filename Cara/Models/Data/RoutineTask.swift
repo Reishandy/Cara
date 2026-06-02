@@ -1,5 +1,5 @@
 //
-//  Task.swift
+//  RoutineTask.swift
 //  CH3-PM-Team4
 //
 //  Created by Muhammad Akbar Reishandy on 26/05/26.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Task: Hashable, Equatable {
+class RoutineTask: Hashable, Equatable {
 	var id: UUID
 	
 	var taskName: String
