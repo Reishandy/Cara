@@ -40,7 +40,7 @@ class HomeViewModel {
 			.store(in: &cancellables)
 	}
 	
-	/// Changes selected day for displaying history
+	/// Changes selected day for displaying history.
 	///
 	/// Use this to change the desired day of the history to view of the routintes, this will update the historiesDict variable.
 	///
@@ -55,7 +55,17 @@ class HomeViewModel {
 		}
 	}
 	
-	// FIXME: Possible routine deletion here?
+	/// Delete a routine.
+	///
+	/// Use this to delete a routine, by passing the Routine object to this function.
+	///
+	/// > Warning: It is advisable to provide a confirmation dialog to delete, by calling this function inside that confirmation dialog's confirm button.
+	///
+	/// - Parameters:
+	///   * routine: The Routine object to be deleted
+	func deleteRoutine(routine: Routine) {
+		self.modelContext.delete(routine)
+	}
 	
 	private func fetchData() {
 		do {

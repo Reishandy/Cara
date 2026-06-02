@@ -52,7 +52,17 @@ class LearnViewModel {
 			.store(in: &cancellables)
 	}
 	
-	// FIXME: Possible task deletion here?
+	/// Delete a task.
+	///
+	/// Use this to delete a task, by passing the Routinetask object to this function.
+	///
+	/// > Warning: It is advisable to provide a confirmation dialog to delete, by calling this function inside that confirmation dialog's confirm button.
+	///
+	/// - Parameters:
+	///   * task: The RoutineTask object to be deleted
+	func deleteRoutine(task: RoutineTask) {
+		self.modelContext.delete(task)
+	}
 	
 	private func fetchData() {
 		do {
