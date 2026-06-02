@@ -14,10 +14,10 @@ struct TaskIconView: View {
         ZStack{
             Circle()
                 .fill(Color("AppPrimaryColor"))
-                .frame(width: 60, height: 60)
+                .frame(width: 44, height: 44)
             Image(systemName:taskIcon)
                 .foregroundStyle(Color(.white))
-                .font(.system(size: 30))
+                .font(.system(size: 26))
             
         }
     }

@@ -8,53 +8,48 @@
 import SwiftUI
 
 struct TaskCardView: View {
-    @State var taskIcon: String = "pill.circle.fill"
-    @State var taskName: String = "Task Name"
+    @State var taskName: String = "this is an example of long text"
     @State var taskDesc: String = "Task Description"
+    @State var taskIconEach: String = "pill.circle.fill"
+    @State var taskAmount: Int = 0
+    @State var isChecked: Bool = false
+    
     
     var body: some View {
-            ZStack {
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(Color("CapsuleColor"))
-                    .frame(maxWidth: .infinity, maxHeight: 100)
-                HStack(spacing: 20){
-                    ZStack{
-                        Circle()
-                            .fill(Color("AppPrimaryColor"))
-                            .frame(width: 60, height: 60)
-                        Image(systemName:taskIcon)
-                            .foregroundStyle(Color(.white))
-                            .font(.system(size: 30))
+            HStack(spacing: 20){
+                TaskIconView(taskIcon: taskIconEach)
+                VStack (alignment: .leading){
+                    Text(taskName)
+                        .multilineTextAlignment(.leading)
+                        .foregroundStyle(Color("AppPrimaryColor"))
+                        .font(.system(size: 20, weight: .medium, design: .default))
+                        .frame(maxWidth: 170, maxHeight: .infinity, alignment: .leading)
                         
-                    }
-                    VStack (alignment: .leading){
-                        Text(taskName)
-                            .foregroundStyle(Color("AppPrimaryColor"))
-                            .font(.system(size: 20, weight: .bold, design: .default))
-                        Text(taskDesc)
-                            .foregroundStyle(Color("AppThirdColor"))
-                            .font(.system(size: 15, weight: .regular))
-                    }
-                    
-                    Spacer()
-                    
-                    Button {
-                        // nanti buat masukin ke list
-                    } label: {
-                            Image(systemName: "plus.circle")
-                            .font(.system(size: 50))
-                            .foregroundStyle(Color("AppThirdColor"))
-                            
-                    }
-
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(10)
-//                .clipShape(RoundedRectangle(cornerRadius: 10))
+                
+                Spacer()
+                
+                Button {
+                    isChecked.toggle()
+                } label: {
+                    Image(systemName: isChecked ? "checkmark.circle.fill" : "plus.circle")
+                        .font(.system(size: 30))
+                        .foregroundStyle(Color("AppThirdColor"))
+                    
+                }
+                .buttonStyle(PlainButtonStyle())
                 
             }
-            .buttonStyle(.bordered)
-            .tint(Color("AppThirdColor"))
+            .frame(maxWidth: .infinity,
+                   maxHeight:40,
+                   alignment: .leading)
+            .padding()
+            .background(Color("CapsuleColor"))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .padding(.horizontal)
+            
+        
+        
     }
 }
 

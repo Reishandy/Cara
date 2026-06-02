@@ -6,13 +6,93 @@
 //
 
 import SwiftUI
+enum TaskRoutineDetailViewType {
+    case check
+    case edit
+}
+
 
 struct TaskRoutineDetailView: View {
+    let type: TaskRoutineDetailViewType
+    @State private var taskRoutineDetailTitle: String = "Task Name"
+    @State private var taskRoutineDetailField: String = ""
+    @State private var isOn: Bool = false
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        switch type {
+        case .check:
+                HStack{
+                    Text(taskRoutineDetailTitle)
+                    Image(systemName: "questionmark.circle")
+                    
+                    Spacer()
+                    
+                    Toggle(isOn: $isOn) {
+                    }
+                    .toggleStyle(iOSCheckboxToggleStyle())
+
+                }
+                .padding() // inside padding
+                .frame(maxWidth: .infinity, maxHeight: 50, alignment: .leading)
+                .background(Color("CapsuleColor"))
+                .foregroundStyle(Color("AppPrimaryColor"))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding() // outside padding
+            
+           
+            
+        case .edit:
+    
+                HStack(spacing: 5){
+                        TextField(text: $taskRoutineDetailField, prompt: Text(".....")) {
+                            Text("Details")
+                    }
+                        .frame(width: 150)
+                        .disableAutocorrection(true)
+                        .textFieldStyle(.roundedBorder)
+                        .multilineTextAlignment(TextAlignment.center)
+                    
+                    Spacer()
+                    
+                    Text(taskRoutineDetailTitle)
+                    Image(systemName: "questionmark.circle")
+                    
+                }
+                .padding() // inside padding
+                .frame(maxWidth: .infinity, maxHeight: 50, alignment: .leading)
+                .background(Color("CapsuleColor"))
+                .foregroundStyle(Color("AppPrimaryColor"))
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding() // outside padding
+            
+        }
+        
     }
 }
 
-#Preview {
-    TaskRoutineDetailView()
+struct iOSCheckboxToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        // 1
+        Button(action: {
+
+            // 2
+            configuration.isOn.toggle()
+
+        }, label: {
+            HStack {
+                // 3
+                Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 24))
+//                configuration.label.hidden()
+            }
+        })
+    }
+}
+
+#Preview("Check Mode") {
+    TaskRoutineDetailView(type: .check)
+}
+
+#Preview("Edit Mode") {
+    TaskRoutineDetailView(type: .edit)
 }
