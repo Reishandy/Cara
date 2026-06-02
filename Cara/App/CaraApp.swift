@@ -15,7 +15,7 @@ struct CaraApp: App {
 	
 	init() {
 		do {
-			let modelContainer = try ModelContainer(for: Schema([Category.self, History.self, Routine.self, RoutineTask.self, Vital.self]))
+			let modelContainer = try ModelContainer(for: Schema([TaskCategory.self, History.self, Routine.self, RoutineTask.self, Vital.self]))
 			let modelContext = modelContainer.mainContext
 			
 			_homeViewModel = State(initialValue: HomeViewModel(modelContext: modelContext))

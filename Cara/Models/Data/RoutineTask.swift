@@ -18,10 +18,10 @@ class RoutineTask: Hashable, Equatable {
 	
 	@Attribute(.externalStorage) var image: Data?
 	
-	var category: Category?
+	var category: TaskCategory?
 	var routines: [Routine] = []
 	
-	init(taskName: String, howTo: [String], isDefault: Bool = false, image: Data? = nil, category: Category? = nil) {
+	init(taskName: String, howTo: [String], isDefault: Bool = false, image: Data? = nil, category: TaskCategory? = nil) {
 		self.id = UUID()
 		self.taskName = taskName
 		self.howTo = howTo

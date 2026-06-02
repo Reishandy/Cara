@@ -19,9 +19,9 @@ class LearnViewModel {
 	// FIXME: Make only read
 	// FIXME: Docs for each public facing element
 	var tasks: [RoutineTask] = []
-	var categories: [Category] = []
+	var categories: [TaskCategory] = []
 	var searchTerm: String = "" { didSet { self.fetchData() } }
-	var categoryFilter: [Category] = [] { didSet { self.fetchData() } }
+	var categoryFilter: [TaskCategory] = [] { didSet { self.fetchData() } }
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
@@ -38,11 +38,18 @@ class LearnViewModel {
 	
 	private func fetchData() {
 		do {
-//			let taskPredicate = #Predicate<RoutineTask> { task in
-//			}
+			// A solution that works now because it is unrealistic to see a lot of tasks locally
+			// So what I did is just fetch all and fitler in memory instead of dealing with Predicate...
+			let search = self.searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+			var fetchedTask = try modelContext.fetch(FetchDescriptor<RoutineTask>())
 			
-			self.tasks = try modelContext.fetch(FetchDescriptor<RoutineTask>())
-			self.categories = try modelContext.fetch(FetchDescriptor<Category>())
+			self.tasks = fetchedTask.filter { task in
+				let matchesSearch = search.isEmpty || task.taskName.localizedStandardContains(search)
+				let matchesCategory = self.categoryFilter.isEmpty || (task.category.map { self.categoryFilter.contains($0) } ?? false)
+				
+				return matchesSearch && matchesCategory
+			}
+			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>())
 		} catch {
 			print("ERROR > Failed to fetch tasks: \(error)")
 		}
