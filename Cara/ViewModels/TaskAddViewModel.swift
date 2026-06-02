@@ -54,11 +54,12 @@ class TaskAddViewModel {
 	///
 	/// Use this function to save a new task based on the set variables inside this class, when saved it will reset those variables.
 	func saveTask() {
-		// FIXME: optimize image here
+		let compressedImage = self.taskImage.map { ImageOptimizer.optimize(data: $0) }
+		
 		let newTask = RoutineTask(
 			taskName: self.taskName,
 			howTo: self.taskHowTo,
-			image: self.taskImage,
+			image: compressedImage ?? nil,
 			category: self.selectedCategory
 		)
 		
