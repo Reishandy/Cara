@@ -19,6 +19,7 @@ class HomeViewModel {
 	// FIXME: Docs for each public facing element
 	var routines: [Routine] = []
 	var historiesDict: [UUID: History] = [:]
+	
 	private var selectedDay: Date = .now
 	
 	init(modelContext: ModelContext) {
@@ -38,6 +39,8 @@ class HomeViewModel {
 		self.selectedDay = date
 		self.fetchData()
 	}
+	
+	// FIXME: Possible routine deletion here?
 	
 	private func fetchData() {
 		do {

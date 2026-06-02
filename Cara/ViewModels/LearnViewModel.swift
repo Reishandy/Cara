@@ -20,7 +20,7 @@ class LearnViewModel {
 	// FIXME: Docs for each public facing element
 	var tasks: [RoutineTask] = []
 	var categories: [TaskCategory] = []
-	var searchTerm: String = "" { didSet { self.fetchData() } }
+	var searchTerm: String = "" { didSet { self.fetchData() } } // FIXME: Add warning on the doc to use bounce search
 	var categoryFilter: [TaskCategory] = [] { didSet { self.fetchData() } }
 	
 	init(modelContext: ModelContext) {
@@ -35,6 +35,8 @@ class LearnViewModel {
 			}
 			.store(in: &cancellables)
 	}
+	
+	// FIXME: Possible task deletion here?
 	
 	private func fetchData() {
 		do {
