@@ -59,7 +59,7 @@ class LearnViewModel {
 			// A solution that works now because it is unrealistic to see a lot of tasks locally
 			// So what I did is just fetch all and fitler in memory instead of dealing with Predicate...
 			let search = self.searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
-			var fetchedTask = try modelContext.fetch(FetchDescriptor<RoutineTask>())
+			let fetchedTask = try modelContext.fetch(FetchDescriptor<RoutineTask>())
 			
 			self.tasks = fetchedTask.filter { task in
 				let matchesSearch = search.isEmpty || task.taskName.localizedStandardContains(search)

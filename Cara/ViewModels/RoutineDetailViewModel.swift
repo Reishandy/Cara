@@ -31,18 +31,19 @@ class RoutineDetailViewModel {
 	
 	private func populateHistory() {
 		do {
-			let selectedRoutine = self.selectedRoutine
 			let startOfDay = Calendar.current.startOfDay(for: .now)
 			let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 			
 			let currentHistoryPredicate = #Predicate<History> { history in
-				(history.date >= startOfDay && history.date < endOfDay) &&
-				(history.routine == selectedRoutine)
+				history.date >= startOfDay && history.date < endOfDay
 			}
-			let fetchedHistories = try modelContext.fetch(FetchDescriptor<History>(predicate: currentHistoryPredicate)).first
+			let fetchedHistories = try modelContext.fetch(FetchDescriptor<History>(predicate: currentHistoryPredicate))
+			let selectedHistory = fetchedHistories.filter { history in
+				history.routine == self.selectedRoutine
+			}.first
 			
-			self.routineTaskProgress = fetchedHistories?.taskProgress
-			self.vital = fetchedHistories?.vital
+			self.routineTaskProgress = selectedHistory?.taskProgress
+			self.vital = selectedHistory?.vital
 		} catch {
 			print("ERROR > Failed populating routine history: \(error)")
 		}
