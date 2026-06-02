@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class RoutineTask: Hashable, Equatable, Seedable {
+final class RoutineTask: Seedable {
 	var id: UUID
 	
 	var taskName: String

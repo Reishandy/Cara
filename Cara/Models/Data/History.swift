@@ -13,7 +13,7 @@ nonisolated struct TaskProgress: Codable {
 }
 
 @Model
-class History: Hashable, Equatable {
+class History {
 	var id: UUID
 	
 	var date: Date
