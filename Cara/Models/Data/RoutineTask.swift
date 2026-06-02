@@ -1,5 +1,5 @@
 //
-//  Task.swift
+//  RoutineTask.swift
 //  CH3-PM-Team4
 //
 //  Created by Muhammad Akbar Reishandy on 26/05/26.
@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-class Task: Hashable, Equatable {
+class RoutineTask: Hashable, Equatable {
 	var id: UUID
 	
 	var taskName: String
@@ -18,10 +18,10 @@ class Task: Hashable, Equatable {
 	
 	@Attribute(.externalStorage) var image: Data?
 	
-	var category: Category?
+	var category: TaskCategory?
 	var routines: [Routine] = []
 	
-	init(taskName: String, howTo: [String], isDefault: Bool = false, image: Data? = nil, category: Category? = nil) {
+	init(taskName: String, howTo: [String], isDefault: Bool = false, image: Data? = nil, category: TaskCategory? = nil) {
 		self.id = UUID()
 		self.taskName = taskName
 		self.howTo = howTo

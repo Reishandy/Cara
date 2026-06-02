@@ -1,0 +1,85 @@
+//
+//  LearnViewModel.swift
+//  Cara
+//
+//  Created by Muhammad Akbar Reishandy on 02/06/26.
+//
+
+import SwiftUI
+import SwiftData
+import Combine
+
+@Observable
+@MainActor
+class LearnViewModel {
+	private var modelContext: ModelContext
+	private var cancellables = Set<AnyCancellable>()
+	
+	// FIXME: ReEvaluate filters, add new field or delete
+	
+	/// Collection of stored tasks.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var tasks: [RoutineTask] = []
+	
+	/// Collection of stored categories.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var categories: [TaskCategory] = []
+	
+	/// Search term used to filter tasks by it's name.
+	///
+	/// To apply search / update tasks variable, update this variable with the desired search term.
+	///
+	/// > Tip: It is advised to use debounced search on the search field to improve performance.
+	var searchTerm: String = "" { didSet { self.fetchData() } }
+	
+	/// Category filter used to filter tasks by it's category.
+	///
+	/// To apply search / update tasks variable, update this variable by adding or deleting TaskCategory inside.
+	var categoryFilter: [TaskCategory] = [] { didSet { self.fetchData() } }
+	
+	init(modelContext: ModelContext) {
+		self.modelContext = modelContext
+		
+		fetchData()
+		
+		// This will run fetchData everytime there is a database save action
+		NotificationCenter.default.publisher(for: ModelContext.didSave)
+			.sink { [weak self] _ in
+				self?.fetchData()
+			}
+			.store(in: &cancellables)
+	}
+	
+	/// Delete a task.
+	///
+	/// Use this to delete a task, by passing the Routinetask object to this function.
+	///
+	/// > Warning: It is advisable to provide a confirmation dialog to delete, by calling this function inside that confirmation dialog's confirm button.
+	///
+	/// - Parameters:
+	///   * task: The RoutineTask object to be deleted
+	func deleteRoutine(task: RoutineTask) {
+		self.modelContext.delete(task)
+	}
+	
+	private func fetchData() {
+		do {
+			// A solution that works now because it is unrealistic to see a lot of tasks locally
+			// So what I did is just fetch all and fitler in memory instead of dealing with Predicate...
+			let search = self.searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+			let fetchedTask = try modelContext.fetch(FetchDescriptor<RoutineTask>())
+			
+			self.tasks = fetchedTask.filter { task in
+				let matchesSearch = search.isEmpty || task.taskName.localizedStandardContains(search)
+				let matchesCategory = self.categoryFilter.isEmpty || (task.category.map { self.categoryFilter.contains($0) } ?? false)
+				
+				return matchesSearch && matchesCategory
+			}
+			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>())
+		} catch {
+			print("ERROR > Failed to fetch tasks: \(error)")
+		}
+	}
+}
