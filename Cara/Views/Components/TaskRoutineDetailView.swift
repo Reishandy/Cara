@@ -42,7 +42,7 @@ struct TaskRoutineDetailView: View {
            
             
         case .edit:
-    
+
                 HStack(spacing: 5){
                         TextField(text: $taskRoutineDetailField, prompt: Text(".....")) {
                             Text("Details")
@@ -72,18 +72,12 @@ struct TaskRoutineDetailView: View {
 
 struct iOSCheckboxToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
-        // 1
         Button(action: {
-
-            // 2
             configuration.isOn.toggle()
-
         }, label: {
             HStack {
-                // 3
                 Image(systemName: configuration.isOn ? "checkmark.square.fill" : "square")
                     .font(.system(size: 24))
-//                configuration.label.hidden()
             }
         })
     }

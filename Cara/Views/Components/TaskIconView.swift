@@ -16,9 +16,8 @@ struct TaskIconView: View {
                 .fill(Color("AppPrimaryColor"))
                 .frame(width: 44, height: 44)
             Image(systemName:taskIcon)
-                .foregroundStyle(Color(.white))
+                .foregroundStyle(Color("BackgroundColor"))
                 .font(.system(size: 26))
-            
         }
     }
 }
