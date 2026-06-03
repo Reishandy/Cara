@@ -31,7 +31,7 @@ class HomeViewModel {
 	/// The earlieast recorded history.
 	///
 	/// Practically the first time the user opens the app.
-	var earliestHistoryDat: Date = .now
+	var earliestHistoryDate: Date = .now
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext

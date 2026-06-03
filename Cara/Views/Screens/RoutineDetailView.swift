@@ -13,8 +13,6 @@ enum RoutineDetailElement {
 }
 
 struct RoutineDetailView: View {
-	@Environment(RoutineDetailViewModel.self) var routineDetailViewModel
-	
 	@Bindable var routine: Routine
 	var selectedDay: Date
 	
@@ -173,9 +171,6 @@ struct RoutineDetailView: View {
 			}
 		}
 		.navigationBarTitleDisplayMode(.inline)
-		.task {
-			routineDetailViewModel.fetchData(routine: routine, day: selectedDay)
-		}
 	}
 }
 
