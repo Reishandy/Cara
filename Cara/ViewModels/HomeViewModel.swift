@@ -71,7 +71,7 @@ class HomeViewModel {
 	}
 	
 	private func fetchHistoriesDict() throws -> [UUID: History] {
-		let startOfDay = Calendar.current.startOfDay(for: selectedDay)
+		let startOfDay = Calendar.current.startOfDay(for: self.selectedDay)
 		let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 		
 		let currentHistoryPredicate = #Predicate<History> { history in

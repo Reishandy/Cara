@@ -33,12 +33,4 @@ class History {
 		self.vital = vital
 		self.routine = routine
 	}
-	
-	var bindableVital: Vital? {
-		get { self.vital }
-		set {
-			self.vital = newValue
-			self.vitalFilledAt = (newValue != nil) ? Date.now : nil
-		}
-	}
 }

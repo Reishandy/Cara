@@ -24,17 +24,28 @@ class RoutineDetailViewModel {
 	/// > Tip: This property can be read from anywhere, but can only be modified internally.
 	private(set) var selectedDay: Date = .now
 	
+	private var currentHistory: History? = nil
+	
 	/// The current task progress.
 	///
-	/// If the task UUID doesn't exist here
+	/// If the task UUID doesn't exist here treat it as unchecked. Use the date as filled at time.
 	///
-	/// > Tip: This property can be read from anywhere, but can only be modified internally.
-	private(set) var taskProgress: [UUID: Date] = [:]
+	/// > Tip: To check a task, set the task UUID here with .now
+	var taskProgress: [UUID: Date] {
+		get { currentHistory?.taskProgress.filledAt ?? [:] }
+		set { currentHistory?.taskProgress.filledAt = newValue }
+	}
 	
 	/// The vitals of the current Routine.
 	///
 	/// You can directly modify this data and SwiftData will automatically save it.
-	var vital: Vital? = nil
+	var vital: Vital? {
+		get { currentHistory?.vital }
+		set {
+			currentHistory?.vital = newValue
+			currentHistory?.vitalFilledAt = (newValue != nil) ? Date.now : nil
+		}
+	}
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
@@ -53,11 +64,9 @@ class RoutineDetailViewModel {
 		self.populateHistory()
 	}
 	
-	// FIXME: Add function to check a task and set vital to update their filled at
-	
 	private func populateHistory() {
 		do {
-			let startOfDay = Calendar.current.startOfDay(for: .now)
+			let startOfDay = Calendar.current.startOfDay(for: self.selectedDay)
 			let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 			
 			let currentHistoryPredicate = #Predicate<History> { history in
@@ -65,12 +74,7 @@ class RoutineDetailViewModel {
 			}
 			let fetchedHistories = try modelContext.fetch(FetchDescriptor<History>(predicate: currentHistoryPredicate))
 			
-			if let selectedHistory = fetchedHistories.filter({ history in
-				history.routine == self.selectedRoutine
-			}).first {
-				self.taskProgress = selectedHistory.taskProgress.filledAt
-				self.vital = selectedHistory.bindableVital
-			}
+			self.currentHistory = fetchedHistories.first(where: { $0.routine == selectedRoutine })
 		} catch {
 			print("ERROR > Failed populating routine history: \(error)")
 		}
