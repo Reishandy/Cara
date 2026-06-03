@@ -17,7 +17,7 @@ class LearnViewModel {
 	
 	// FIXME: ReEvaluate filters, add new field or delete
 	
-	/// Collection of stored tasks dictionary, grouped by it's category name.
+	/// Collection of stored tasks dictionary, grouped by its category name.
 	///
 	/// This property can be read from anywhere, but can only be modified internally.
 	private(set) var groupedTasks: [String: [RoutineTask]] = [:]
@@ -81,7 +81,7 @@ class LearnViewModel {
 			self.groupedTasks = Dictionary(grouping: filteredTasks, by: { $0.category?.categoryName ?? "Uncategorized" })
 			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>())
 		} catch {
-			print("ERROR > Failed to fetch tasks: \(error)")
+			print("ERROR > Failed to fetch tasks or categories: \(error)")
 		}
 	}
 }

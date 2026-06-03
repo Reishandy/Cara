@@ -15,7 +15,7 @@ class RoutineAddViewModel {
 	private var modelContext: ModelContext
 	private var cancellables = Set<AnyCancellable>()
 	
-	/// Collection of stored tasks dictionary, grouped by it's category name.
+	/// Collection of stored tasks dictionary, grouped by its category name.
 	///
 	/// This property can be read from anywhere, but can only be modified internally.
 	private(set) var groupedTasks: [String: [RoutineTask]] = [:]
@@ -25,16 +25,16 @@ class RoutineAddViewModel {
 	/// This property can be read from anywhere, but can only be modified internally.
 	private(set) var categories: [TaskCategory] = []
 	
-	/// Search term used to filter tasks by it's name.
+	/// Search term used to filter tasks by its name.
 	///
-	/// To apply search / update tasks variable, update this variable with the desired search term.
+	/// To apply search / update groupedTasks, set this property to the desired search term.
 	///
-	/// > Tip: It is advised to use debounced search on the search field to improve performance.
+	/// > Tip: Debounce updates on the search field to improve performance.
 	var searchTerm: String = "" { didSet { self.fetchData() } }
 	
-	/// Category filter used to filter tasks by it's category.
+	/// Category filter used to filter tasks by its category.
 	///
-	/// To apply search / update tasks variable, update this variable by adding or deleting TaskCategory inside.
+	/// To apply filtering / update groupedTasks, modify this array by adding or removing TaskCategory values.
 	var categoryFilter: [TaskCategory] = [] { didSet { self.fetchData() } }
 	
 	/// Selected Tasks in which to be added to a new Routine.
@@ -91,7 +91,7 @@ class RoutineAddViewModel {
 			self.groupedTasks = Dictionary(grouping: filteredTasks, by: { $0.category?.categoryName ?? "Uncategorized" })
 			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>())
 		} catch {
-			print("ERROR > Failed to fetch tasks: \(error)")
+			print("ERROR > Failed to fetch tasks or categories: \(error)")
 		}
 	}
 }
