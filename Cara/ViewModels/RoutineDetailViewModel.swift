@@ -51,7 +51,7 @@ class RoutineDetailViewModel {
 		self.modelContext = modelContext
 	}
 	
-	/// Store selected routine and it's history for detail view.
+	/// Store selected routine and its history for detail view.
 	///
 	/// Use this function to populate the RoutineDetailViewModel with the selected routine data, do this before moving to the detail screen.
 	///
