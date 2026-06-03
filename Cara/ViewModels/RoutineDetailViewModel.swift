@@ -14,16 +14,6 @@ import Combine
 class RoutineDetailViewModel {
 	private var modelContext: ModelContext
 	
-	/// Selected routine for the current detail view.
-	///
-	/// > Tip: This property can be read from anywhere, but can only be modified internally.
-	private(set) var selectedRoutine: Routine? = nil
-	
-	/// Date variable for the selected day.
-	///
-	/// > Tip: This property can be read from anywhere, but can only be modified internally.
-	private(set) var selectedDay: Date = .now
-	
 	private var currentHistory: History? = nil
 	
 	/// The current task progress.
@@ -51,22 +41,18 @@ class RoutineDetailViewModel {
 		self.modelContext = modelContext
 	}
 	
-	/// Store selected routine and its history for detail view.
+	/// Populate viewmodel with data.
 	///
-	/// Use this function to populate the RoutineDetailViewModel with the selected routine data, do this before moving to the detail screen.
+	/// Use this function to populate data for this viewmodel.
+	///
+	/// > Tip: Use this in the parent component on a view with .task {}.
 	///
 	/// - Parameters:
-	///  * routine: The selected routine.
-	///  * day: The selected day (Date), get this from the HomeViewModel.
-	func selectRoutine(routine: Routine, day: Date) {
-		self.selectedRoutine = routine
-		self.selectedDay = day
-		self.populateHistory()
-	}
-	
-	private func populateHistory() {
+	///   * routine: The selected routine to displayed.
+	///   * day: The day selected for this routine.
+	func fetchData(routine: Routine, day: Date) {
 		do {
-			let startOfDay = Calendar.current.startOfDay(for: self.selectedDay)
+			let startOfDay = Calendar.current.startOfDay(for: day)
 			let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: startOfDay)!
 			
 			let currentHistoryPredicate = #Predicate<History> { history in
@@ -74,7 +60,7 @@ class RoutineDetailViewModel {
 			}
 			let fetchedHistories = try modelContext.fetch(FetchDescriptor<History>(predicate: currentHistoryPredicate))
 			
-			self.currentHistory = fetchedHistories.first(where: { $0.routine == selectedRoutine })
+			self.currentHistory = fetchedHistories.first(where: { $0.routine.id == routine.id })
 		} catch {
 			print("ERROR > Failed populating routine history: \(error)")
 		}

@@ -7,13 +7,11 @@
 
 import SwiftUI
 import SwiftData
-import Combine
 
 @Observable
 @MainActor
 class HomeViewModel {
 	private var modelContext: ModelContext
-	private var cancellables = Set<AnyCancellable>()
 	
 	/// Collection of stored routines.
 	///
@@ -30,22 +28,18 @@ class HomeViewModel {
 	/// By default it will be today, change this value to update the historiesDict with the selected date.
 	var selectedDay: Date = .now { didSet { self.fetchData(isOnlyHistories: true) } }
 	
+	/// The earlieast recorded history.
+	///
+	/// Practically the first time the user opens the app.
+	var earliestHistoryDate: Date = .now
+	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
-		
-		fetchData()
-		
-		// This will run fetchData everytime there is a database save action
-		NotificationCenter.default.publisher(for: ModelContext.didSave)
-			.sink { [weak self] _ in
-				self?.fetchData()
-			}
-			.store(in: &cancellables)
 	}
-    
-    var routineDay:  Date {
-        selectedDay
-    }
+	
+	var routineDay:  Date {
+		selectedDay
+	}
 	
 	/// Delete a routine.
 	///
@@ -60,10 +54,19 @@ class HomeViewModel {
 		self.fetchData()
 	}
 	
-	private func fetchData(isOnlyHistories: Bool = false) {
+	/// Populate viewmodel with data.
+	///
+	/// Use this function to populate data for this viewmodel.
+	///
+	/// > Tip: Use this in the parent component on a view with .task {}.
+	///
+	/// - Parameters:
+	///   * isOnlyHistories: Only fetch histories, can safely ignore this.
+	func fetchData(isOnlyHistories: Bool = false) {
 		do {
 			if !isOnlyHistories {
 				self.routines = try fetchRoutines()
+				self.earliestHistoryDat = try fetchEarliestHistoryDate()
 			}
 			self.historiesDict = try fetchHistoriesDict()
 		} catch {
@@ -88,7 +91,6 @@ class HomeViewModel {
 			uniqueKeysWithValues: fetchedHistories.map { ($0.routine.id, $0) }
 		)
 		
-		// FIXME: Reconsider this
 		for routine in routines {
 			if !historyDictionary.keys.contains(routine.id) {
 				let newHistory = History(
@@ -104,5 +106,15 @@ class HomeViewModel {
 		}
 		
 		return historyDictionary
+	}
+	
+	private func fetchEarliestHistoryDate() throws -> Date {
+		var descriptor = FetchDescriptor<History>(
+			sortBy: [SortDescriptor(\.date, order: .forward)]
+		)
+		descriptor.fetchLimit = 1
+		
+		let records = try modelContext.fetch(descriptor)
+		return records.first?.date ?? .now
 	}
 }
