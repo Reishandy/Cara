@@ -17,10 +17,10 @@ class LearnViewModel {
 	
 	// FIXME: ReEvaluate filters, add new field or delete
 	
-	/// Collection of stored tasks.
+	/// Collection of stored tasks dictionary, grouped by its category name.
 	///
 	/// This property can be read from anywhere, but can only be modified internally.
-	private(set) var tasks: [RoutineTask] = []
+	private(set) var groupedTasks: [String: [RoutineTask]] = [:]
 	
 	/// Collection of stored categories.
 	///
@@ -69,17 +69,19 @@ class LearnViewModel {
 			// A solution that works now because it is unrealistic to see a lot of tasks locally
 			// So what I did is just fetch all and fitler in memory instead of dealing with Predicate...
 			let search = self.searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
-			let fetchedTask = try modelContext.fetch(FetchDescriptor<RoutineTask>())
+			let fetchedTasks = try modelContext.fetch(FetchDescriptor<RoutineTask>())
 			
-			self.tasks = fetchedTask.filter { task in
+			let filteredTasks = fetchedTasks.filter { task in
 				let matchesSearch = search.isEmpty || task.taskName.localizedStandardContains(search)
 				let matchesCategory = self.categoryFilter.isEmpty || (task.category.map { self.categoryFilter.contains($0) } ?? false)
 				
 				return matchesSearch && matchesCategory
 			}
+			
+			self.groupedTasks = Dictionary(grouping: filteredTasks, by: { $0.category?.categoryName ?? "Uncategorized" })
 			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>())
 		} catch {
-			print("ERROR > Failed to fetch tasks: \(error)")
+			print("ERROR > Failed to fetch tasks or categories: \(error)")
 		}
 	}
 }

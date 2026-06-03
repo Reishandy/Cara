@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TaskSelectionView: View {
+    var taskCategory: String = "Task Category"
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             ForEach (0..<10, id: \.self) { _ in
