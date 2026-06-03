@@ -9,7 +9,7 @@ enum Screen: Hashable {
 	// FIXME: Check list of navigation later
 	case home
 	case learn
-	case routineDetail
+	case routineDetail(Routine)
 	case routineAdd
 	case taskDetail
 	case taskAdd
