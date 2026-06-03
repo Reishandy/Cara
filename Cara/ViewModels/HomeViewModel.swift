@@ -66,7 +66,7 @@ class HomeViewModel {
 		do {
 			if !isOnlyHistories {
 				self.routines = try fetchRoutines()
-				self.earliestHistoryDat = try fetchEarliestHistoryDate()
+				self.earliestHistoryDate = try fetchEarliestHistoryDate()
 			}
 			self.historiesDict = try fetchHistoriesDict()
 		} catch {
