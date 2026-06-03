@@ -13,13 +13,12 @@ struct TaskCategoryView: View {
     var body: some View {
         HStack {
             Text(taskCategory)
-                .font(.system(size: 24))
+                .font(.system(size: 20))
                 .fontWeight(.semibold)
                 .foregroundStyle(Color("AppPrimaryColor"))
             Spacer()
         }
         .frame(alignment: .leading)
-        .padding()
     }
 }
 
