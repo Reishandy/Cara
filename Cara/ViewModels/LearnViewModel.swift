@@ -19,12 +19,12 @@ class LearnViewModel {
 	
 	/// Collection of stored tasks dictionary, grouped by its category name.
 	///
-	/// This property can be read from anywhere, but can only be modified internally.
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
 	private(set) var groupedTasks: [String: [RoutineTask]] = [:]
 	
 	/// Collection of stored categories.
 	///
-	/// This property can be read from anywhere, but can only be modified internally.
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
 	private(set) var categories: [TaskCategory] = []
 	
 	/// Search term used to filter tasks by it's name.

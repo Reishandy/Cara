@@ -17,15 +17,18 @@ class HomeViewModel {
 	
 	/// Collection of stored routines.
 	///
-	/// This property can be read from anywhere, but can only be modified internally.
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
 	private(set) var routines: [Routine] = []
 	
 	/// Mapping of History by the Routine's ID.
 	///
-	/// This property can be read from anywhere, but can only be modified internally.
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
 	private(set) var historiesDict: [UUID: History] = [:]
 	
-	private var selectedDay: Date = .now
+	/// Date variable for the selected day.
+	///
+	/// By default it will be today, change this value to update the historiesDict with the selected date.
+	var selectedDay: Date = .now { didSet { self.fetchData(isOnlyHistories: true) } }
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
@@ -40,21 +43,6 @@ class HomeViewModel {
 			.store(in: &cancellables)
 	}
 	
-	/// Changes selected day for displaying history.
-	///
-	/// Use this to change the desired day of the history to view of the routintes, this will update the historiesDict variable.
-	///
-	/// - Parameters:
-	///   * date: The date of the desired history to view.
-	func changeSelectedDay(date: Date) {
-		do {
-			self.selectedDay = date
-			self.historiesDict = try fetchHistoriesDict()
-		} catch {
-			print("ERROR > Failed to fetch histories: \(error)")
-		}
-	}
-	
 	/// Delete a routine.
 	///
 	/// Use this to delete a routine, by passing the Routine object to this function.
@@ -67,9 +55,11 @@ class HomeViewModel {
 		self.modelContext.delete(routine)
 	}
 	
-	private func fetchData() {
+	private func fetchData(isOnlyHistories: Bool = false) {
 		do {
-			self.routines = try fetchRoutines()
+			if !isOnlyHistories {
+				self.routines = try fetchRoutines()
+			}
 			self.historiesDict = try fetchHistoriesDict()
 		} catch {
 			print("ERROR > Failed to fetch routines or histories: \(error)")
@@ -97,8 +87,9 @@ class HomeViewModel {
 			if !historyDictionary.keys.contains(routine.id) {
 				let newHistory = History(
 					date: selectedDay,
-					taskProgress: TaskProgress(status: [:]),
+					taskProgress: TaskProgress(filledAt: [:]),
 					note: "",
+					vital: Vital(),
 					routine: routine
 				)
 				modelContext.insert(newHistory)

@@ -18,7 +18,7 @@ class TaskAddViewModel {
 	
 	/// Collection of stored categories.
 	///
-	/// This property can be read from anywhere, but can only be modified internally.
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
 	private(set) var categories: [TaskCategory] = []
 	
 	/// Task Name in which to be set to a new Task.

@@ -17,22 +17,19 @@ nonisolated struct BloodPressure: Codable {
 class Vital: Hashable, Equatable {
 	var id: UUID
 	
-	// FIXME: Check what field is actualy used
-	var bloodPressure: BloodPressure
-	var heartRate: Int
-	var oxygenSaturation: Int
-	var temperature: Float
-	var bloodSugarLevel: Int
+	var bloodPressure: BloodPressure?
+	var heartRate: Int?
+	var oxygenSaturation: Int?
+	var temperature: Float?
 	
 	var history: History?
 	
-	init(bloodPressure: BloodPressure, heartRate: Int, oxygenSaturation: Int, temperature: Float, bloodSugarLevel: Int, history: History? = nil) {
+	init(bloodPressure: BloodPressure? = nil, heartRate: Int? = nil, oxygenSaturation: Int? = nil, temperature: Float? = nil, history: History? = nil) {
 		self.id = UUID()
 		self.bloodPressure = bloodPressure
 		self.heartRate = heartRate
 		self.oxygenSaturation = oxygenSaturation
 		self.temperature = temperature
-		self.bloodSugarLevel = bloodSugarLevel
 		self.history = history
 	}
 }
