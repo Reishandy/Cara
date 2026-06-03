@@ -14,7 +14,7 @@ enum RoutineDetailElement {
 
 struct RoutineDetailView: View {
 	@Bindable var routine: Routine
-	var selectedDay: Date
+	let selectedDay: Date
 	
 	@State private var currentElement: RoutineDetailElement = .task
 	
