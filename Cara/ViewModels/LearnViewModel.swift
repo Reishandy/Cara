@@ -60,8 +60,9 @@ class LearnViewModel {
 	///
 	/// - Parameters:
 	///   * task: The RoutineTask object to be deleted
-	func deleteRoutine(task: RoutineTask) {
+	func deleteTask(task: RoutineTask) {
 		self.modelContext.delete(task)
+		self.fetchData()
 	}
 	
 	private func fetchData() {

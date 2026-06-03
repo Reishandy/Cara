@@ -57,6 +57,7 @@ class HomeViewModel {
 	///   * routine: The Routine object to be deleted
 	func deleteRoutine(routine: Routine) {
 		self.modelContext.delete(routine)
+		self.fetchData()
 	}
 	
 	private func fetchData(isOnlyHistories: Bool = false) {
@@ -87,6 +88,7 @@ class HomeViewModel {
 			uniqueKeysWithValues: fetchedHistories.map { ($0.routine.id, $0) }
 		)
 		
+		// FIXME: Reconsider this
 		for routine in routines {
 			if !historyDictionary.keys.contains(routine.id) {
 				let newHistory = History(
