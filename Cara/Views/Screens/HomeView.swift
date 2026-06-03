@@ -30,7 +30,7 @@ struct HomeView: View {
 			
 			ScrollView {
 				// FIXME: Consider putting it in a menu
-				// FIXME: Add a limit, only selectable is today until latest history.
+				// FIXME: Add a limit, only selectable is today until earliest history.
 				// 			^ Now available in homeviewmodel
 				Button {
 					showDatePicker = true
