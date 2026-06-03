@@ -7,6 +7,6 @@
 
 import SwiftData
 
-protocol Seedable: PersistentModel {
+nonisolated protocol Seedable: PersistentModel {
 	static var defaultData: [Self] { get }
 }
