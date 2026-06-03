@@ -12,19 +12,20 @@ import UIKit
 
 struct HomeView: View {
     @Environment(HomeViewModel.self) var homeViewModel
+    @Environment(RoutineDetailViewModel.self) var routineDetailViewModel
+	@Environment(NavigationRouter.self) var navigationRouter
+	
     @State private var showDatePicker = false
     
     var formattedDateString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd MMM yyyy"
-        return formatter.string(from: homeViewModel.routineDay)
+		return formatter.string(from: homeViewModel.selectedDay)
     }
     
     var body: some View {
         VStack {
-            HomeHeaderView {
-                // FIXME: Navigate to Add Routine
-            }
+            HomeHeaderView()
             
             ScrollView {
                 Button {
@@ -48,7 +49,7 @@ struct HomeView: View {
                                 homeViewModel.routineDay
                             },
                             set: {
-                                homeViewModel.changeSelectedDay(date: $0)
+                                homeViewModel.selectedDay = $0
                             }
                         ),
                         displayedComponents: .date
@@ -63,7 +64,9 @@ struct HomeView: View {
                     if let history = homeViewModel.historiesDict[routine.id] {
                         
                         Button {
-                            // FIXME: Navigate to Routine Detail
+							// FIXME: check this later
+							routineDetailViewModel.selectRoutine(routine: routine, day: homeViewModel.selectedDay)
+							navigationRouter.path.append(Screen.routineDetail(routine))
                         } label: {
                             RoutineCard(routine: routine, history: history)
                         }
@@ -78,6 +81,31 @@ struct HomeView: View {
     }
     
 }
+
+struct HomeHeaderView: View {
+	var body: some View {
+		HStack(alignment: .center) {
+			Text("Caregiving")
+				.font(.largeTitle)
+				.bold()
+				.foregroundStyle(.appPrimary)
+			
+			Spacer()
+			
+			NavigationLink(
+				value: Screen.routineAdd
+			) {
+				Image(systemName: "plus")
+					.font(.system(size: 24, weight: .regular))
+					.foregroundStyle(.white)
+					.frame(width: 48, height: 48)
+					.background(Color.appPrimary)
+					.clipShape(Circle())
+			}
+		}
+	}
+}
+
 
 #Preview {
     let container = try! ModelContainer(
@@ -97,7 +125,7 @@ struct HomeView: View {
     
     let history = History(
         date: .now,
-        taskProgress: TaskProgress(status: [:]),
+        taskProgress: TaskProgress(filledAt: [:]),
         note: "Mom is not happy",
         routine: routine
     )
@@ -114,28 +142,4 @@ struct HomeView: View {
     }
     .environment(homeViewModel)
     .modelContainer(container)
-}
-
-struct HomeHeaderView: View {
-    var onAddTapped: () -> Void
-    
-    var body: some View {
-        HStack(alignment: .center) {
-            Text("Caregiving")
-                .font(.largeTitle)
-                .bold()
-                .foregroundStyle(.appPrimary)
-            
-            Spacer()
-            
-            Button(action: onAddTapped) {
-                Image(systemName: "plus")
-                    .font(.system(size: 24, weight: .regular))
-                    .foregroundStyle(.white)
-                    .frame(width: 48, height: 48)
-                    .background(Color.appPrimary)
-                    .clipShape(Circle())
-            }
-        }
-    }
 }
