@@ -14,7 +14,7 @@ nonisolated struct BloodPressure: Codable {
 }
 
 @Model
-class Vital: Hashable, Equatable {
+class Vital {
 	var id: UUID
 	
 	var bloodPressure: BloodPressure?
