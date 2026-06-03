@@ -5,129 +5,137 @@
 //  Created by Fadil Himawan on 29/05/26.
 //
 
+
 import SwiftUI
+import SwiftData
+import UIKit
 
 struct HomeView: View {
-    @State private var morningRoutine =
-    Routine(routineName: "Morning Routine",
-    routineDescription: "Every Morning")
+    @Environment(HomeViewModel.self) var homeViewModel
+    @State private var showDatePicker = false
+    
+    var formattedDateString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMM yyyy"
+        return formatter.string(from: homeViewModel.routineDay)
+    }
     
     var body: some View {
-		ScrollView {
-			HStack {
-				Text("26 May 2026")
-				Spacer()
-				Image(systemName: "chevron.down")
-			}
-			.padding(16)
-			.background(Color.background)
-			.cornerRadius(26)
-			.foregroundStyle(.appPrimary)
-			
-			Text("Daily Routine")
-				.font(.title)
-				.foregroundStyle(.appPrimary)
-			
-			// FIXME: Change this to a component and ForEach
-			NavigationLink(
-                value: Screen.routineDetail(morningRoutine)
-			) {
-				VStack(alignment: .leading) {
-					HStack() {
-						CircularProgressRing(progress: 0.50)
-						
-						Spacer().frame(width: 24)
-						
-						VStack(alignment: .leading) {
-							Text("Morning Routine")
-							Text("Best time: 05:00 - 11:59")
-							
-							HStack {
-								Circle()
-									.foregroundStyle(.appThird)
-									.frame(width: 16)
-								
-								Circle()
-									.foregroundStyle(.appThird)
-									.frame(width: 16)
-							}
-						}
-						
-						HStack {
-							
-						}
-					}
-					
-					VStack {
-						
-					}
-					
-					Spacer().frame(height: 8)
-					
-					HStack {
-						Image(systemName: "text.pad.header")
-						Spacer()
-							.frame(width: 6)
-						Text("Mom is not happy")
-					}
-					.foregroundStyle(.appThird)
-				}
-				.frame(maxWidth: .infinity)
-				.padding(20)
-				.background(Color.secondaryBackground)
-				.cornerRadius(13)
-			}
-		}
-		.frame(maxWidth: .infinity, alignment: .leading)
-		.padding(16)
-		// .navigationTitle("Caregiving")
-		.toolbar {
-			ToolbarItem(placement: .navigationBarLeading) {
-				Text("Caregiving")
-					.foregroundStyle(Color.primary)
-			}
-			
-			ToolbarItem(placement: .navigationBarTrailing) {
-				Button {
-					// do nothing
-				} label: {
-					Image(systemName: "plus")
-				}
-			}
-		}
-	}
-	
+        VStack {
+            HomeHeaderView {
+                // FIXME: Navigate to Add Routine
+            }
+            
+            ScrollView {
+                Button {
+                    showDatePicker = true
+                } label: {
+                    HStack {
+                        Text(formattedDateString)
+                        Spacer()
+                        Image(systemName: "chevron.down")
+                    }
+                    .padding(16)
+                    .background(Color.background)
+                    .cornerRadius(26)
+                    .foregroundStyle(.appPrimary)
+                    
+                }.sheet(isPresented: $showDatePicker) {
+                    DatePicker(
+                        "Select Date",
+                        selection: Binding(
+                            get: {
+                                homeViewModel.routineDay
+                            },
+                            set: {
+                                homeViewModel.changeSelectedDay(date: $0)
+                            }
+                        ),
+                        displayedComponents: .date
+                    )
+                    .datePickerStyle(.graphical)
+                    .padding()
+                    
+                }
+                
+                
+                ForEach(homeViewModel.routines, id: \.self) { routine in
+                    if let history = homeViewModel.historiesDict[routine.id] {
+                        
+                        Button {
+                            // FIXME: Navigate to Routine Detail
+                        } label: {
+                            RoutineCard(routine: routine, history: history)
+                        }
+                    }
+                }
+                
+            }
+        }
+        
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+    }
+    
 }
 
 #Preview {
-	HomeView()
+    let container = try! ModelContainer(
+        for: Routine.self, RoutineTask.self, TaskCategory.self, History.self, Vital.self,
+        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+    )
+    
+    container.mainContext.autosaveEnabled = false
+    
+    let tasks = Array(RoutineTask.defaultData.prefix(5))
+    
+    let routine = Routine(
+        routineName: "Morning",
+        routineDescription: "Routines to do in the morning.",
+        tasks: tasks
+    )
+    
+    let history = History(
+        date: .now,
+        taskProgress: TaskProgress(status: [:]),
+        note: "Mom is not happy",
+        routine: routine
+    )
+    
+    container.mainContext.insert(routine)
+    container.mainContext.insert(history)
+    
+    let homeViewModel = HomeViewModel(
+        modelContext: container.mainContext
+    )
+    
+    return NavigationStack {
+        HomeView()
+    }
+    .environment(homeViewModel)
+    .modelContainer(container)
 }
 
-// FIXME: Move to components
-struct CircularProgressRing: View {
-	let progress: Double // 0.0 to 1.0
-	
-	var body: some View {
-		ZStack {
-			// inactive part
-			Circle()
-				.stroke(
-					Color.gray.opacity(0.25),
-					lineWidth: 12
-				)
-			
-			// active part
-			Circle()
-				.trim(from: 0, to: progress)
-				.stroke(
-					Color.appPrimary,
-					style: StrokeStyle(
-						lineWidth: 12,
-						lineCap: .round
-					)
-				)
-				.rotationEffect(.degrees(-90))
-		}
-		.frame(width: 55, height: 55)
-	}
+struct HomeHeaderView: View {
+    var onAddTapped: () -> Void
+    
+    var body: some View {
+        HStack(alignment: .center) {
+            Text("Caregiving")
+                .font(.largeTitle)
+                .bold()
+                .foregroundStyle(.appPrimary)
+            
+            Spacer()
+            
+            Button(action: onAddTapped) {
+                Image(systemName: "plus")
+                    .font(.system(size: 24, weight: .regular))
+                    .foregroundStyle(.white)
+                    .frame(width: 48, height: 48)
+                    .background(Color.appPrimary)
+                    .clipShape(Circle())
+            }
+        }
+    }
 }

@@ -39,6 +39,10 @@ class HomeViewModel {
 			}
 			.store(in: &cancellables)
 	}
+    
+    var routineDay:  Date {
+        selectedDay
+    }
 	
 	/// Changes selected day for displaying history.
 	///
