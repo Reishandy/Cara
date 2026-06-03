@@ -15,10 +15,27 @@ class RoutineAddViewModel {
 	private var modelContext: ModelContext
 	private var cancellables = Set<AnyCancellable>()
 	
-	/// Collection of stored tasks.
+	/// Collection of stored tasks dictionary, grouped by its category name.
 	///
 	/// This property can be read from anywhere, but can only be modified internally.
-	private(set) var tasks: [RoutineTask] = []
+	private(set) var groupedTasks: [String: [RoutineTask]] = [:]
+	
+	/// Collection of stored categories.
+	///
+	/// This property can be read from anywhere, but can only be modified internally.
+	private(set) var categories: [TaskCategory] = []
+	
+	/// Search term used to filter tasks by its name.
+	///
+	/// To apply search / update groupedTasks, set this property to the desired search term.
+	///
+	/// > Tip: Debounce updates on the search field to improve performance.
+	var searchTerm: String = "" { didSet { self.fetchData() } }
+	
+	/// Category filter used to filter tasks by its category.
+	///
+	/// To apply filtering / update groupedTasks, modify this array by adding or removing TaskCategory values.
+	var categoryFilter: [TaskCategory] = [] { didSet { self.fetchData() } }
 	
 	/// Selected Tasks in which to be added to a new Routine.
 	var selectedTask: [RoutineTask] = []
@@ -61,9 +78,20 @@ class RoutineAddViewModel {
 	
 	private func fetchData() {
 		do {
-			self.tasks = try modelContext.fetch(FetchDescriptor<RoutineTask>())
+			let search = self.searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
+			let fetchedTasks = try modelContext.fetch(FetchDescriptor<RoutineTask>())
+			
+			let filteredTasks = fetchedTasks.filter { task in
+				let matchesSearch = search.isEmpty || task.taskName.localizedStandardContains(search)
+				let matchesCategory = self.categoryFilter.isEmpty || (task.category.map { self.categoryFilter.contains($0) } ?? false)
+				
+				return matchesSearch && matchesCategory
+			}
+			
+			self.groupedTasks = Dictionary(grouping: filteredTasks, by: { $0.category?.categoryName ?? "Uncategorized" })
+			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>())
 		} catch {
-			print("ERROR > Failed to fetch tasks: \(error)")
+			print("ERROR > Failed to fetch tasks or categories: \(error)")
 		}
 	}
 }
