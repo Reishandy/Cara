@@ -7,14 +7,11 @@
 
 import SwiftUI
 import SwiftData
-import Combine
 
 @Observable
 @MainActor
 class TaskAddViewModel {
-	// FIXME: Check if this is even needed
 	private var modelContext: ModelContext
-	private var cancellables = Set<AnyCancellable>()
 	
 	/// Collection of stored categories.
 	///
@@ -39,15 +36,6 @@ class TaskAddViewModel {
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
-		
-		fetchData()
-		
-		// This will run fetchData everytime there is a database save action
-		NotificationCenter.default.publisher(for: ModelContext.didSave)
-			.sink { [weak self] _ in
-				self?.fetchData()
-			}
-			.store(in: &cancellables)
 	}
 	
 	/// Saves a new task.
@@ -71,7 +59,12 @@ class TaskAddViewModel {
 		self.selectedCategory = nil
 	}
 	
-	private func fetchData() {
+	/// Populate viewmodel with data.
+	///
+	/// Use this function to populate data for this viewmodel.
+	///
+	/// > Tip: Use this in the parent component on a view with .task {}.
+	func fetchData() {
 		do {
 			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>())
 		} catch {

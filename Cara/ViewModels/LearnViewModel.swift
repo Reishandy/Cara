@@ -7,13 +7,11 @@
 
 import SwiftUI
 import SwiftData
-import Combine
 
 @Observable
 @MainActor
 class LearnViewModel {
 	private var modelContext: ModelContext
-	private var cancellables = Set<AnyCancellable>()
 	
 	// FIXME: ReEvaluate filters, add new field or delete
 	
@@ -41,15 +39,6 @@ class LearnViewModel {
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
-		
-		fetchData()
-		
-		// This will run fetchData everytime there is a database save action
-		NotificationCenter.default.publisher(for: ModelContext.didSave)
-			.sink { [weak self] _ in
-				self?.fetchData()
-			}
-			.store(in: &cancellables)
 	}
 	
 	/// Delete a task.
@@ -65,7 +54,12 @@ class LearnViewModel {
 		self.fetchData()
 	}
 	
-	private func fetchData() {
+	/// Populate viewmodel with data.
+	///
+	/// Use this function to populate data for this viewmodel.
+	///
+	/// > Tip: Use this in the parent component on a view with .task {}.
+	func fetchData() {
 		do {
 			// A solution that works now because it is unrealistic to see a lot of tasks locally
 			// So what I did is just fetch all and fitler in memory instead of dealing with Predicate...
