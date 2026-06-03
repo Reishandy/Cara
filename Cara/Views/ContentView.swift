@@ -46,8 +46,8 @@ struct ContentView: View {
 					TaskSelectionView()
 				case .routineAdd:
 					Text("This is routine add")
-				case .routineDetail:
-					RoutineDetailView()
+                case .routineDetail(let routine):
+                    RoutineDetailView(routine: routine)
 				case .taskDetail:
 					Text("This is task detail")
 				case .taskAdd:

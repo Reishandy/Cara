@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct HomeView: View {
-	var body: some View {
+    @State private var morningRoutine =
+    Routine(routineName: "Morning Routine",
+    routineDescription: "Every Morning")
+    
+    var body: some View {
 		ScrollView {
 			HStack {
 				Text("26 May 2026")
@@ -26,7 +30,7 @@ struct HomeView: View {
 			
 			// FIXME: Change this to a component and ForEach
 			NavigationLink(
-				value: Screen.routineDetail
+                value: Screen.routineDetail(morningRoutine)
 			) {
 				VStack(alignment: .leading) {
 					HStack() {
