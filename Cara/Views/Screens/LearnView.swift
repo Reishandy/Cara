@@ -34,7 +34,6 @@ struct LearnView: View {
         }
         
         .navigationTitle("Learn")
-        .navigationSubtitle("Click on a task to learn more")
         .navigationBarTitleDisplayMode(.large)
         .padding(.horizontal)
     }
