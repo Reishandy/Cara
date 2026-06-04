@@ -31,7 +31,8 @@ private struct RoutineBody: View {
 	let history: History
 	
 	var finishedTasks: [RoutineTask] {
-		routine.tasks.filter { (task) -> Bool in
+        // FIXME: Integrate w viewmodel
+        history.routine.tasks.filter { (task) -> Bool in
 			task.isDefault
 		}
 	}
@@ -47,8 +48,9 @@ private struct RoutineBody: View {
 			VStack(alignment: .leading) {
 				HStack {
 					CircularProgressRing(
-						total: routine.tasks.count,
-						done: finishedTasks.count)
+                        total: history.routine.tasks.count,
+                        done: finishedTasks.count
+                    )
 					
 					Spacer().frame(width: 24)
 					
@@ -103,6 +105,10 @@ private struct RoutineBody: View {
 					// FIXME: integrate w viewmodel
 					//			^ Now can be done with homeviewmodel, just access the History.Vital
 					if history.vital != nil {
+//                        if history.vital!.bloodPressure != nil {
+//                            
+//                        }
+                        
 						VitalRoutineView()
 						VitalRoutineView()
 						VitalRoutineView()
