@@ -23,6 +23,7 @@ struct HomeView: View {
     
     var body: some View {
         VStack {
+            HomeHeaderView()
             ScrollView {
                 // FIXME: Consider putting it in a menu
                 Button {
@@ -69,33 +70,6 @@ struct HomeView: View {
         .padding(.top, 12)
         .task {
             homeViewModel.fetchData()
-        }
-        .toolbar {
-            ToolbarItemGroup(placement: .topBarLeading) {
-                Button {
-                    
-                } label: {
-                    Text("Caregiving")
-                        .font(.largeTitle)
-                        .bold()
-                        .foregroundStyle(.appSecondary)
-                }
-            }
-            .sharedBackgroundVisibility(.hidden)
-            
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(
-                    value: Screen.routineAdd
-                ) {
-                    Image(systemName: "plus")
-                        .font(.system(size: 24, weight: .regular))
-                        .foregroundStyle(.appPrimary)
-                        .frame(width: 48, height: 48)
-                        .background(Color.background)
-                        .clipShape(Circle())
-                }
-            }
-            .sharedBackgroundVisibility(.hidden)
         }
     }
     
