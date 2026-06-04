@@ -28,6 +28,9 @@ struct RoutineDetailView: View {
     @State private var noteText: String = ""
     @State private var lastEditedDate: Date? = nil
     
+    @State private var checkedTasks : [UUID: Date] = [:]
+    
+    
     var body: some View {
         VStack(spacing: 24) {
             // FIXME: Filled indicator
@@ -136,25 +139,44 @@ struct RoutineDetailView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 90)
                         
-                        //Else 추가
                         
+                        
+                    }
+                    else {
+                        VStack(spacing: 12) {
+                            ForEach(routine.tasks) { task in
+                            TaskCardView(
+                                taskName: task.taskName,
+                                style: checkedTasks[task.id] != nil ? .checked : .uncheckedCircle, onButtonClick: {
+                                    if checkedTasks[task.id] != nil {
+                                        checkedTasks[task.id] = nil
+                                    } else {
+                                        checkedTasks[task.id] = Date()
+                                    }
+                                },
+                                clickTime: checkedTasks[task.id]
+                                )
+                            }
+                        }
                     }
                     
                 }
                 
             case .note:
                 // FIXME: Note color matching
-                Text("Notes")
-                    .font(.title)
+                Text("Describe what happened")
+                    .font(.title2)
+                    .foregroundStyle(Color.appPrimary)
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 ZStack(alignment: .bottomTrailing) {
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.appThird.opacity(0.15))
+                        .fill(Color.background.opacity(0.8))
                     
                     VStack(alignment: .leading, spacing: 0) {
                         TextEditor(text: $noteText)
+                            .foregroundStyle(.appPrimary)
                             .scrollContentBackground(.hidden)
                             .padding(16)
                             .onChange(of: noteText) {
@@ -162,7 +184,7 @@ struct RoutineDetailView: View {
                             }
                         
                         if let date = lastEditedDate {
-                            Text("Last edited: \(date.formatted(date: .abbreviated, time: .shortened))")
+                            Text("✓ Last edited at: \(date.formatted(date: .omitted, time: .shortened))")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .padding([.bottom, .leading], 16)
@@ -178,25 +200,11 @@ struct RoutineDetailView: View {
         .padding(.horizontal, 24)
         
         .toolbar {
-            
-            ToolbarItem(placement: .bottomBar) {
-                
-                Button {
-                    ///
-                } label: {
-                    Text("Add Task")
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                }
-                .frame(maxWidth: .infinity)
-                .buttonStyle(.borderedProminent)
-                .tint(Color("AppThirdColor"))
-            }
-            
+            // Title
             ToolbarItem(placement: .principal) {
                 VStack(spacing: 2) {
                     TextField("Routine name", text: $routine.routineName)
-                        .font(.title)
+                        .font(.title3)
                         .bold()
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Color.appPrimary)
@@ -205,6 +213,40 @@ struct RoutineDetailView: View {
                         .foregroundStyle(.appThird)
                 }
             }
+            
+            // Add Task button
+            
+                ToolbarItem(placement: .bottomBar) {
+                    if currentElement == .task && routine.tasks.isEmpty {
+                    Button {
+                        ///
+                    } label: {
+                        Text("Add Task")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color("AppThirdColor"))
+                }
+            }
+           
+            // Edit button
+            
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    if currentElement == .task && !routine.tasks.isEmpty {
+                    Button {
+                        ///
+                    } label: {
+                        Text("Edit")
+                            .foregroundColor(Color("AppPrimaryColor"))
+                        
+                    }
+                    
+                }
+            }
+            
+
         }
         .navigationBarTitleDisplayMode(.inline)
         .onAppear{
@@ -222,7 +264,7 @@ struct RoutineDetailView: View {
     }
 }
 
-#Preview {
+#Preview("Empty State") {
     NavigationStack {
         RoutineDetailView(
             routine: Routine(
@@ -230,5 +272,23 @@ struct RoutineDetailView: View {
             routineDescription: "Every Morning"
             ), selectedDay: .now
             )
+    }
+}
+
+
+#Preview("Filled State") {
+    NavigationStack {
+        RoutineDetailView(
+            routine: Routine(
+                routineName: "Morning Routine",
+                routineDescription: "Every Morning",
+                tasks: [
+                    RoutineTask(taskName: "Assisted Hip & Knee Flexion", howTo: []),
+                    RoutineTask(taskName: "Scheduled Medication", howTo: []),
+                    RoutineTask(taskName: "Tongue In-and-Outs", howTo: [])
+                ]
+            ),
+            selectedDay: .now
+        )
     }
 }
