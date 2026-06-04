@@ -5,11 +5,13 @@
 //  Created by Muhammad Akbar Reishandy on 26/05/26.
 //
 
+import Foundation
+
 enum Screen: Hashable {
 	// FIXME: Check list of navigation later
 	case home
 	case learn
-	case routineDetail(Routine)
+	case routineDetail(routine: Routine, day: Date)
 	case routineAdd
 	case taskDetail
 	case taskAdd

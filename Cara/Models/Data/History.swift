@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 nonisolated struct TaskProgress: Codable {
-	var status: [String: Bool]
+	var filledAt: [UUID: Date]
 }
 
 @Model
@@ -19,6 +19,7 @@ class History {
 	var date: Date
 	var taskProgress: TaskProgress
 	var note: String
+	var vitalFilledAt: Date?
 	
 	@Relationship(deleteRule: .cascade, inverse: \Vital.history)
 	var vital: Vital?

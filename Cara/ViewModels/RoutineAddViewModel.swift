@@ -7,22 +7,20 @@
 
 import SwiftUI
 import SwiftData
-import Combine
 
 @Observable
 @MainActor
 class RoutineAddViewModel {
 	private var modelContext: ModelContext
-	private var cancellables = Set<AnyCancellable>()
 	
 	/// Collection of stored tasks dictionary, grouped by its category name.
 	///
-	/// This property can be read from anywhere, but can only be modified internally.
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
 	private(set) var groupedTasks: [String: [RoutineTask]] = [:]
 	
 	/// Collection of stored categories.
 	///
-	/// This property can be read from anywhere, but can only be modified internally.
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
 	private(set) var categories: [TaskCategory] = []
 	
 	/// Search term used to filter tasks by its name.
@@ -48,15 +46,6 @@ class RoutineAddViewModel {
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
-		
-		fetchData()
-		
-		// This will run fetchData everytime there is a database save action
-		NotificationCenter.default.publisher(for: ModelContext.didSave)
-			.sink { [weak self] _ in
-				self?.fetchData()
-			}
-			.store(in: &cancellables)
 	}
 	
 	/// Saves a new routine.
@@ -76,7 +65,12 @@ class RoutineAddViewModel {
 		self.routineDescription = ""
 	}
 	
-	private func fetchData() {
+	/// Populate viewmodel with data.
+	///
+	/// Use this function to populate data for this viewmodel.
+	///
+	/// > Tip: Use this in the parent component on a view with .task {}.
+	func fetchData() {
 		do {
 			let search = self.searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
 			let fetchedTasks = try modelContext.fetch(FetchDescriptor<RoutineTask>())

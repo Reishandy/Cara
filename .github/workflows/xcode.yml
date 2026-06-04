@@ -10,12 +10,16 @@ on:
 
 jobs:
   build:
-    name: Build and analyse default scheme using xcodebuild command
+    name: Build and analyze default scheme
     runs-on: macos-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
       - name: Build and Analyze
         run: |
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
@@ -24,7 +28,7 @@ jobs:
           xcodebuild clean build analyze \
             -$filetype_parameter "$file_to_build" \
             -scheme "Cara" \
-            -destination 'platform=iOS Simulator,name=iPhone 17' \
+            -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
-            | xcpretty && exit ${PIPESTATUS[0]}
+            | xcbeautify && exit ${PIPESTATUS[0]}

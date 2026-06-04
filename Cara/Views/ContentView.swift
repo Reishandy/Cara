@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 enum Tab {
 	case routine
@@ -46,8 +47,8 @@ struct ContentView: View {
 					TaskSelectionView()
 				case .routineAdd:
 					Text("This is routine add")
-                case .routineDetail(let routine):
-                    RoutineDetailView(routine: routine)
+                case .routineDetail(let routine, let day):
+					RoutineDetailView(routine: routine, selectedDay: day)
 				case .taskDetail:
 					Text("This is task detail")
 				case .taskAdd:
@@ -60,5 +61,19 @@ struct ContentView: View {
 }
 
 #Preview {
+	let container = CaraApp.previewSharedContainer
+	
+	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
+	let learnViewModel = LearnViewModel(modelContext: container.mainContext)
+	let routineDetailViewModel = RoutineDetailViewModel(modelContext: container.mainContext)
+	let routineAddViewModel = RoutineAddViewModel(modelContext: container.mainContext)
+	let taskAddViewModel = TaskAddViewModel(modelContext: container.mainContext)
+	
 	ContentView()
+		.environment(NavigationRouter())
+		.environment(homeViewModel)
+		.environment(learnViewModel)
+		.environment(routineDetailViewModel)
+		.environment(routineAddViewModel)
+		.environment(taskAddViewModel)
 }
