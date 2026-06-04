@@ -41,10 +41,31 @@ struct TaskDetailView: View {
                     contentView
                 }
             }
+            .onScrollGeometryChange(for: CGFloat.self) { geometry in
+                geometry.contentOffset.y
+            } action: { oldOffset, newOffset in
+//                currentOffset = newOffset
+                if newOffset > 100 {
+                    showAppBarTitle = true
+                } else {
+                    showAppBarTitle = false
+                }
+            }
             
-            closeButton
+//            closeButton
         }
         .ignoresSafeArea(edges: .top)
+        .navigationTitle(title)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                }
+            }
+        }
     }
     
     let imageUrl = "https://www.seniorlivingarrangements.com/wp-content/uploads/2018/08/Senior-Care-Centre.jpg"
@@ -72,13 +93,17 @@ struct TaskDetailView: View {
     
     private var contentView: some View {
         VStack(alignment: .leading) {
-            Text(title)
-                .font(.title2)
-                .bold()
-                .foregroundStyle(.white)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 4)
             
+            if !showAppBarTitle {
+                Text(title)
+                    .font(.title2)
+                    .bold()
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 4)
+            } else {
+                Spacer().frame(height: 60)
+            }
             
             VStack(alignment: .leading) {
                 Text(subtitle)
