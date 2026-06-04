@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TaskSelectionReviewPage: View {
+struct RoutineDetailEditView: View {
     var placeholder: String = "Example: Morning Routine"
     @State var routineInput: String = ""
     
@@ -32,28 +32,6 @@ struct TaskSelectionReviewPage: View {
                             TaskCardView(style: .noButton)
                         }
                     }
-                    
-                    // ADD NEW EXERCISE BUTTON
-                    Button() {
-                        // FIXME: need to route this to action
-                    } label: {
-                        HStack(){
-                            Image(systemName: "plus")
-                            Text("Add More Task")
-                                .font(.system(size:17))
-                        }
-                        .foregroundStyle(Color("AppThirdColor"))
-                        .frame(maxWidth: .infinity, minHeight: 30)
-                        .padding()
-                        .background(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 20)
-                                .stroke(Color("AppThirdColor"), lineWidth: 1)
-                        )
-                    }
-                    .padding(.bottom, 50)
-                    
                 }
             }
         }
@@ -62,18 +40,36 @@ struct TaskSelectionReviewPage: View {
                 Button {
                     // FIXME: need to route this to action
                 } label: {
-                    Text("Save Routine")
+                    Text("Add Task")
                         .font(.headline)
                 }
                 .frame(maxWidth: .infinity)
                 .buttonStyle(.borderedProminent)
-                .tint(Color("AppPrimaryColor"))
+                .tint(Color("AppThirdColor"))
             }
         }
-        .padding()
+        .toolbar{
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    
+                } label: {
+                    Text("Save")
+                }
+            }
+        }
+        .padding(.horizontal)
+        
+        
+        
+        
+        
+        
+        
     }
 }
 
 #Preview {
-    TaskSelectionReviewPage()
+    NavigationStack{
+        RoutineDetailEditView()
+    }
 }
