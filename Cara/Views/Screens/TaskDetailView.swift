@@ -124,7 +124,7 @@ struct TaskDetailView: View {
                 }
             }
             .padding(28)
-            .background(Color.white)
+            .background(Color.appBackground)
             .clipShape(
                 UnevenRoundedRectangle(
                     topLeadingRadius: 36,
@@ -165,7 +165,8 @@ private struct TaskInstructionView: View {
                 .padding()
                 .padding(.leading, 20)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.secondaryBackground)
+                .background(Color.capsule)
+                .foregroundStyle(.appPrimary)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             
             Text("\(number)")

@@ -128,7 +128,7 @@ struct RoutineDetailView: View {
 				HStack(spacing: 8) {
 					ZStack {
 						Circle()
-							.fill(Color("AppPrimaryColor"))
+							.fill(.secondaryBackground)
 							.frame(
 								width: vitalHeaderIconBackgroundSize,
 								height: vitalHeaderIconBackgroundSize
@@ -212,7 +212,7 @@ struct RoutineDetailView: View {
 
 			ZStack(alignment: .bottomTrailing) {
 				RoundedRectangle(cornerRadius: 16)
-					.fill(Color.background.opacity(0.8))
+					.fill(Color.selected.opacity(0.8))
 
 				VStack(alignment: .leading, spacing: 0) {
 					TextEditor(text: $noteText)

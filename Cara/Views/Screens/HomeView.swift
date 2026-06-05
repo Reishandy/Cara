@@ -37,7 +37,7 @@ struct HomeView: View {
 								.imageScale(.medium)
 						}
 						.padding(16)
-						.background(.secondaryBackground)
+						.background(.capsule)
 						.cornerRadius(26)
 						.foregroundStyle(.appPrimary)
 					}
@@ -97,7 +97,7 @@ struct HomeHeaderView: View {
 			Text("Caregiving")
 				.font(.largeTitle)
 				.bold()
-				.foregroundStyle(.appSecondary)
+				.foregroundStyle(.appPrimary)
 				.fixedSize(horizontal: false, vertical: true)
 
 			Spacer(minLength: 12)

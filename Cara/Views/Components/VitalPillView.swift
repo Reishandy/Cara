@@ -38,7 +38,7 @@ struct VitalPillView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(padding)
-        .background(Color.appThird.opacity(0.2))
+        .background(Color.selected)
         .cornerRadius(12)
         
         

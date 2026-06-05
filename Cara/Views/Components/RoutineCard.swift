@@ -47,7 +47,7 @@ struct RoutineCard: View {
 			}
 			.frame(maxWidth: .infinity, alignment: .leading)
 			.padding(20)
-			.background(Color.secondaryBackground)
+			.background(Color.capsule)
 			.cornerRadius(13)
 		}
 	}
@@ -216,7 +216,7 @@ struct VitalRoutineView: View {
 		}
 		.frame(maxWidth: .infinity)
 		.padding(cardPadding)
-		.background(.appFourth)
+		.background(.selected)
 		.clipShape(RoundedRectangle(cornerRadius: 8))
 	}
 }
