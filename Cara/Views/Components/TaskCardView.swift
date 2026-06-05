@@ -39,14 +39,22 @@ struct TaskCardView: View {
     var body: some View {
         HStack(spacing: 20){
             TaskIconView(taskIcon: taskIconEach)
-            VStack (alignment: .leading){
+            VStack (alignment: .leading, spacing: 5){
                 Text(taskName)
                     .multilineTextAlignment(.leading)
                     .foregroundStyle(Color("AppPrimaryColor"))
                     .font(.system(size: 17, weight: .medium, design: .default))
-                    .frame(maxWidth: 170, maxHeight: .infinity, alignment: .leading)
+                    .frame(maxWidth: 170, alignment: .leading)
+                    .lineLimit(3)
+                    .truncationMode(.tail)
                 if let clickTime = clickTime {
-                    Text(clickTime.formatted(date: .omitted, time: .shortened))
+                    HStack{
+                        Image(systemName: "clock")
+                        Text(clickTime.formatted(date: .omitted, time: .shortened))
+                    }
+                    .font(Font.system(size: 12, weight: .regular, design: .default))
+                    .foregroundStyle(Color(.systemGray))
+                   
                 }
             }
             
@@ -66,7 +74,6 @@ struct TaskCardView: View {
         }
         .frame(maxWidth: .infinity,
                minHeight: 30,
-               maxHeight: 50,
                alignment: .leading)
         .padding()
         .background(Color("CapsuleColor"))
