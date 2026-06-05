@@ -9,25 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct RoutineCard: View {
-	let routine: Routine
-	let history: History
-	
-	var body: some View {
-		VStack(alignment: .leading, spacing: 16) {
-			// FIXME: Do we need this?
-			Text(routine.routineName)
-				.font(.title)
-				.bold()
-				.foregroundStyle(.appPrimary)
-				.fixedSize(horizontal: false, vertical: true)
-			
-			RoutineBody(routine: routine, history: history)
-		}
-	}
-}
-
-private struct RoutineBody: View {
-	@Environment(HomeViewModel.self) var homeViewModel
 	@Environment(\.dynamicTypeSize) private var dynamicTypeSize
 	
 	@ScaledMetric(relativeTo: .body) private var horizontalSpacing = 24
@@ -36,9 +17,9 @@ private struct RoutineBody: View {
 	
 	let routine: Routine
 	let history: History
+	let selectedDay: Date
 	
-	// FIXME: Do we need this?
-	var bestTime: String {
+	private var bestTime: String {
 		"Best time: 05:00 - 11:59"
 	}
 	
@@ -61,7 +42,7 @@ private struct RoutineBody: View {
 	
 	var body: some View {
 		NavigationLink(
-			value: Screen.routineDetail(routine: routine, day: homeViewModel.selectedDay)
+			value: Screen.routineDetail(routine: routine, day: selectedDay)
 		) {
 			VStack(alignment: .leading, spacing: 16) {
 				routineSummary
@@ -266,11 +247,6 @@ struct CircularProgressRing: View {
 }
 
 #Preview {
-	let container = try! ModelContainer(
-		for: Routine.self, RoutineTask.self, TaskCategory.self, History.self, Vital.self,
-		configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-	)
-	
 	let routine = Routine(
 		routineName: "Taking care of my heart",
 		routineDescription: "Take care of your heart",
@@ -278,23 +254,16 @@ struct CircularProgressRing: View {
 	)
 	
 	let history = History(
-		date: Date.now,
+		date: .now,
 		taskProgress: TaskProgress(filledAt: [UUID(): Date.now]),
 		note: "Mama is here",
 		vital: Vital(),
 		routine: routine
 	)
 	
-	container.mainContext.insert(routine)
-	container.mainContext.insert(history)
-	
-	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
-	
-	return NavigationStack {
-		RoutineCard(routine: routine, history: history)
+	NavigationStack {
+		RoutineCard(routine: routine, history: history, selectedDay: .now)
 	}
-	.environment(homeViewModel)
-	.modelContainer(container)
 }
 
 #Preview("Accessibility Text Scale") {
@@ -323,7 +292,7 @@ struct CircularProgressRing: View {
 	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
 	
 	return NavigationStack {
-		RoutineCard(routine: routine, history: history)
+		RoutineCard(routine: routine, history: history, selectedDay: .now)
 	}
 	.environment(homeViewModel)
 	.environment(\.dynamicTypeSize, .accessibility3)

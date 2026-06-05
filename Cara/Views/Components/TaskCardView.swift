@@ -50,7 +50,7 @@ struct TaskCardView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .background(Color("CapsuleColor"))
+        .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
     
@@ -86,10 +86,13 @@ struct TaskCardView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
             if let clickTime = clickTime {
-                Text(clickTime.formatted(date: .omitted, time: .shortened))
-                    .font(.subheadline)
-                    .foregroundStyle(Color("AppPrimaryColor").opacity(0.7))
-                    .fixedSize(horizontal: false, vertical: true)
+                HStack(alignment: .top, spacing: 4) {
+                    Image(systemName: "clock")
+                    Text(clickTime.formatted(date: .omitted, time: .shortened))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .font(.subheadline)
+                .foregroundStyle(Color("AppPrimaryColor").opacity(0.7))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
