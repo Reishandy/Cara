@@ -71,7 +71,6 @@ struct TaskCardView: View {
         .padding()
         .background(Color("CapsuleColor"))
         .clipShape(RoundedRectangle(cornerRadius: 20))
-
     }
     
     private var backgroundColor: Color {

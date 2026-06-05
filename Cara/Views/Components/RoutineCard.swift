@@ -14,6 +14,7 @@ struct RoutineCard: View {
 	
 	var body: some View {
 		VStack(alignment: .leading, spacing: 16) {
+			// FIXME: Do we need this?
 			Text(routine.routineName)
 				.font(.title)
 				.bold()
@@ -30,15 +31,22 @@ private struct RoutineBody: View {
 	let routine: Routine
 	let history: History
 	
-	var finishedTasks: [RoutineTask] {
-        // FIXME: Integrate w viewmodel
-        history.routine.tasks.filter { (task) -> Bool in
-			task.isDefault
-		}
-	}
-	
+	// FIXME: Do we need this?
 	var bestTime: String {
 		"Best time: 05:00 - 11:59"
+	}
+	
+	private var bpString: String {
+		history.vital?.bloodPressure.map { "\($0.systolic)/\($0.diastolic)" } ?? "-/-"
+	}
+	private var hrString: String {
+		history.vital?.heartRate.map(String.init) ?? "-"
+	}
+	private var tempString: String {
+		history.vital?.temperature.map { String(format: "%.1f", $0) } ?? "-"
+	}
+	private var o2String: String {
+		history.vital?.oxygenSaturation.map(String.init) ?? "-"
 	}
 	
 	var body: some View {
@@ -48,9 +56,9 @@ private struct RoutineBody: View {
 			VStack(alignment: .leading) {
 				HStack {
 					CircularProgressRing(
-                        total: history.routine.tasks.count,
-                        done: finishedTasks.count
-                    )
+						total: history.routine.tasks.count,
+						done: history.validCompletedTask.count
+					)
 					
 					Spacer().frame(width: 24)
 					
@@ -79,13 +87,11 @@ private struct RoutineBody: View {
 										.foregroundStyle(.appThird)
 										.frame(width: 28)
 									
-									if let imageData = task.image,
-									   !imageData.isEmpty,
-									   let uiImage = UIImage(data: imageData) {
-										Image(uiImage: uiImage)
-											.resizable()
-											.scaledToFit()
-									}
+									Image(systemName: task.taskIcon)
+										.resizable()
+										.scaledToFit()
+										.frame(width: 16)
+										.foregroundStyle(.white)
 								}
 							}
 							
@@ -102,19 +108,31 @@ private struct RoutineBody: View {
 				Spacer().frame(height: 16)
 				
 				HStack {
-					// FIXME: integrate w viewmodel
-					//			^ Now can be done with homeviewmodel, just access the History.Vital
-					if history.vital != nil {
-//                        if history.vital!.bloodPressure != nil {
-//                            
-//                        }
-                        
-						VitalRoutineView()
-						VitalRoutineView()
-						VitalRoutineView()
-						VitalRoutineView()
-					}
+					VitalRoutineView(
+						systemIcon: "blood.pressure.cuff",
+						value: bpString,
+						unit: "mm Hg"
+					)
+					
+					VitalRoutineView(
+						systemIcon: "waveform.path.ecg",
+						value: hrString,
+						unit: "bpm"
+					)
+					
+					VitalRoutineView(
+						systemIcon: "thermometer.variable",
+						value: tempString,
+						unit: "℃"
+					)
+					
+					VitalRoutineView(
+						systemIcon: "lungs",
+						value: o2String,
+						unit: "%"
+					)
 				}
+				.frame(maxWidth: .infinity)
 				
 				Spacer().frame(height: 16)
 				
@@ -137,22 +155,27 @@ private struct RoutineBody: View {
 }
 
 struct VitalRoutineView: View {
+	let systemIcon: String
+	let value: String
+	let unit: String
+	
 	var body: some View {
 		VStack {
 			Image(
-				systemName: "square.and.arrow.down.badge.xmark.fill"
+				systemName: systemIcon
 			)
 			.resizable()
 			.scaledToFit()
 			.frame(width: 20, height: 20)
 			.foregroundStyle(.appPrimary)
 			
-			Text("120/80")
+			Text(value)
 				.foregroundStyle(.appPrimary)
 				.bold()
-			Text("mm Hg")
-				.foregroundStyle(.appPrimary)
+			Text(unit)
+				.foregroundStyle(.appPrimary.opacity(0.7))
 		}
+		.frame(width: 60)
 		.padding(8)
 		.background(.appFourth)
 		.clipShape(RoundedRectangle(cornerRadius: 8))

@@ -11,7 +11,7 @@ struct CaraApp: App {
 			let container = try ModelContainer(for: schema, configurations: [configuration])
 			
 			let seeder = DatabaseSeederService(modelContext: container.mainContext)
-			seeder.seedIfEmpty([Routine.self, RoutineTask.self])
+			seeder.seedIfEmpty([History.self, Routine.self, RoutineTask.self]) // FIXME: Remove history seed dummy
 			
 			return container
 		} catch {
@@ -25,7 +25,7 @@ struct CaraApp: App {
 			let container = try ModelContainer(for: schema)
 			
 			let seeder = DatabaseSeederService(modelContext: container.mainContext)
-			seeder.seedIfEmpty([Routine.self, RoutineTask.self])
+			seeder.seedIfEmpty([History.self, Routine.self, RoutineTask.self]) // FIXME: Remove history seed dummy
 			
 			return container
 		} catch {

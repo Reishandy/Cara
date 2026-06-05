@@ -15,15 +15,14 @@ struct HomeView: View {
     
     @State private var showDatePicker = false
     
-    var formattedDateString: String {
+    private var formattedDateString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd MMM yyyy"
         return formatter.string(from: homeViewModel.selectedDay)
     }
     
     var body: some View {
-        VStack {
-            HomeHeaderView()
+		ZStack(alignment: .top) {
             ScrollView {
                 // FIXME: Consider putting it in a menu
                 Button {
@@ -47,23 +46,24 @@ struct HomeView: View {
                             get: { homeViewModel.routineDay },
                             set: { homeViewModel.selectedDay = $0 }
                         ),
-                        in: homeViewModel.earliestHistoryDate...,
+						in: homeViewModel.earliestHistoryDate...Date.now,
                         displayedComponents: .date
                     )
                     .datePickerStyle(.graphical)
                     .padding()
-                    .presentationDetents([.height(480)])
+                    .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
                 }
-                
                 
                 ForEach(homeViewModel.routines, id: \.self) { routine in
                     if let history = homeViewModel.historiesDict[routine.id] {
                         RoutineCard(routine: routine, history: history)
                     }
                 }
-                
             }
+			.padding(.top, 70)
+			
+			HomeHeaderView()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
@@ -101,38 +101,12 @@ struct HomeHeaderView: View {
 
 
 #Preview {
-    let container = try! ModelContainer(
-        for: Routine.self, RoutineTask.self, TaskCategory.self, History.self, Vital.self,
-        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-    )
+	let container = CaraApp.previewSharedContainer
+	
+	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
     
-    container.mainContext.autosaveEnabled = false
-    
-    var tasks = Array(RoutineTask.defaultData.prefix(5))
-    
-    let routine = Routine(
-        routineName: "Morning",
-        routineDescription: "Routines to do in the morning.",
-        tasks: tasks
-    )
-    
-    let history = History(
-        date: .now,
-        taskProgress: TaskProgress(filledAt: [:]),
-        note: "Mom is not happy",
-        routine: routine
-    )
-    
-    container.mainContext.insert(routine)
-    container.mainContext.insert(history)
-    
-    let homeViewModel = HomeViewModel(
-        modelContext: container.mainContext
-    )
-    
-    return NavigationStack {
+    NavigationStack {
         HomeView()
+			.environment(homeViewModel)
     }
-    .environment(homeViewModel)
-    .modelContainer(container)
 }

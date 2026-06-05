@@ -12,7 +12,9 @@ import SwiftData
 final class RoutineTask: Seedable {
 	var id: UUID
 	
+	// FIXME: TaskIcon
 	var taskName: String
+	var taskIcon: String
 	var howTo: [String]
 	var isDefault: Bool
 	
@@ -21,9 +23,10 @@ final class RoutineTask: Seedable {
 	var category: TaskCategory?
 	var routines: [Routine] = []
 	
-	init(taskName: String, howTo: [String], isDefault: Bool = false, image: Data? = nil, category: TaskCategory? = nil) {
+	init(taskName: String, taskIcon: String = "cross.fill", howTo: [String], isDefault: Bool = false, image: Data? = nil, category: TaskCategory? = nil) {
 		self.id = UUID()
 		self.taskName = taskName
+		self.taskIcon = taskIcon
 		self.howTo = howTo
 		self.image = image
 		self.isDefault = isDefault
@@ -35,7 +38,7 @@ final class RoutineTask: Seedable {
 		let oral = TaskCategory(categoryName: "Swallowing & Oral Exercises", isDefault: true)
 		let daily = TaskCategory(categoryName: "Daily Care Essentials", isDefault: true)
 		
-		// FIXME: Provide default image for each of these tasks
+		// FIXME: Provide default image and icon for each of these tasks
 		return [
 			// MARK: - Category 1: Physical Rehab
 			RoutineTask(
