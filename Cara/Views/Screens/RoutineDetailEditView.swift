@@ -17,8 +17,13 @@ struct RoutineDetailEditView: View {
                 TaskCategoryView(taskCategory: "Routine Name")
                 
                 TextField(placeholder, text: $routineInput)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
                     .font(.system(size: 17, weight: .regular))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 15)
+                    .background(
+                        RoundedRectangle(cornerRadius: 50, style: .continuous)
+                            .fill(Color("AppThirdColor").opacity(0.16))
+                    )
             }
             
             VStack{
@@ -58,18 +63,11 @@ struct RoutineDetailEditView: View {
             }
         }
         .padding(.horizontal)
-        
-        
-        
-        
-        
-        
-        
     }
 }
 
 #Preview {
-    NavigationStack{
-        RoutineDetailEditView()
-    }
+	NavigationStack{
+		RoutineDetailEditView()
+	}
 }

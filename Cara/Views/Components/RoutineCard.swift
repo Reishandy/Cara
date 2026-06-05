@@ -10,19 +10,19 @@ import SwiftData
 
 struct RoutineCard: View {
 	@Environment(\.dynamicTypeSize) private var dynamicTypeSize
-	
+
 	@ScaledMetric(relativeTo: .body) private var horizontalSpacing = 24
 	@ScaledMetric(relativeTo: .body) private var taskIconBackgroundSize = 28
 	@ScaledMetric(relativeTo: .body) private var taskIconSize = 16
-	
+
 	let routine: Routine
 	let history: History
 	let selectedDay: Date
-	
+
 	private var bestTime: String {
 		"Best time: 05:00 - 11:59"
 	}
-	
+
 	private var bpString: String {
 		history.vital?.bloodPressure.map { "\($0.systolic)/\($0.diastolic)" } ?? "-/-"
 	}
@@ -35,11 +35,11 @@ struct RoutineCard: View {
 	private var o2String: String {
 		history.vital?.oxygenSaturation.map(String.init) ?? "-"
 	}
-	
+
 	private var vitalColumns: [GridItem] {
 		[GridItem(.adaptive(minimum: dynamicTypeSize.isAccessibilitySize ? 120 : 76), spacing: 8)]
 	}
-	
+
 	var body: some View {
 		NavigationLink(
 			value: Screen.routineDetail(routine: routine, day: selectedDay)
@@ -55,7 +55,7 @@ struct RoutineCard: View {
 			.cornerRadius(13)
 		}
 	}
-	
+
 	@ViewBuilder
 	private var routineSummary: some View {
 		if dynamicTypeSize.isAccessibilitySize {
@@ -64,7 +64,7 @@ struct RoutineCard: View {
 					total: history.routine.tasks.count,
 					done: history.validCompletedTask.count
 				)
-				
+
 				routineDescription
 			}
 		} else {
@@ -73,12 +73,12 @@ struct RoutineCard: View {
 					total: history.routine.tasks.count,
 					done: history.validCompletedTask.count
 				)
-				
+
 				routineDescription
 			}
 		}
 	}
-	
+
 	private var routineDescription: some View {
 		VStack(alignment: .leading, spacing: 12) {
 			HStack(alignment: .top) {
@@ -93,18 +93,18 @@ struct RoutineCard: View {
 						.foregroundStyle(.appThird)
 						.fixedSize(horizontal: false, vertical: true)
 				}
-				
+
 				Spacer(minLength: 8)
-				
+
 				Image(systemName: "chevron.right")
 					.foregroundStyle(.appThird)
 			}
-			
+
 			taskIconRow
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
 	}
-	
+
 	private var taskIconRow: some View {
 		HStack {
 			ForEach(routine.tasks.prefix(5), id: \.self) { task in
@@ -112,7 +112,7 @@ struct RoutineCard: View {
 					Circle()
 						.foregroundStyle(.appThird)
 						.frame(width: taskIconBackgroundSize, height: taskIconBackgroundSize)
-					
+
 					Image(systemName: task.taskIcon)
 						.resizable()
 						.scaledToFit()
@@ -120,46 +120,49 @@ struct RoutineCard: View {
 						.foregroundStyle(.white)
 				}
 			}
-			
+
 			if routine.tasks.count > 5 {
 				Text("+\(routine.tasks.count - 5)")
 					.font(.caption)
 					.foregroundStyle(.appThird)
 			}
-			
+
 			Spacer()
 		}
 	}
-	
+
+	@ViewBuilder
 	private var vitalsGrid: some View {
-		LazyVGrid(columns: vitalColumns, spacing: 8) {
-			VitalRoutineView(
-				systemIcon: "blood.pressure.cuff",
-				value: bpString,
-				unit: "mm Hg"
-			)
-			
-			VitalRoutineView(
-				systemIcon: "waveform.path.ecg",
-				value: hrString,
-				unit: "bpm"
-			)
-			
-			VitalRoutineView(
-				systemIcon: "thermometer.variable",
-				value: tempString,
-				unit: "℃"
-			)
-			
-			VitalRoutineView(
-				systemIcon: "lungs",
-				value: o2String,
-				unit: "%"
-			)
+		if !(history.vital?.isEmty ?? false) {
+			LazyVGrid(columns: vitalColumns, spacing: 8) {
+				VitalRoutineView(
+					systemIcon: "blood.pressure.cuff",
+					value: bpString,
+					unit: "mm Hg"
+				)
+
+				VitalRoutineView(
+					systemIcon: "waveform.path.ecg",
+					value: hrString,
+					unit: "bpm"
+				)
+
+				VitalRoutineView(
+					systemIcon: "thermometer.variable",
+					value: tempString,
+					unit: "℃"
+				)
+
+				VitalRoutineView(
+					systemIcon: "lungs",
+					value: o2String,
+					unit: "%"
+				)
+			}
+			.frame(maxWidth: .infinity)
 		}
-		.frame(maxWidth: .infinity)
 	}
-	
+
 	@ViewBuilder
 	private var noteView: some View {
 		if !history.note.isEmpty {
@@ -177,11 +180,11 @@ struct RoutineCard: View {
 struct VitalRoutineView: View {
 	@ScaledMetric(relativeTo: .body) private var iconSize = 20
 	@ScaledMetric(relativeTo: .body) private var cardPadding = 8
-	
+
 	let systemIcon: String
 	let value: String
 	let unit: String
-	
+
 	var body: some View {
 		VStack(spacing: 4) {
 			Image(
@@ -191,7 +194,7 @@ struct VitalRoutineView: View {
 			.scaledToFit()
 			.frame(width: iconSize, height: iconSize)
 			.foregroundStyle(.appPrimary)
-			
+
 			Text(value)
 				.font(.headline)
 				.foregroundStyle(.appPrimary)
@@ -212,10 +215,10 @@ struct VitalRoutineView: View {
 struct CircularProgressRing: View {
 	@ScaledMetric(relativeTo: .body) private var ringSize = 55
 	@ScaledMetric(relativeTo: .body) private var lineWidth = 12
-	
+
 	let total: Int
 	let done: Int
-	
+
 	var body: some View {
 		ZStack {
 			// inactive part
@@ -224,7 +227,7 @@ struct CircularProgressRing: View {
 					Color.gray.opacity(0.25),
 					lineWidth: lineWidth
 				)
-			
+
 			// active part
 			let progress = total == 0 ? 0 : CGFloat(done) / CGFloat(total)
 			Circle()
@@ -237,7 +240,7 @@ struct CircularProgressRing: View {
 					)
 				)
 				.rotationEffect(.degrees(-90))
-			
+
 			Text("\(done)/\(total)")
 				.font(.caption)
 				.foregroundStyle(.appPrimary)
@@ -252,7 +255,7 @@ struct CircularProgressRing: View {
 		routineDescription: "Take care of your heart",
 		tasks: Array(RoutineTask.defaultData.prefix(4))
 	)
-	
+
 	let history = History(
 		date: .now,
 		taskProgress: TaskProgress(filledAt: [UUID(): Date.now]),
@@ -260,7 +263,7 @@ struct CircularProgressRing: View {
 		vital: Vital(),
 		routine: routine
 	)
-	
+
 	NavigationStack {
 		RoutineCard(routine: routine, history: history, selectedDay: .now)
 	}
@@ -271,13 +274,13 @@ struct CircularProgressRing: View {
 		for: Routine.self, RoutineTask.self, TaskCategory.self, History.self, Vital.self,
 		configurations: ModelConfiguration(isStoredInMemoryOnly: true)
 	)
-	
+
 	let routine = Routine(
 		routineName: "Taking care of my heart with a longer routine name",
 		routineDescription: "Take care of your heart",
 		tasks: Array(RoutineTask.defaultData.prefix(6))
 	)
-	
+
 	let history = History(
 		date: Date.now,
 		taskProgress: TaskProgress(filledAt: [UUID(): Date.now]),
@@ -285,12 +288,12 @@ struct CircularProgressRing: View {
 		vital: Vital(),
 		routine: routine
 	)
-	
+
 	container.mainContext.insert(routine)
 	container.mainContext.insert(history)
-	
+
 	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
-	
+
 	return NavigationStack {
 		RoutineCard(routine: routine, history: history, selectedDay: .now)
 	}

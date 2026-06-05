@@ -13,7 +13,7 @@ nonisolated struct TaskProgress: Codable {
 }
 
 @Model
-final class History: Seedable { // FIXME: Remove placeholder
+class History {
 	var id: UUID
 	
 	var date: Date
@@ -32,46 +32,6 @@ final class History: Seedable { // FIXME: Remove placeholder
 		self.note = note
 		self.vital = vital
 		self.routine = routine
-	}
-	
-	static var defaultData: [History] {
-		// FIXME: Remove dummy routine
-		let dummyCategory = TaskCategory(categoryName: "Dummy", isDefault: true)
-		let dummyTasks = [
-			RoutineTask(taskName: "dummy", taskIcon: "circle.fill", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory)
-		]
-		let dummyRoutine = Routine(routineName: "Dummy", routineDescription: "Dummy Routine", tasks: dummyTasks)
-		let dummyRoutine2 = Routine(routineName: "Dummy2", routineDescription: "Dummy Routine2 That is slightly long description and such", tasks: dummyTasks)
-		let dummyVital = Vital(bloodPressure: BloodPressure(systolic: 1, diastolic: 1), temperature: 10.2)
-		
-		return [
-			History(
-				date: .now,
-				taskProgress: TaskProgress(
-					filledAt: [
-						dummyTasks[0].id: .now,
-						dummyTasks[1].id: .now
-					]
-				),
-				note: "This is a dummy note",
-				vital: dummyVital,
-				routine: dummyRoutine
-			),
-			History(
-				date: .now,
-				taskProgress: TaskProgress(filledAt: [:]),
-				note: "This is a dummy note",
-				vital: Vital(),
-				routine: dummyRoutine2
-			)
-		]
 	}
 	
 	var validCompletedTask: [UUID: Date] {
