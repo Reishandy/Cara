@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0882FEF72FD29B9B004BB452 /* Cara Icon 2.icon in Resources */ = {isa = PBXBuildFile; fileRef = 0882FEF62FD29B9B004BB452 /* Cara Icon 2.icon */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		0882FEF62FD29B9B004BB452 /* Cara Icon 2.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = "Cara Icon 2.icon"; sourceTree = "<group>"; };
 		8BA608752FC990A600581EBE /* Cara.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cara.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -34,6 +39,7 @@
 			children = (
 				8BA608772FC990A600581EBE /* Cara */,
 				8BA608762FC990A600581EBE /* Products */,
+				0882FEF62FD29B9B004BB452 /* Cara Icon 2.icon */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0882FEF72FD29B9B004BB452 /* Cara Icon 2.icon in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,7 +256,7 @@
 		8BA608812FC990A700581EBE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Cara Icon 2";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -288,7 +295,7 @@
 		8BA608822FC990A700581EBE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "Cara Icon 2";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
