@@ -10,8 +10,60 @@ struct CaraApp: App {
 			let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
 			let container = try ModelContainer(for: schema, configurations: [configuration])
 			
+			// FIXME: Remove history dummy
+			let dummyCategory = TaskCategory(categoryName: "Dummy", isDefault: true)
+			container.mainContext.insert(dummyCategory)
+			
+			let dummyVital = Vital(bloodPressure: BloodPressure(systolic: 1, diastolic: 1), temperature: 10.2)
+			container.mainContext.insert(dummyVital)
+			
+			let dummyRoutine = Routine(routineName: "Dummy", routineDescription: "Dummy Routine")
+			let dummyRoutine2 = Routine(routineName: "Dummy2", routineDescription: "Dummy Routine2 That is slightly long description and such")
+			container.mainContext.insert(dummyRoutine)
+			container.mainContext.insert(dummyRoutine2)
+			
+			let dummyTasks = [
+				RoutineTask(taskName: "dummy", taskIcon: "circle.fill", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
+				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
+				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory)
+			]
+			
+			for task in dummyTasks {
+				container.mainContext.insert(task)
+				dummyRoutine.tasks.append(task)
+			}
+			
+			let dummyHistory = History(
+				date: .now,
+				taskProgress: TaskProgress(
+					filledAt: [
+						dummyTasks[0].id: .now,
+						dummyTasks[1].id: .now
+					]
+				),
+				note: "This is a dummy note",
+				vital: dummyVital,
+				routine: dummyRoutine
+			)
+			
+			let dummyHistory2 = History(
+				date: .now,
+				taskProgress: TaskProgress(filledAt: [:]),
+				note: "This is a dummy note",
+				vital: Vital(),
+				routine: dummyRoutine2
+			)
+			
+			container.mainContext.insert(dummyHistory)
+			container.mainContext.insert(dummyHistory2)
+			
 			let seeder = DatabaseSeederService(modelContext: container.mainContext)
-			seeder.seedIfEmpty([History.self, Routine.self, RoutineTask.self]) // FIXME: Remove history seed dummy
+			seeder.seedIfEmpty([Routine.self, RoutineTask.self])
 			
 			return container
 		} catch {
@@ -25,7 +77,7 @@ struct CaraApp: App {
 			let container = try ModelContainer(for: schema)
 			
 			let seeder = DatabaseSeederService(modelContext: container.mainContext)
-			seeder.seedIfEmpty([History.self, Routine.self, RoutineTask.self]) // FIXME: Remove history seed dummy
+			seeder.seedIfEmpty([Routine.self, RoutineTask.self])
 			
 			return container
 		} catch {

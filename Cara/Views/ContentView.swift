@@ -56,14 +56,12 @@ struct ContentView: View {
 					HomeView()
 				case .learn:
 					TaskSelectionView()
-				case .routineAdd:
-					Text("This is routine add")
                 case .routineDetail(let routine, let day):
 					RoutineDetailView(routine: routine, selectedDay: day)
+				case .taskSelection:
+					Text("This is task selection for add")
 				case .taskDetail:
 					Text("This is task detail")
-				case .taskAdd:
-					Text("This is task add")
 				}
 			}
 		}
