@@ -67,7 +67,7 @@ struct RoutineDetailEditView: View {
 }
 
 #Preview {
-    NavigationStack{
-        RoutineDetailEditView()
-    }
+	NavigationStack{
+		RoutineDetailEditView()
+	}
 }

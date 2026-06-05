@@ -60,7 +60,7 @@ struct RoutineCard: View {
 						}
 						
 						HStack {
-							ForEach(routine.tasks[1...5], id: \.self) { task in
+							ForEach(Array(routine.tasks.dropFirst().prefix(5)), id: \.self) { task in
 								ZStack {
 									Circle()
 										.foregroundStyle(.appThird)

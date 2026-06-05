@@ -11,19 +11,19 @@ import SwiftData
 import UIKit
 
 struct HomeView: View {
-    @Environment(HomeViewModel.self) var homeViewModel
-    
-    @State private var showDatePicker = false
-    
-    private var formattedDateString: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMM yyyy"
-        return formatter.string(from: homeViewModel.selectedDay)
-    }
-    
-    var body: some View {
+	@Environment(HomeViewModel.self) var homeViewModel
+	
+	@State private var showDatePicker = false
+	
+	private var formattedDateString: String {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "dd MMM yyyy"
+		return formatter.string(from: homeViewModel.selectedDay)
+	}
+	
+	var body: some View {
 		ZStack(alignment: .top) {
-            ScrollView {
+			ScrollView {
 				VStack(alignment: .leading) {
 					Button {
 						showDatePicker = true
@@ -67,42 +67,39 @@ struct HomeView: View {
 					}
 				}
 				.padding(.horizontal, 20)
-            }
+			}
 			.padding(.top, 70)
 			
 			HomeHeaderView()
 				.padding(.horizontal, 20)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .task {
-            homeViewModel.fetchData()
-        }
-    }
-    
+		}
+		.frame(maxWidth: .infinity, alignment: .leading)
+		.task {
+			homeViewModel.fetchData()
+		}
+	}
+	
 }
 
 struct HomeHeaderView: View {
-    var body: some View {
-        HStack(alignment: .center) {
-            Text("Caregiving")
-                .font(.largeTitle)
-                .bold()
-                .foregroundStyle(.appSecondary)
-            
-            Spacer()
-            
-            NavigationLink(
-                value: Screen.routineAdd
-            ) {
-                Image(systemName: "plus")
-                    .font(.system(size: 24, weight: .regular))
-                    .foregroundStyle(.appPrimary)
-                    .frame(width: 48, height: 48)
-                    .background(Color.background)
-                    .clipShape(Circle())
-            }
-        }
-    }
+	var body: some View {
+		HStack(alignment: .center) {
+			Text("Caregiving")
+				.font(.largeTitle)
+				.bold()
+				.foregroundStyle(.appSecondary)
+			
+			Spacer()
+			
+			// FIXME: CRUD Sheet
+			Image(systemName: "plus")
+				.font(.system(size: 24, weight: .regular))
+				.foregroundStyle(.appPrimary)
+				.frame(width: 48, height: 48)
+				.background(Color.background)
+				.clipShape(Circle())
+		}
+	}
 }
 
 
@@ -110,9 +107,9 @@ struct HomeHeaderView: View {
 	let container = CaraApp.previewSharedContainer
 	
 	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
-    
-    NavigationStack {
-        HomeView()
+	
+	NavigationStack {
+		HomeView()
 			.environment(homeViewModel)
-    }
+	}
 }
