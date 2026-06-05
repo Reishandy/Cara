@@ -88,6 +88,7 @@ struct RoutineCard: View {
 						.font(.subheadline)
 						.foregroundStyle(.appThird)
 						.fixedSize(horizontal: false, vertical: true)
+						.multilineTextAlignment(.leading)
 				}
 
 				Spacer(minLength: 8)
