@@ -12,6 +12,7 @@ struct LearnView: View {
     var taskAmount: Int = 0
     @State private var searchTask = ""
     let customColor = UIColor(named: "AppPrimaryColor") ?? .systemBlue
+    @State private var selectedFilter: String = "All"
     
     init() {
       UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: customColor]
@@ -31,6 +32,23 @@ struct LearnView: View {
             .searchable(text: $searchTask,
                         placement: .navigationBarDrawer(displayMode: .always),
                         prompt: "Search Task...")
+        }
+        .toolbar{
+            ToolbarItem(placement: .topBarTrailing){
+                Menu {
+                    Button("All"){ selectedFilter = "All"}
+                    Button("Physical Rehab"){ selectedFilter = "physicalRehab"}
+                    Button("Swallowing & Oral Exercises (Dysphagia Safe)"){ selectedFilter = "swallowingExercise"}
+                    Button("Daily Care Essentials & Activities of Daily Living (ADLs)"){ selectedFilter = "dailyCareEssentials"}
+                    Button("Mobility Support & Safe Transfers"){ selectedFilter = "mobilitySupport"}
+                    Button("Skin Integrity"){ selectedFilter = "skinIntegrity"}
+                    Button("Nasogastric Tube (NGT) Management & Feeding"){ selectedFilter = "NGTManagement"}
+                    Button("Advanced Tracheostomy Support & Airway Clearing"){ selectedFilter = "tracheostomySupport"}
+                } label: {
+                    Label("Filter", systemImage: "line.3.horizontal.decrease")
+                }
+                
+            }
         }
         
         .navigationTitle("Learn")
