@@ -17,6 +17,9 @@ struct RoutineDetailView: View {
     @Bindable var routine: Routine
     let selectedDay: Date
     
+    @ScaledMetric(relativeTo: .body) private var vitalHeaderIconBackgroundSize = 44
+    @ScaledMetric(relativeTo: .body) private var vitalHeaderIconSize = 22
+    
     @State private var currentElement: RoutineDetailElement = .task
     
     @State private var vitalFilledDate: Date? = nil
@@ -30,6 +33,7 @@ struct RoutineDetailView: View {
     
     @State private var checkedTasks : [UUID: Date] = [:]
     
+    private let vitalColumns = [GridItem(.adaptive(minimum: 120), spacing: 8)]
     
     var body: some View {
         VStack(spacing: 24) {
@@ -53,22 +57,25 @@ struct RoutineDetailView: View {
                 VStack(spacing: 24) {
                     VStack(alignment: .leading) {
                         HStack(spacing: 8) {
-                                ZStack{
-                                    Circle()
-                                        .fill(Color("AppPrimaryColor"))
-                                        .frame(width: 44, height: 44)
-                                    Image(systemName:"waveform.path.ecg.text.clipboard.fill")
-                                        .foregroundStyle(Color("BackgroundColor"))
-                                        .font(.system(size: 22))
-                                
+                            ZStack{
+                                Circle()
+                                    .fill(Color("AppPrimaryColor"))
+                                    .frame(
+                                        width: vitalHeaderIconBackgroundSize,
+                                        height: vitalHeaderIconBackgroundSize
+                                    )
+                                Image(systemName:"waveform.path.ecg.text.clipboard.fill")
+                                    .foregroundStyle(Color("BackgroundColor"))
+                                    .font(.system(size: vitalHeaderIconSize))
                             }
                             Text("Vitals Check")
                                 .foregroundStyle(Color("AppPrimaryColor"))
-                                .font(.system(size: 17, weight: .medium, design: .default))
+                                .font(.headline)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                         
                         
-                        HStack(spacing: 8) {
+                        LazyVGrid(columns: vitalColumns, spacing: 8) {
                             VitalPillView(
                                 unit: "mm HG",
                                 systemIcon: "blood.pressure.cuff",
@@ -106,9 +113,10 @@ struct RoutineDetailView: View {
                         }
                         
                         if let date = vitalFilledDate {
-                            HStack {
+                            HStack(alignment: .top) {
                                 Image(systemName: "clock")
                                 Text("Filled at \(date.formatted(date: .omitted, time: .shortened))")
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                             .font(.caption)
                             .padding(5)
@@ -131,9 +139,11 @@ struct RoutineDetailView: View {
                                 .font(.title2)
                                 .bold()
                                 .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                             Text("Start by adding a task")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                             
                         }
                         .frame(maxWidth: .infinity)
@@ -168,6 +178,7 @@ struct RoutineDetailView: View {
                     .font(.title2)
                     .foregroundStyle(Color.appPrimary)
                     .bold()
+                    .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 ZStack(alignment: .bottomTrailing) {
@@ -187,6 +198,7 @@ struct RoutineDetailView: View {
                             Text("✓ Last edited at: \(date.formatted(date: .omitted, time: .shortened))")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
+                                .fixedSize(horizontal: false, vertical: true)
                                 .padding([.bottom, .leading], 16)
                         }
                     }
