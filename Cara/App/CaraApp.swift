@@ -13,6 +13,8 @@ struct CaraApp: App {
 			// FIXME: Remove history dummy
 			let dummyCategory = TaskCategory(categoryName: "Dummy", isDefault: true)
 			container.mainContext.insert(dummyCategory)
+            let dummyCategory2 = TaskCategory(categoryName: "Dummy2", isDefault: true)
+            container.mainContext.insert(dummyCategory2)
 			
 			let dummyVital = Vital(bloodPressure: BloodPressure(systolic: 1, diastolic: 1), temperature: 10.2)
 			container.mainContext.insert(dummyVital)
@@ -23,14 +25,14 @@ struct CaraApp: App {
 			container.mainContext.insert(dummyRoutine2)
 			
 			let dummyTasks = [
-				RoutineTask(taskName: "dummy", taskDescription: "Desc", taskIcon: "circle.fill", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory)
+				RoutineTask(taskName: "dummy1", taskDescription: "Desc", taskIcon: "circle.fill", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
+				RoutineTask(taskName: "dummy2", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
+				RoutineTask(taskName: "dummy3", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy4", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy5", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy6", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy7", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy8", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory2)
 			]
 			
 			for task in dummyTasks {
