@@ -11,8 +11,6 @@ import SwiftData
 struct LearnView: View {
     @Environment(LearnViewModel.self) private var learnViewModel
     
-    var taskCategory: String = "Task Category"
-    var taskAmount: Int = 0
     let customColor = UIColor(named: "AppPrimaryColor") ?? .systemBlue
     
     init() {
@@ -26,9 +24,9 @@ struct LearnView: View {
             ScrollView(.vertical, showsIndicators: true) {
                 ForEach(learnViewModel.groupedTasks.keys.sorted(), id: \.self) { categoryName in
                     ForEach(learnViewModel.groupedTasks[categoryName] ?? [], id: \.id) { task in
-                        NavigationLink(
-							value: Screen.taskDetail(task: task)
-						) {
+						NavigationLink {
+							TaskDetailView(task: task)
+						} label: {
                             TaskCardView(
                                 taskName: task.taskName,
                                 taskIconEach: task.taskIcon,
@@ -62,9 +60,8 @@ struct LearnView: View {
                 
             }
         }
-        
         .navigationTitle("Learn")
-        .navigationBarTitleDisplayMode(.large)
+		.toolbarTitleDisplayMode(.inlineLarge)
         .padding(.horizontal)
         .task {
             learnViewModel.fetchData()

@@ -91,6 +91,7 @@ struct RoutineDetailView: View {
 				}
 			}
 		}
+		.toolbar(.hidden, for: .tabBar)
 		.navigationBarTitleDisplayMode(.inline)
 		.onAppear {
 			UISegmentedControl.appearance().backgroundColor = UIColor.appThird.withAlphaComponent(0.15)
@@ -177,9 +178,9 @@ struct RoutineDetailView: View {
 			} else {
 				VStack(spacing: 12) {
 					ForEach(routine.tasks) { task in
-						NavigationLink(
-							value: Screen.taskDetail(task: task)
-						) {
+						NavigationLink {
+							TaskDetailView(task: task)
+						} label: {
 							TaskCardView(
 								taskName: task.taskName,
 								style: routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle,

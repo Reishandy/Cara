@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TaskDetailView: View {
-    @Environment(\.dismiss) private var dismiss
     @State private var showAppBarTitle = false
     
 	let task: RoutineTask
@@ -37,16 +36,7 @@ struct TaskDetailView: View {
         }
         .ignoresSafeArea(edges: .top)
 		.navigationTitle(task.taskName)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "xmark")
-                }
-            }
-        }
+		.toolbar(.hidden, for: .tabBar)
     }
     
 	// FIXME: Actually use the image data
@@ -113,22 +103,6 @@ struct TaskDetailView: View {
                 )
             )
         }
-    }
-    
-    private var closeButton: some View {
-        Button {
-            dismiss()
-        } label: {
-            Image(systemName: "xmark")
-                .font(.system(size: 26, weight: .medium))
-                .foregroundStyle(.black)
-                .frame(width: 64, height: 64)
-                .background(.ultraThinMaterial)
-                .clipShape(Circle())
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 64)
-        .padding(.leading, 28)
     }
 }
 

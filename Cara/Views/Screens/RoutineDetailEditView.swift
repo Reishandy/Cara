@@ -11,6 +11,7 @@ struct RoutineDetailEditView: View {
     var placeholder: String = "Example: Morning Routine"
     @State var routineInput: String = ""
     
+	// FIXME: Remove dont need?
     var body: some View {
         VStack(spacing: 20){
             VStack{

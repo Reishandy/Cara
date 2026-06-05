@@ -37,9 +37,9 @@ struct RoutineCard: View {
 	}
 
 	var body: some View {
-		NavigationLink(
-			value: Screen.routineDetail(routine: routine, day: selectedDay)
-		) {
+		NavigationLink {
+			RoutineDetailView(routine: routine, selectedDay: selectedDay)
+		} label: {
 			VStack(alignment: .leading, spacing: 16) {
 				routineSummary
 				vitalsGrid

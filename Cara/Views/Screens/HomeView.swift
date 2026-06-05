@@ -21,6 +21,7 @@ struct HomeView: View {
 		return formatter.string(from: homeViewModel.selectedDay)
 	}
 
+	// FIXME: Consider changing to toolbar?
 	var body: some View {
 		ZStack(alignment: .top) {
 			ScrollView {
@@ -104,9 +105,9 @@ struct HomeHeaderView: View {
 
 			Spacer(minLength: 12)
 
-			NavigationLink(
-				value: Screen.taskSelection
-			) {
+			Button {
+				// FIXME: Open add sheet
+			} label: {
 				Image(systemName: "plus")
 					.font(.system(size: iconSize, weight: .regular))
 					.foregroundStyle(.appPrimary)
