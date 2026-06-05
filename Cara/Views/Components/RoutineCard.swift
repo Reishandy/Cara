@@ -19,10 +19,6 @@ struct RoutineCard: View {
 	let history: History
 	let selectedDay: Date
 
-	private var bestTime: String {
-		"Best time: 05:00 - 11:59"
-	}
-
 	private var bpString: String {
 		history.vital?.bloodPressure.map { "\($0.systolic)/\($0.diastolic)" } ?? "-/-"
 	}
@@ -88,7 +84,7 @@ struct RoutineCard: View {
 						.bold()
 						.foregroundStyle(.appPrimary)
 						.fixedSize(horizontal: false, vertical: true)
-					Text(bestTime)
+					Text(routine.routineDescription)
 						.font(.subheadline)
 						.foregroundStyle(.appThird)
 						.fixedSize(horizontal: false, vertical: true)
