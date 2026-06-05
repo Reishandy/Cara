@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 enum RoutineDetailElement {
 	case task
@@ -13,49 +14,44 @@ enum RoutineDetailElement {
 }
 
 struct RoutineDetailView: View {
+	@Environment(RoutineDetailViewModel.self) var routineDetailViewModel
 	@Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
+	
 	@Bindable var routine: Routine
 	let selectedDay: Date
-
+	
 	@ScaledMetric(relativeTo: .body) private var vitalHeaderIconBackgroundSize = 44
 	@ScaledMetric(relativeTo: .body) private var vitalHeaderIconSize = 22
-
+	
 	@State private var currentElement: RoutineDetailElement = .task
-
-	@State private var vitalFilledDate: Date? = nil
-	@State private var bloodPressure: String = ""
-	@State private var heartRate: String = ""
-	@State private var temperature: String = ""
-	@State private var oxygenLevel: String = ""
-
+	
 	@State private var noteText: String = ""
 	@State private var lastEditedDate: Date? = nil
-
+	
 	@State private var checkedTasks: [UUID: Date] = [:]
-
+	
 	private let vitalColumns = [GridItem(.adaptive(minimum: 120), spacing: 8)]
-
+	
 	var body: some View {
 		ScrollView {
 			VStack(spacing: 24) {
 				Picker("Routine Detail Element", selection: $currentElement) {
 					Text("Task")
 						.tag(RoutineDetailElement.task)
-
+					
 					Text("Note")
 						.tag(RoutineDetailElement.note)
 				}
 				.pickerStyle(.segmented)
 				.padding(.top, 16)
-
+				
 				switch currentElement {
 				case .task:
 					taskSection
 				case .note:
 					noteSection
 				}
-
+				
 				Spacer()
 			}
 			.padding(.horizontal, 20)
@@ -73,7 +69,7 @@ struct RoutineDetailView: View {
 						.foregroundStyle(.appThird)
 				}
 			}
-
+			
 			ToolbarItem(placement: .bottomBar) {
 				if currentElement == .task && routine.tasks.isEmpty {
 					Button {
@@ -88,7 +84,7 @@ struct RoutineDetailView: View {
 					.tint(Color("AppThirdColor"))
 				}
 			}
-
+			
 			ToolbarItem(placement: .navigationBarTrailing) {
 				if currentElement == .task && !routine.tasks.isEmpty {
 					Button {
@@ -113,15 +109,18 @@ struct RoutineDetailView: View {
 				for: .normal
 			)
 		}
+		.task {
+			routineDetailViewModel.fetchData(routine: routine, day: selectedDay)
+		}
 	}
-
+	
 	private var taskSection: some View {
 		VStack(spacing: 24) {
 			vitalsSection
 			tasksList
 		}
 	}
-
+	
 	private var vitalsSection: some View {
 		VStack(spacing: 24) {
 			VStack(alignment: .leading) {
@@ -142,10 +141,10 @@ struct RoutineDetailView: View {
 						.font(.headline)
 						.fixedSize(horizontal: false, vertical: true)
 				}
-
+				
 				vitalsInputLayout
-
-				if let date = vitalFilledDate {
+				
+				if let date = routineDetailViewModel.vitalFilledDate {
 					HStack(alignment: .top) {
 						Image(systemName: "clock")
 						Text("Filled at \(date.formatted(date: .omitted, time: .shortened))")
@@ -162,7 +161,7 @@ struct RoutineDetailView: View {
 			.cornerRadius(12)
 		}
 	}
-
+	
 	@ViewBuilder
 	private var tasksList: some View {
 		VStack(spacing: 24) {
@@ -200,7 +199,7 @@ struct RoutineDetailView: View {
 			}
 		}
 	}
-
+	
 	private var noteSection: some View {
 		VStack(spacing: 24) {
 			Text("Describe what happened")
@@ -209,11 +208,11 @@ struct RoutineDetailView: View {
 				.bold()
 				.fixedSize(horizontal: false, vertical: true)
 				.frame(maxWidth: .infinity, alignment: .leading)
-
+			
 			ZStack(alignment: .bottomTrailing) {
 				RoundedRectangle(cornerRadius: 16)
 					.fill(Color.selected.opacity(0.8))
-
+				
 				VStack(alignment: .leading, spacing: 0) {
 					TextEditor(text: $noteText)
 						.foregroundStyle(.appPrimary)
@@ -222,7 +221,7 @@ struct RoutineDetailView: View {
 						.onChange(of: noteText) {
 							lastEditedDate = Date()
 						}
-
+					
 					if let date = lastEditedDate {
 						Text("✓ Last edited at: \(date.formatted(date: .omitted, time: .shortened))")
 							.font(.caption)
@@ -235,7 +234,7 @@ struct RoutineDetailView: View {
 			.frame(minHeight: 240)
 		}
 	}
-
+	
 	@ViewBuilder
 	private var vitalsInputLayout: some View {
 		if dynamicTypeSize.isAccessibilitySize {
@@ -248,48 +247,93 @@ struct RoutineDetailView: View {
 			}
 		}
 	}
-
+	
 	@ViewBuilder
 	private var vitalInputFields: some View {
+		@Bindable var routineDetailViewModel = self.routineDetailViewModel
+		
 		VitalPillView(
+			name: "Blood Pressure",
 			unit: "mm HG",
 			systemIcon: "blood.pressure.cuff",
-			value: $bloodPressure
+			isBp: true,
+			value: Binding(
+				get: {
+					guard let bloodPressure = routineDetailViewModel.vital.bloodPressure else { return "" }
+					return "\(bloodPressure.systolic)/\(bloodPressure.diastolic)"
+				},
+				set: { newValue in
+					let components = newValue.components(separatedBy: "/")
+					if components.count == 2,
+					   let systolic = Int(components[0].trimmingCharacters(in: .whitespaces)),
+					   let diastolic = Int(components[1].trimmingCharacters(in: .whitespaces)) {
+						
+						if routineDetailViewModel.vital.bloodPressure == nil {
+							routineDetailViewModel.vital.bloodPressure = BloodPressure(systolic: systolic, diastolic: diastolic)
+						} else {
+							routineDetailViewModel.vital.bloodPressure?.systolic = systolic
+							routineDetailViewModel.vital.bloodPressure?.diastolic = diastolic
+						}
+					}
+				}
+			)
 		)
-		.onChange(of: bloodPressure) {
-			vitalFilledDate = Date()
-		}
-
+		
 		VitalPillView(
+			name: "Heart Rate",
 			unit: "bpm",
 			systemIcon: "waveform.path.ecg",
-			value: $heartRate
+			value: Binding(
+				get: {
+					let heartRate = routineDetailViewModel.vital.heartRate ?? 0
+					return heartRate > 0 ? String(heartRate) : ""
+				},
+				set: { routineDetailViewModel.vital.heartRate = Int($0) }
+			)
 		)
-		.onChange(of: heartRate) {
-			vitalFilledDate = Date()
-		}
-
+		
 		VitalPillView(
+			name: "Temperature",
 			unit: "℃",
 			systemIcon: "thermometer.variable",
-			value: $temperature
+			value: Binding(
+				get: {
+					let temperature = routineDetailViewModel.vital.temperature ?? 0
+					return temperature > 0 ? String(temperature) : ""
+				},
+				set: { newValue in
+					if newValue.isEmpty {
+						routineDetailViewModel.vital.temperature = nil
+					} else {
+						let sanitized = newValue.replacingOccurrences(of: ",", with: ".")
+						if let parsedFloat = Float(sanitized) {
+							routineDetailViewModel.vital.temperature = parsedFloat
+						}
+					}
+				}
+			)
 		)
-		.onChange(of: temperature) {
-			vitalFilledDate = Date()
-		}
-
+		
 		VitalPillView(
+			name: "Oxygen Satur",
 			unit: " %",
 			systemIcon: "lungs",
-			value: $oxygenLevel
+			value: Binding(
+				get: {
+					let oxygenSaturation = routineDetailViewModel.vital.oxygenSaturation ?? 0
+					return oxygenSaturation > 0 ? String(oxygenSaturation) : ""
+				},
+				set: { routineDetailViewModel.vital.oxygenSaturation = Int($0) }
+			)
 		)
-		.onChange(of: oxygenLevel) {
-			vitalFilledDate = Date()
-		}
 	}
 }
 
 #Preview("Empty State") {
+	let container = CaraApp.previewSharedContainer
+	
+	let routineDetailViewModel = RoutineDetailViewModel(modelContext: container.mainContext)
+	
 	NavigationStack {
 		RoutineDetailView(
 			routine: Routine(
@@ -297,11 +341,16 @@ struct RoutineDetailView: View {
 				routineDescription: "Every Morning"
 			), selectedDay: .now
 		)
+		.environment(routineDetailViewModel)
 	}
 }
 
 
 #Preview("Filled State") {
+	let container = CaraApp.previewSharedContainer
+	
+	let routineDetailViewModel = RoutineDetailViewModel(modelContext: container.mainContext)
+	
 	NavigationStack {
 		RoutineDetailView(
 			routine: Routine(
@@ -315,5 +364,6 @@ struct RoutineDetailView: View {
 			),
 			selectedDay: .now
 		)
+		.environment(routineDetailViewModel)
 	}
 }

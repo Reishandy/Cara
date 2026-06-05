@@ -28,17 +28,21 @@ class HomeViewModel {
 	/// By default it will be today, change this value to update the historiesDict with the selected date.
 	var selectedDay: Date = .now { didSet { self.fetchData(isOnlyHistories: true) } }
 	
+	/// Read only selected day for display
+	var routineDay: Date {
+		selectedDay
+	}
+	
 	/// The earlieast recorded history.
 	///
 	/// Practically the first time the user opens the app.
 	var earliestHistoryDate: Date = .now
 	
+	/// Fetch counter for SwiftUI update
+	var fetchCounter: Int = 0
+	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
-	}
-	
-	var routineDay:  Date {
-		selectedDay
 	}
 	
 	/// Delete a routine.
@@ -69,13 +73,16 @@ class HomeViewModel {
 				self.earliestHistoryDate = try fetchEarliestHistoryDate()
 			}
 			self.historiesDict = try fetchHistoriesDict()
+			self.fetchCounter += 1
 		} catch {
 			print("ERROR > Failed to fetch routines or histories: \(error)")
 		}
 	}
 	
 	private func fetchRoutines() throws -> [Routine] {
-		return try modelContext.fetch(FetchDescriptor<Routine>())
+		return try modelContext.fetch(FetchDescriptor<Routine>(
+			sortBy: [SortDescriptor(\.timestamp, order: .forward)]
+		))
 	}
 	
 	private func fetchHistoriesDict() throws -> [UUID: History] {

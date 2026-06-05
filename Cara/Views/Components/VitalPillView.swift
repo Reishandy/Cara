@@ -11,10 +11,17 @@ struct VitalPillView: View {
     @ScaledMetric(relativeTo: .body) private var spacing = 10
     @ScaledMetric(relativeTo: .body) private var padding = 12
     
+	let name: String
 	let unit: String
 	let systemIcon: String
+	var isBp: Bool = false
 	
-	// FIXME: Dynamic type using generic T?
+	@FocusState private var isCardFocused: Bool
+	
+	private var keyboardtype: UIKeyboardType {
+		isBp ? .numbersAndPunctuation : .decimalPad
+	}
+	
 	@Binding var value: String
 	
 	var body: some View {
@@ -22,13 +29,20 @@ struct VitalPillView: View {
             Image(systemName: systemIcon)
                 .font(.title2)
                 .foregroundStyle(.appPrimary)
+			
+			Text(name)
+				.font(.caption)
+				.foregroundStyle(.appPrimary)
+				.multilineTextAlignment(.center)
+				.fixedSize(horizontal: false, vertical: true)
             
-            TextField("- -", text: $value)
-                .font(.subheadline)
+			TextField(isBp ? "-/-" : "- -", text: $value)
+				.font(.headline)
                 .bold()
-                .foregroundStyle(.appSecondary)
+				.foregroundStyle(.appPrimary)
                 .multilineTextAlignment(.center)
-                .keyboardType(.decimalPad)
+				.keyboardType(keyboardtype)
+				.focused($isCardFocused)
             
             Text(unit)
                 .font(.caption)
@@ -40,25 +54,23 @@ struct VitalPillView: View {
         .padding(padding)
         .background(Color.selected)
         .cornerRadius(12)
-        
-        
-
 		.frame(maxWidth: .infinity)
+		.onTapGesture {
+			isCardFocused = true
+		}
 	}
 }
 
 #Preview {
-	// FIXME: Updatable preview
-	
 	VitalPillView(
-		unit: "celcius", systemIcon: "thermometer.variable", value: .constant("")
+		name: "temperature", unit: "celcius", systemIcon: "thermometer.variable", value: .constant("")
 	)
 	.padding()
 }
 
 #Preview("Accessibility Text Scale") {
     VitalPillView(
-        unit: "celcius", systemIcon: "thermometer.variable", value: .constant("36.5")
+		name: "temperature", unit: "celcius", systemIcon: "thermometer.variable", value: .constant("36.5")
     )
     .padding()
     .environment(\.dynamicTypeSize, .accessibility3)

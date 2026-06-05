@@ -11,6 +11,7 @@ import SwiftData
 @Model
 final class Routine: Seedable {
 	var id: UUID
+	var timestamp: Date
 	
 	var routineName: String
 	var routineDescription: String
@@ -23,6 +24,7 @@ final class Routine: Seedable {
 	
 	init(routineName: String, routineDescription: String, tasks: [RoutineTask] = []) {
 		self.id = UUID()
+		self.timestamp = .now
 		self.routineName = routineName
 		self.routineDescription = routineDescription
 		self.tasks = tasks

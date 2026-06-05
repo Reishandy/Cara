@@ -26,7 +26,7 @@ struct ContentView: View {
 	//	- Task Detail edit
 	//	- Toolbar in contentview
 	//	- Match padding sketch
-	//	- Do tabview color
+	//	- Do tabview color and chek dark mode
 	
 	var body: some View {
 		NavigationStack(path: $router.path) {

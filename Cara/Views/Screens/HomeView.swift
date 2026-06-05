@@ -70,6 +70,8 @@ struct HomeView: View {
 								history: history,
 								selectedDay: homeViewModel.selectedDay
 							)
+							.id("\(routine.id)-\(homeViewModel.fetchCounter)")
+							// Using this to force the component to update it's reference
 						}
 					}
 				}
