@@ -14,6 +14,8 @@ enum RoutineDetailElement {
 
 struct RoutineDetailView: View {
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    
     @Bindable var routine: Routine
     let selectedDay: Date
     
@@ -75,42 +77,7 @@ struct RoutineDetailView: View {
                         }
                         
                         
-                        LazyVGrid(columns: vitalColumns, spacing: 8) {
-                            VitalPillView(
-                                unit: "mm HG",
-                                systemIcon: "blood.pressure.cuff",
-                                value: $bloodPressure
-                                
-                            ).onChange(of: bloodPressure) {
-                                vitalFilledDate = Date()
-                            }
-                            
-                            VitalPillView(
-                                unit: "bpm",
-                                systemIcon: "waveform.path.ecg",
-                                value: $heartRate
-                            ).onChange(of: heartRate) {
-                                vitalFilledDate = Date()
-                            }
-                            
-                            VitalPillView(
-                                unit: "℃",
-                                systemIcon: "thermometer.variable",
-                                value: $temperature
-                            ).onChange(of: temperature) {
-                                vitalFilledDate = Date()
-                            }
-                            
-                            VitalPillView(
-                                
-                                unit: " %",
-                                systemIcon: "lungs",
-                                value: $oxygenLevel
-                            )
-                            .onChange(of: oxygenLevel) {
-                                vitalFilledDate = Date()
-                            }
-                        }
+                        vitalsInputLayout
                         
                         if let date = vitalFilledDate {
                             HStack(alignment: .top) {
@@ -272,6 +239,56 @@ struct RoutineDetailView: View {
                 [.foregroundColor: UIColor.appPrimary],
                 for: .normal
                 )
+        }
+    }
+    
+    @ViewBuilder
+    private var vitalsInputLayout: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            LazyVGrid(columns: vitalColumns, spacing: 8) {
+                vitalInputFields
+            }
+        } else {
+            HStack(spacing: 8) {
+                vitalInputFields
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var vitalInputFields: some View {
+        VitalPillView(
+            unit: "mm HG",
+            systemIcon: "blood.pressure.cuff",
+            value: $bloodPressure
+            
+        ).onChange(of: bloodPressure) {
+            vitalFilledDate = Date()
+        }
+        
+        VitalPillView(
+            unit: "bpm",
+            systemIcon: "waveform.path.ecg",
+            value: $heartRate
+        ).onChange(of: heartRate) {
+            vitalFilledDate = Date()
+        }
+        
+        VitalPillView(
+            unit: "℃",
+            systemIcon: "thermometer.variable",
+            value: $temperature
+        ).onChange(of: temperature) {
+            vitalFilledDate = Date()
+        }
+        
+        VitalPillView(
+            unit: " %",
+            systemIcon: "lungs",
+            value: $oxygenLevel
+        )
+        .onChange(of: oxygenLevel) {
+            vitalFilledDate = Date()
         }
     }
 }
