@@ -22,7 +22,9 @@ struct HomeView: View {
     }
     
     var body: some View {
-		ZStack(alignment: .top) {
+        VStack(alignment: .leading, spacing: 16) {
+            HomeHeaderView()
+            
             ScrollView {
                 // FIXME: Consider putting it in a menu
                 Button {
@@ -30,8 +32,11 @@ struct HomeView: View {
                 } label: {
                     HStack {
                         Text(formattedDateString)
+                            .font(.body)
+                            .fixedSize(horizontal: false, vertical: true)
                         Spacer()
                         Image(systemName: "chevron.down")
+                            .imageScale(.medium)
                     }
                     .padding(16)
                     .background(.secondaryBackground)
@@ -61,9 +66,6 @@ struct HomeView: View {
                     }
                 }
             }
-			.padding(.top, 70)
-			
-			HomeHeaderView()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
@@ -76,22 +78,26 @@ struct HomeView: View {
 }
 
 struct HomeHeaderView: View {
+    @ScaledMetric(relativeTo: .body) private var buttonSize = 48
+    @ScaledMetric(relativeTo: .body) private var iconSize = 24
+    
     var body: some View {
         HStack(alignment: .center) {
             Text("Caregiving")
                 .font(.largeTitle)
                 .bold()
                 .foregroundStyle(.appSecondary)
+                .fixedSize(horizontal: false, vertical: true)
             
-            Spacer()
+            Spacer(minLength: 12)
             
             NavigationLink(
                 value: Screen.routineAdd
             ) {
                 Image(systemName: "plus")
-                    .font(.system(size: 24, weight: .regular))
+                    .font(.system(size: iconSize, weight: .regular))
                     .foregroundStyle(.appPrimary)
-                    .frame(width: 48, height: 48)
+                    .frame(width: buttonSize, height: buttonSize)
                     .background(Color.background)
                     .clipShape(Circle())
             }
