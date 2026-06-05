@@ -6,44 +6,54 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LearnView: View {
+    @Environment(LearnViewModel.self) private var learnViewModel
+    
     var taskCategory: String = "Task Category"
     var taskAmount: Int = 0
-    @State private var searchTask = ""
     let customColor = UIColor(named: "AppPrimaryColor") ?? .systemBlue
-    @State private var selectedFilter: String = "All"
     
     init() {
-      UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: customColor]
+        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: customColor]
     }
     
     var body: some View {
+        @Bindable var learnViewModel = learnViewModel
+        
         VStack {
             ScrollView(.vertical, showsIndicators: true) {
-                ForEach (0..<10, id: \.self) { _ in
-                    NavigationLink(
-                        value: Screen.taskDetail
-                    ) {
-                        TaskCardView(style: .noButton)
+                ForEach(learnViewModel.groupedTasks.keys.sorted(), id: \.self) { categoryName in
+                    ForEach(learnViewModel.groupedTasks[categoryName] ?? [], id: \.id) { task in
+                        NavigationLink(value: Screen.taskDetail) {
+                            TaskCardView(
+                                taskName: task.taskName,
+                                taskIconEach: task.taskIcon,
+                                style: .noButton
+                            )
+                        }
                     }
                 }
             }
-            .searchable(text: $searchTask,
-                        placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: "Search Task...")
+            .searchable(
+                text: $learnViewModel.searchTerm,
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Search Task..."
+            )
         }
         .toolbar{
             ToolbarItem(placement: .topBarTrailing){
                 Menu {
-                    Button("All"){ selectedFilter = "All"}
-                    Button("Physical Rehab"){ selectedFilter = "physicalRehab"}
-                    Button("Swallowing & Oral Exercises (Dysphagia Safe)"){ selectedFilter = "swallowingExercise"}
-                    Button("Daily Care Essentials & Activities of Daily Living (ADLs)"){ selectedFilter = "dailyCareEssentials"}
-                    Button("Mobility Support & Safe Transfers"){ selectedFilter = "mobilitySupport"}
-                    Button("Skin Integrity"){ selectedFilter = "skinIntegrity"}
-                    Button("Nasogastric Tube (NGT) Management & Feeding"){ selectedFilter = "NGTManagement"}
-                    Button("Advanced Tracheostomy Support & Airway Clearing"){ selectedFilter = "tracheostomySupport"}
+                    Button("All") {
+                        learnViewModel.categoryFilter = []
+                    }
+                    
+                    ForEach(learnViewModel.categories, id: \.id) { category in
+                        Button(category.categoryName) {
+                            learnViewModel.categoryFilter = [category]
+                        }
+                    }
                 } label: {
                     Label("Filter", systemImage: "line.3.horizontal.decrease")
                 }
@@ -54,11 +64,18 @@ struct LearnView: View {
         .navigationTitle("Learn")
         .navigationBarTitleDisplayMode(.large)
         .padding(.horizontal)
+        .task {
+            learnViewModel.fetchData()
+        }
     }
 }
 
 #Preview {
-    NavigationStack{
+    let container = CaraApp.previewSharedContainer
+    let learnViewModel = LearnViewModel(modelContext: container.mainContext)
+
+    NavigationStack {
         LearnView()
+            .environment(learnViewModel)
     }
 }
