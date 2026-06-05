@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct RoutineCard: View {
 	let routine: Routine
@@ -30,7 +31,8 @@ private struct RoutineBody: View {
 	let history: History
 	
 	var finishedTasks: [RoutineTask] {
-		routine.tasks.filter { (task) -> Bool in
+        // FIXME: Integrate w viewmodel
+        history.routine.tasks.filter { (task) -> Bool in
 			task.isDefault
 		}
 	}
@@ -46,8 +48,9 @@ private struct RoutineBody: View {
 			VStack(alignment: .leading) {
 				HStack {
 					CircularProgressRing(
-						total: routine.tasks.count,
-						done: finishedTasks.count)
+                        total: history.routine.tasks.count,
+                        done: finishedTasks.count
+                    )
 					
 					Spacer().frame(width: 24)
 					
@@ -101,7 +104,11 @@ private struct RoutineBody: View {
 				HStack {
 					// FIXME: integrate w viewmodel
 					//			^ Now can be done with homeviewmodel, just access the History.Vital
-					if let vital = history.vital {
+					if history.vital != nil {
+//                        if history.vital!.bloodPressure != nil {
+//                            
+//                        }
+                        
 						VitalRoutineView()
 						VitalRoutineView()
 						VitalRoutineView()
@@ -183,4 +190,36 @@ struct CircularProgressRing: View {
 		}
 		.frame(width: 55, height: 55)
 	}
+}
+
+#Preview {
+	let container = try! ModelContainer(
+		for: Routine.self, RoutineTask.self, TaskCategory.self, History.self, Vital.self,
+		configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+	)
+	
+	let routine = Routine(
+		routineName: "Taking care of my heart",
+		routineDescription: "Take care of your heart",
+		tasks: Array(RoutineTask.defaultData.prefix(4))
+	)
+	
+	let history = History(
+		date: Date.now,
+		taskProgress: TaskProgress(filledAt: [UUID(): Date.now]),
+		note: "Mama is here",
+		vital: Vital(),
+		routine: routine
+	)
+	
+	container.mainContext.insert(routine)
+	container.mainContext.insert(history)
+	
+	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
+	
+	return NavigationStack {
+		RoutineCard(routine: routine, history: history)
+	}
+	.environment(homeViewModel)
+	.modelContainer(container)
 }
