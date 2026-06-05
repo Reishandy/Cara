@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TaskSelectionView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    
     var taskCategory: String = "Task Category"
     var taskAmount: Int = 0
     @State private var searchTask = ""
@@ -30,13 +32,7 @@ struct TaskSelectionView: View {
                 Button {
                     // FIXME: need to route this to action
                 } label: {
-                    HStack{
-                        Text("\(taskAmount) Selected")
-                        Text("|")
-                        Text("Save")
-                            .font(.headline)
-                    }
-
+                    selectedTaskButtonLabel
                 }
                 .frame(maxWidth: .infinity)
                 .buttonStyle(.borderedProminent)
@@ -45,6 +41,21 @@ struct TaskSelectionView: View {
         }
         .navigationTitle("Add Tasks")
         .navigationBarTitleDisplayMode(.inline)
+    }
+    
+    @ViewBuilder
+    private var selectedTaskButtonLabel: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(spacing: 2) {
+                Text("\(taskAmount) Selected")
+                Text("Save")
+                    .font(.headline)
+            }
+            .multilineTextAlignment(.center)
+        } else {
+            Text("\(taskAmount) Selected • Save")
+                .font(.headline)
+        }
     }
 }
 
