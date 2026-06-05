@@ -24,21 +24,24 @@ struct RoutineDetailView: View {
 	@ScaledMetric(relativeTo: .body) private var vitalHeaderIconSize = 22
 	
 	@State private var currentElement: RoutineDetailElement = .task
+	@State private var isEdit: Bool = false
 	
 	private let vitalColumns = [GridItem(.adaptive(minimum: 120), spacing: 8)]
 	
 	var body: some View {
 		ScrollView {
 			VStack(spacing: 24) {
-				Picker("Routine Detail Element", selection: $currentElement) {
-					Text("Task")
-						.tag(RoutineDetailElement.task)
-					
-					Text("Note")
-						.tag(RoutineDetailElement.note)
+				if !isEdit {
+					Picker("Routine Detail Element", selection: $currentElement) {
+						Text("Task")
+							.tag(RoutineDetailElement.task)
+						
+						Text("Note")
+							.tag(RoutineDetailElement.note)
+					}
+					.pickerStyle(.segmented)
+					.padding(.top, 16)
 				}
-				.pickerStyle(.segmented)
-				.padding(.top, 16)
 				
 				switch currentElement {
 				case .task:
@@ -66,16 +69,18 @@ struct RoutineDetailView: View {
 			}
 			
 			ToolbarItem(placement: .bottomBar) {
-				if currentElement == .task && routine.tasks.isEmpty {
+				if currentElement == .task && (routine.tasks.isEmpty || isEdit) {
 					NavigationLink {
 						TaskSelectionView(
 							initialTasks: routine.tasks,
 							onSaveAction: { tasks in
 								routine.tasks = tasks
-							}
+							},
+							isEdit: isEdit
 						)
 					} label: {
-						Text("Add Task")
+						// FIXME: This align to leading after changing nav or back from taskselection
+						Text(routine.tasks.isEmpty ? "Add Task" : "Modoify Task")
 							.font(.headline)
 							.foregroundStyle(.white)
 							.multilineTextAlignment(.center)
@@ -87,12 +92,12 @@ struct RoutineDetailView: View {
 			}
 			
 			ToolbarItem(placement: .navigationBarTrailing) {
-				if currentElement == .task && !routine.tasks.isEmpty {
+				if currentElement == .task && (!routine.tasks.isEmpty || isEdit) {
 					Button {
-						// FIXME: Edit
+						isEdit.toggle()
 					} label: {
-						Text("Edit")
-							.foregroundColor(Color("AppPrimaryColor"))
+						Text(isEdit ? "Done" : "Edit")
+							.foregroundColor(.appPrimary)
 					}
 				}
 			}
@@ -118,7 +123,9 @@ struct RoutineDetailView: View {
 	
 	private var taskSection: some View {
 		VStack(spacing: 24) {
-			vitalsSection
+			if !isEdit {
+				vitalsSection
+			}
 			tasksList
 		}
 	}
@@ -189,7 +196,7 @@ struct RoutineDetailView: View {
 						} label: {
 							TaskCardView(
 								taskName: task.taskName,
-								style: routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle,
+								style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle),
 								onButtonClick: {
 									if routineDetailViewModel.taskProgress[task.id] != nil {
 										routineDetailViewModel.taskProgress[task.id] = nil
@@ -197,7 +204,7 @@ struct RoutineDetailView: View {
 										routineDetailViewModel.taskProgress[task.id] = Date()
 									}
 								},
-								clickTime: routineDetailViewModel.taskProgress[task.id]
+								clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
 							)
 						}
 					}

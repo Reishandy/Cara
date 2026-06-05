@@ -16,6 +16,7 @@ struct TaskSelectionView: View {
 	
 	var initialTasks: [RoutineTask]? = nil
 	var onSaveAction: (([RoutineTask]) -> Void)? = nil
+	var isEdit: Bool = false
 	
 	var body: some View {
 		@Bindable var taskSelectViewModel = taskSelectViewModel
@@ -71,7 +72,7 @@ struct TaskSelectionView: View {
 				.tint(Color("AppThirdColor"))
 			}
 		}
-		.navigationTitle("Add Tasks")
+		.navigationTitle(isEdit ? "Modify Tasks" : "Add Tasks")
 		.navigationBarTitleDisplayMode(.inline)
 		.padding(.horizontal, 20)
 		.task {
