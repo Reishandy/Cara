@@ -22,11 +22,13 @@ struct LearnView: View {
         VStack {
             ScrollView(.vertical, showsIndicators: true) {
                 ForEach (0..<10, id: \.self) { _ in
-                    NavigationLink(
-                        value: Screen.taskDetail
-                    ) {
+					// FIXME: TODO
+					
+//                    NavigationLink(
+//                        value: Screen.taskDetail
+//                    ) {
                         TaskCardView(style: .noButton)
-                    }
+//                    }
                 }
             }
             .searchable(text: $searchTask,

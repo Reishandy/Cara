@@ -18,11 +18,12 @@ struct TaskSelectionView: View {
         VStack {
             ScrollView(.vertical, showsIndicators: true) {
                 ForEach (0..<10, id: \.self) { _ in
-                    NavigationLink(
-                        value: Screen.taskDetail
-                    ) {
+					// FIXME: Update this sometime...
+//                    NavigationLink(
+//                        value: Screen.taskDetail
+//                    ) {
                         TaskCardView()
-                    }
+//                    }
                 }
             }
             .searchable(text: $searchTask, prompt: "Search Task...")

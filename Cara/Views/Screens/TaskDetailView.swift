@@ -11,23 +11,7 @@ struct TaskDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showAppBarTitle = false
     
-    private let steps = [
-        "Hold the patient's weak forearm just above the wrist with one hand to keep it steady.",
-        "Open your other hand and interlace your fingers with the patient's fingers, flattening their hand against yours.",
-        "Slowly pull their fingers back to open the hand, and gently pull the entire hand backward at the wrist joint.",
-        "Hold this open, stretched position for 15 to 30 seconds.",
-        "Slowly release the stretch; never let the hand snap back rapidly.",
-        "Hold the patient's weak forearm just above the wrist with one hand to keep it steady.",
-        "Open your other hand and interlace your fingers with the patient's fingers, flattening their hand against yours.",
-        "Hold the patient's weak forearm just above the wrist with one hand to keep it steady.",
-        "Open your other hand and interlace your fingers with the patient's fingers, flattening their hand against yours."
-    ]
-    
-    private let subtitle: String = """
-                Opens the wrist and fingers to counteract "flexor spasticity" \
-                (the natural tendency for a stroke-affected hand to curl into a tight fist).
-                """
-    private let title = "Wrist & Finger Stretch\n(Passive ROM)"
+	let task: RoutineTask
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -44,18 +28,15 @@ struct TaskDetailView: View {
             .onScrollGeometryChange(for: CGFloat.self) { geometry in
                 geometry.contentOffset.y
             } action: { oldOffset, newOffset in
-//                currentOffset = newOffset
                 if newOffset > 100 {
                     showAppBarTitle = true
                 } else {
                     showAppBarTitle = false
                 }
             }
-            
-//            closeButton
         }
         .ignoresSafeArea(edges: .top)
-        .navigationTitle(title)
+		.navigationTitle(task.taskName)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -68,10 +49,10 @@ struct TaskDetailView: View {
         }
     }
     
+	// FIXME: Actually use the image data
     let imageUrl = "https://www.seniorlivingarrangements.com/wp-content/uploads/2018/08/Senior-Care-Centre.jpg"
     
     private var headerImage: some View {
-        
         ZStack(alignment: .bottomLeading) {
             AsyncImage(url: URL(string: imageUrl)) { image in
                 image
@@ -95,7 +76,7 @@ struct TaskDetailView: View {
         VStack(alignment: .leading) {
             
             if !showAppBarTitle {
-                Text(title)
+				Text(task.taskName)
                     .font(.title2)
                     .bold()
                     .foregroundStyle(.white)
@@ -106,7 +87,7 @@ struct TaskDetailView: View {
             }
             
             VStack(alignment: .leading) {
-                Text(subtitle)
+				Text(task.taskDescription)
                 .font(.subheadline)
                 .foregroundStyle(.appPrimary)
                 .padding(.bottom, 8)
@@ -116,7 +97,7 @@ struct TaskDetailView: View {
                     .foregroundStyle(.appPrimary)
                     .padding(.bottom, 8)
                 
-                ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+				ForEach(Array(task.howTo.enumerated()), id: \.offset) { index, step in
                     TaskInstructionView(
                         number: index + 1,
                         content: step
@@ -151,10 +132,6 @@ struct TaskDetailView: View {
     }
 }
 
-#Preview {
-    TaskDetailView()
-}
-
 private struct TaskInstructionView: View {
     let number: Int
     let content: String
@@ -181,4 +158,8 @@ private struct TaskInstructionView: View {
         
         Spacer().frame(height: 12)
     }
+}
+
+#Preview {
+	TaskDetailView(task: RoutineTask.defaultData.first!)
 }

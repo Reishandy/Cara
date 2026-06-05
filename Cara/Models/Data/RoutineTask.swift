@@ -12,8 +12,8 @@ import SwiftData
 final class RoutineTask: Seedable {
 	var id: UUID
 	
-	// FIXME: TaskIcon
 	var taskName: String
+	var taskDescription: String
 	var taskIcon: String
 	var howTo: [String]
 	var isDefault: Bool
@@ -23,9 +23,10 @@ final class RoutineTask: Seedable {
 	var category: TaskCategory?
 	var routines: [Routine] = []
 	
-	init(taskName: String, taskIcon: String = "cross.fill", howTo: [String], isDefault: Bool = false, image: Data? = nil, category: TaskCategory? = nil) {
+	init(taskName: String, taskDescription: String, taskIcon: String = "cross.fill", howTo: [String], isDefault: Bool = false, image: Data? = nil, category: TaskCategory? = nil) {
 		self.id = UUID()
 		self.taskName = taskName
+		self.taskDescription = taskDescription
 		self.taskIcon = taskIcon
 		self.howTo = howTo
 		self.image = image
@@ -37,12 +38,17 @@ final class RoutineTask: Seedable {
 		let physical = TaskCategory(categoryName: "Physical Rehab", isDefault: true)
 		let oral = TaskCategory(categoryName: "Swallowing & Oral Exercises", isDefault: true)
 		let daily = TaskCategory(categoryName: "Daily Care Essentials", isDefault: true)
+		let mobility = TaskCategory(categoryName: "Mobility Support & Safe Transfers", isDefault: true)
+		let skin = TaskCategory(categoryName: "Skin Integrity & Pressure Management", isDefault: true)
+		let ngt = TaskCategory(categoryName: "Nasogastric Tube (NGT) Management & Feeding", isDefault: true)
+		let trach = TaskCategory(categoryName: "Advanced Tracheostomy Support & Airway Clearing", isDefault: true)
 		
-		// FIXME: Provide default image and icon for each of these tasks
 		return [
 			// MARK: - Category 1: Physical Rehab
 			RoutineTask(
 				taskName: "Assisted Shoulder Forward Flexion (Passive ROM)",
+				taskDescription: "Keeps the shoulder joint loose and prevents painful stiffening (frozen shoulder) on the paralyzed side.",
+				taskIcon: "figure.dance",
 				howTo: [
 					"Have the patient lie flat on their back or sit securely in a supportive chair.",
 					"Support the weak arm by cradling the elbow with one hand and holding the wrist firmly with your other hand.",
@@ -56,6 +62,8 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Shoulder Outer Rotation (Passive ROM)",
+				taskDescription: "Rotates the shoulder joint outward to maintain the flexibility needed for dressing and hygiene.",
+				taskIcon: "figure.dance",
 				howTo: [
 					"Have the patient lie flat on their back in bed.",
 					"Place their weak arm next to their body, bend their elbow to a 90-degree angle, so their fingers point straight up at the ceiling.",
@@ -68,6 +76,8 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Elbow Extension & Forearm Turning (Passive ROM)",
+				taskDescription: "Straightens the elbow and rotates the forearm to prevent muscles from shortening into a permanent bend.",
+				taskIcon: "figure.dance",
 				howTo: [
 					"Cradle the patient's weak elbow with one hand and hold their hand with your other hand (like shaking hands).",
 					"Gently straighten the elbow out completely until the arm is lying flat.",
@@ -79,6 +89,8 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Wrist & Finger Extension Stretch (Passive ROM)",
+				taskDescription: "Opens the wrist and fingers to counteract \"flexor spasticity\" (the natural tendency for a stroke-affected hand to curl into a tight fist).",
+				taskIcon: "hand.raised.fill",
 				howTo: [
 					"Hold the patient's weak forearm just above the wrist with one hand to keep it steady.",
 					"Open your other hand and interlace your fingers with the patient's fingers, flattening their hand against yours.",
@@ -91,6 +103,8 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Hand & Finger Towel Grasp (Active-Assisted)",
+				taskDescription: "Retrains grip strength and neural connection by forcing the fingers on the weak hand to open and squeeze intentionally.",
+				taskIcon: "hand.raised.fill",
 				howTo: [
 					"Seat the patient at a flat table and place a small, rolled-up hand towel directly in front of them.",
 					"Assist the patient in placing their weak hand flat next to the towel.",
@@ -103,6 +117,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Assisted Hip & Knee Flexion / \"Classic Heel Slides\" (Passive ROM)",
+				taskDescription: "Moves the hip and knee joints together to prevent stiffness and prepare the lower body for eventually walking again.",
 				howTo: [
 					"Have the patient lie completely flat on their back in bed.",
 					"Place one hand securely behind the patient's weak knee and cup their heel with your other hand.",
@@ -115,6 +130,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Hip Abduction / Outward Leg Slide (Passive ROM)",
+				taskDescription: "Moves the leg sideways to keep the inner thigh muscles flexible, which is essential for safe transfers and using the bathroom.",
 				howTo: [
 					"Ensure the patient is lying flat on their back with both legs straight.",
 					"Slide one hand underneath the patient’s weak ankle and place your other hand just under their knee to support the weight of the leg.",
@@ -127,6 +143,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Ankle Dorsiflexion / Calf Stretch (Passive ROM)",
+				taskDescription: "Stretches the Achilles tendon to treat or prevent \"drop-foot\" (where the toes drag on the ground, causing severe tripping hazards).",
 				howTo: [
 					"While the patient is lying down with a straight leg, cup their weak heel with the palm of your hand.",
 					"Let their forearm rest flat against the bottom sole of the patient's foot.",
@@ -139,6 +156,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Seated Ankle Taps (Active-Assisted)",
+				taskDescription: "A cognitive-motor drill to help the brain reconnect with the muscles on the front of the shin that lift the foot.",
 				howTo: [
 					"Sit the patient upright in a sturdy chair with both feet resting flat on the floor.",
 					"Ask the patient to try and lift just the toes and front half of their weak foot off the ground while keeping their heel glued to the floor.",
@@ -153,6 +171,7 @@ final class RoutineTask: Seedable {
 			// MARK: - Category 2: Swallowing & Oral Exercises
 			RoutineTask(
 				taskName: "Tongue In-and-Outs (Active / Active-Assisted)",
+				taskDescription: "Builds forward and backward tongue strength required to initiate a clean, safe swallow.",
 				howTo: [
 					"Sit the patient completely upright at a 90-degree angle.",
 					"Instruct the patient to open their mouth slightly and stick their tongue straight out as far as possible.",
@@ -166,6 +185,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Tongue Side-to-Side Movements",
+				taskDescription: "Trains the lateral coordination needed to manipulate food chunks and prevent choking.",
 				howTo: [
 					"Have the patient open their mouth wide.",
 					"Direct them to touch the far right corner of their lips with the tip of their tongue.",
@@ -179,6 +199,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Tongue Up-and-Down Elevation",
+				taskDescription: "Strengthens the top of the tongue to push food upward against the hard palate before swallowing.",
 				howTo: [
 					"Open the mouth comfortably wide.",
 					"Direct the patient to raise the tip of their tongue upward toward their nose, attempting to touch the upper lip or roof of the mouth.",
@@ -191,6 +212,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Lip Purse-to-Smile Flexing",
+				taskDescription: "Builds lip elasticity and closure strength to eliminate drooling and improve speech clarity.",
 				howTo: [
 					"Instruct the patient to pucker their lips tightly forward into an exaggerated \"fish face\" or kissing shape.",
 					"Hold the tight pucker for 3 seconds.",
@@ -203,6 +225,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Lip Resistance Training (Caregiver Assisted)",
+				taskDescription: "Directly builds tone on the paralyzed side of the lip using physical counter-pressure.",
 				howTo: [
 					"Have the patient close their mouth firmly.",
 					"Place a clean, flat tongue depressor or the back of a smooth, cold metal spoon against the outer center of their lips.",
@@ -215,6 +238,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Cheek Puffs (Intraoral Pressure Drill)",
+				taskDescription: "Strengthens the cheek muscles (buccinator) to keep food from getting trapped between the teeth and gums.",
 				howTo: [
 					"Instruct the patient to close their mouth tightly and blow air into their cheeks until they puff out like a balloon.",
 					"Hold the air inside their mouth, keeping the lips sealed completely for 5 seconds.",
@@ -227,8 +251,9 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Effortless Swallow / Masako Maneuver",
+				taskDescription: "Forces the back wall of the throat forward to compensate for weak base-of-tongue movement, protecting the airway.",
 				howTo: [
-					"Ensure the patient is sitting fully alert and upright.",
+					"Ensure the patient is status alert and upright.",
 					"Stick the tip of the tongue out slightly between the front teeth.",
 					"Gently bite down on the tongue to hold it securely in place.",
 					"**Without releasing the tongue**, instruct the patient to swallow their own saliva.",
@@ -240,6 +265,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "The Mendelsohn Maneuver (The Adam's Apple Hold)",
+				taskDescription: "Keeps the throat open longer during a swallow, giving food more time to pass safely into the stomach without dropping into the lungs.",
 				howTo: [
 					"Ask the patient to swallow their saliva normally and feel their throat move up and down (the Adam's apple or larynx area).",
 					"Instruct them to perform another swallow, but **consciously hold their throat up at its highest point** for 2 to 3 seconds using their throat muscles.",
@@ -251,6 +277,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "The Chin-Tuck Setup (Postural Drill)",
+				taskDescription: "A physical positioning technique that physically narrows the entrance to the airway, dramatically reducing silent aspiration risks during meals.",
 				howTo: [
 					"Before taking any bite or sip, ensure the patient is sitting at a 90-degree angle.",
 					"Bring the food or cup to the patient's mouth.",
@@ -265,6 +292,7 @@ final class RoutineTask: Seedable {
 			// MARK: - Category 3: Daily Care Essentials
 			RoutineTask(
 				taskName: "Pre-Medication Vitals Check",
+				taskDescription: "Logging critical safety numbers (Blood Pressure/Heart Rate) before administering potent cardiovascular medications.",
 				howTo: [
 					"Ensure the patient has been resting quietly in a seated position for at least 5 minutes.",
 					"Secure the automated blood pressure cuff onto the patient's **strong arm**, tracking the placement guidelines on the cuff.",
@@ -276,6 +304,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Scheduled Medication Administration",
+				taskDescription: "Safely organizing and verifying the intake of daily stroke prevention and management prescriptions.",
 				howTo: [
 					"Cross-reference your pill organizer with the active prescription labels to ensure zero duplicates.",
 					"Sit the patient completely upright at a 90-degree angle to prevent choking.",
@@ -287,6 +316,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Safe Assisted Showering",
+				taskDescription: "A highly structured routine for bathing a patient with one-sided weakness while minimizing catastrophic slip-and-fall risks.",
 				howTo: [
 					"Transfer the patient into a dedicated, slip-resistant shower chair placed inside the basin. Securely fasten any safety straps.",
 					"Set the water temperature and test it yourself on your inner wrist first; stroke survivors often have altered temperature sensation and can burn easily without realizing it.",
@@ -298,8 +328,9 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Assisted Sink Grooming (Oral & Shaving)",
+				taskDescription: "Morning routine at the bathroom sink designed to promote independence while protecting the weak side.",
 				howTo: [
-					"Wheel or guide the patient to the sink, ensuring their feet are flat and stable on the floor or footrests.",
+					"Concentrate or guide the patient to the sink, ensuring their feet are flat and stable on the floor or footrests.",
 					"Apply toothpaste or grooming cream using adaptive, wide-grip tools if available.",
 					"Stand closely on the patient's **weak side** to act as a physical stabilizer in case they lose their trunk balance and lean over.",
 					"Guide them to use their strong hand to complete the tasks, using a mirror to provide visual feedback to their brain for orientation."
@@ -309,6 +340,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Structured Orientation & Reality Check",
+				taskDescription: "A brief morning cognitive drill to combat post-stroke confusion, memory lapses, and environmental disorientation.",
 				howTo: [
 					"Sit face-to-face with the patient in a well-lit room free of background noise (turn off the TV).",
 					"Ask the patient open-ended questions: \"Do you know what day of the week it is?\", \"What season are we in right now?\", or \"Where are we currently sitting?\"",
@@ -320,6 +352,7 @@ final class RoutineTask: Seedable {
 			),
 			RoutineTask(
 				taskName: "Evening Wind-Down & Sundowning Prevention",
+				taskDescription: "A strict sensory-reduction routine to prevent late-day confusion, anxiety, and aggressive behavior (sundowning) common in neurological recovery.",
 				howTo: [
 					"Eliminate harsh overhead lighting and transition to warm, dim lamps 2 hours before the target bedtime.",
 					"Shut off loud, chaotic media or news programs; switch to soft ambient music or total silence.",
@@ -328,6 +361,194 @@ final class RoutineTask: Seedable {
 				],
 				isDefault: true,
 				category: daily
+			),
+			
+			// MARK: - Category 4: Mobility Support & Safe Transfers
+			RoutineTask(
+				taskName: "Bed-to-Chair Stand Pivot Transfer",
+				taskDescription: "Safely moving a patient with one-sided weakness from the edge of the bed into a wheelchair or sturdy chair.",
+				howTo: [
+					"Lock the wheelchair brakes and place the chair at a 45-degree angle directly next to the bed, facing the patient's strong side.",
+					"Assist the patient into a seated position on the edge of the bed with their feet flat on the floor, slightly apart.",
+					"Place your feet outside of the patient's feet, and block their weak knee with your own knee to keep it from buckling.",
+					"Place your hands firmly around the patient's torso or hips (never pull on their weak arm or under their armpits).",
+					"On the count of three, rock forward and help the patient bear weight through their strong leg to stand up.",
+					"Pivot together on their strong foot until their backside faces the chair, then slowly lower them into the seat."
+				],
+				isDefault: true,
+				category: mobility
+			),
+			RoutineTask(
+				taskName: "Log Roll Bed Turn",
+				taskDescription: "Turning a non-ambulatory patient onto their side in bed without twisting their spine or pinching their weak shoulder.",
+				howTo: [
+					"Cross the patient's weak arm gently across their chest so it doesn't get trapped or dragged underneath them during the turn.",
+					"Bend the patient's knee on the opposite side of the direction you want them to turn (the leg furthest from you).",
+					"Stand on the side of the bed toward which the patient will be turning.",
+					"Place one of your hands securely on the patient's far shoulder and your other hand on their far hip.",
+					"In one smooth, synchronous motion, roll the patient toward you onto their side like a solid log.",
+					"Tuck a supportive pillow behind their back and another between their knees to hold the position safely."
+				],
+				isDefault: true,
+				category: mobility
+			),
+			RoutineTask(
+				taskName: "Boosting a Patient Up in Bed (Two-Person Draw-Sheet Method)",
+				taskDescription: "Moving a patient up toward the pillows after they have slid down, avoiding skin-tearing friction.",
+				howTo: [
+					"Lower the head of the bed completely flat and remove the patient's pillows.",
+					"Ensure the patient is lying flat on a friction-reducing draw-sheet (or a folded bed sheet placed under their torso).",
+					"Stand on opposite sides of the bed, facing each other, near the patient's upper body.",
+					"Roll up the edges of the draw-sheet close to the patient's body, grasping it firmly with an palms-up grip.",
+					"Shift your weight from your back foot to your front foot, and on the count of three, lift and slide the sheet and patient smoothly up toward the head of the bed together."
+				],
+				isDefault: true,
+				category: mobility
+			),
+			RoutineTask(
+				taskName: "Assisted Sitting Edge-of-Bed Balance",
+				taskDescription: "A static core drill to help the brain rebuild trunk control and upright spatial orientation.",
+				howTo: [
+					"Assist the patient to sit up straight on the edge of the bed with their feet fully supported flat on the floor or a stool.",
+					"Stand closely on the patient’s weak side, ready to act as a physical stabilizer if they lean or fall over.",
+					"Encourage the patient to hold themselves upright without using their strong hand for support if possible.",
+					"Have them maintain this upright posture for 1 to 3 minutes, tracking whether they lean heavily toward their weak side (known as \"Pusher Syndrome\")."
+				],
+				isDefault: true,
+				category: mobility
+			),
+			
+			// MARK: - Category 5: Skin Integrity & Pressure Management
+			RoutineTask(
+				taskName: "Sacrum & Heel Visual Pressure Check",
+				taskDescription: "Daily visual inspection of high-risk contact points to spot and stop bedsores before the skin breaks open.",
+				howTo: [
+					"Roll the patient onto their side to fully expose the tailbone (sacrum) and lower buttocks.",
+					"Check the skin thoroughly under a bright light, looking for localized redness, purple discoloration, or a change in skin temperature/stiffness.",
+					"Press your finger firmly onto any red area; if it does not turn briefly white when pressed (non-blanching erythema), a bedsore is actively forming.",
+					"Check both heels, looking closely for deep redness, clear blisters, or skin peeling.",
+					"**Action Step:** If any un-blanching redness is found, log it immediately and use pillows to lift that specific body part entirely off the mattress surface."
+				],
+				isDefault: true,
+				category: skin
+			),
+			RoutineTask(
+				taskName: "The 2-Hour Side-to-Side Position Rotation",
+				taskDescription: "Systematically changing the patient's body orientation every 2 hours to redistribute blood flow and relieve compressed tissue.",
+				howTo: [
+					"Log the patient's starting position (e.g., Supine / Flat on back).",
+					"Exactly 2 hours later, use the Log Roll technique to turn the patient onto their **Right Side** at a 30-degree tilt.",
+					"Tuck a pillow under their left hip and back, and place a pillow between their knees so their bony joints don't rub together.",
+					"After another 2 hours, rotate them back to their back, or onto their **Left Side**.",
+					"**Crucial Safety Rule:** If a specific side of the body is already showing red, un-blanching pressure marks, skip that side entirely in the rotation until the color returns to normal."
+				],
+				isDefault: true,
+				category: skin
+			),
+			RoutineTask(
+				taskName: "Heel Floating & Offloading Setup",
+				taskDescription: "Completely suspending the heels in the air to prevent painful, deep-tissue pressure injuries while lying down.",
+				howTo: [
+					"Position the patient flat on their back in bed.",
+					"Take a firm, standard bed pillow and place it crosswise under the patient's lower legs (calves).",
+					"Position the pillow so it ends just above the ankles.",
+					"Visually verify that the patient's heels are completely suspended (\"floating\") in the air and are not touching the mattress or the sheet at all.",
+					"Ensure the knees are slightly bent to avoid hyperextension strain on the joints."
+				],
+				isDefault: true,
+				category: skin
+			),
+			RoutineTask(
+				taskName: "Skin Shear Prevention During Adjustments",
+				taskDescription: "Techniques to prevent the skin from dragging and tearing across bed sheets when the head of the bed is elevated.",
+				howTo: [
+					"Before raising the head of the bed, always elevate the patient's knees slightly first (if using an adjustable hospital bed). This stops their hips from sliding forward.",
+					"Slowly raise the head of the bed, keeping the angle below 30 degrees whenever they are resting to minimize pressure on the tailbone.",
+					"If you must adjust their clothes or sheets, gently lift their body weight up rather than pulling or dragging them across the fabric."
+				],
+				isDefault: true,
+				category: skin
+			),
+			
+			// MARK: - Category 6: Nasogastric Tube (NGT) Management & Feeding
+			RoutineTask(
+				taskName: "Pre-Feeding Tube Verification & Residual Check",
+				taskDescription: "Testing the placement of the tube and checking stomach stomach contents to prevent accidental lung flooding.",
+				howTo: [
+					"Elevate the bed head so the patient is sitting upright at a minimum of a 30 to 45-degree angle.",
+					"Check the external markings on the tube at the nose to ensure it hasn't slipped outward.",
+					"Attach a large 60 mL syringe to the tube port and gently pull back on the plunger to draw out stomach fluid.",
+					"**The Safe Limit Rule:** If you pull back more than 100 mL to 150 mL of undigested liquid formula from the previous meal, stop. Re-inject the fluid, close the port, skip the feeding, and check again in 1 hour (the stomach is not emptying properly).",
+					"Test the drawn fluid with a pH strip if instructed by your nurse; a pH less than 5.0 confirms the tube is securely in the stomach."
+				],
+				isDefault: true,
+				category: ngt
+			),
+			RoutineTask(
+				taskName: "Gravity-Fed Bolus NGT Feeding",
+				taskDescription: "Administering liquid nutritional formulas safely using natural gravity flow instead of forcing it.",
+				howTo: [
+					"Ensure the patient remains sitting upright at a 45-degree angle.",
+					"Clamp or pinch the NG tube with your fingers, remove the syringe plunger, and insert the empty syringe barrel into the tube opening.",
+					"Fill the syringe barrel with the prescribed amount of room-temperature formula.",
+					"Unclamp the tube and let the formula flow down naturally via gravity. Raise or lower the syringe to adjust the speed; a full feed should take 15 to 20 minutes.",
+					"**Critical Airway Rule:** Right before the syringe goes completely empty, clamp the tube again to prevent air from entering the stomach, which causes severe bloating and vomiting."
+				],
+				isDefault: true,
+				category: ngt
+			),
+			RoutineTask(
+				taskName: "Post-Feed Flush & Lock",
+				taskDescription: "Clearing the inner pipeline of the tube with fresh water to prevent thick formula from clotting and blocking the line.",
+				howTo: [
+					"Immediately following the formula feed, keep the tube clamped and pour 30 mL to 50 mL of clean, lukewarm water into the syringe barrel.",
+					"Unclamp the line and let the water flush through completely to rinse away sticky milk residues.",
+					"Clamp the tube tightly, remove the syringe, and close the safety cap on the NGT port securely.",
+					"**The 30-Minute Stay Rule:** Force the patient to remain sitting upright at a 45-degree angle for at least 30 to 60 minutes after the feed ends to prevent reflux and silent aspiration."
+				],
+				isDefault: true,
+				category: ngt
+			),
+			
+			// MARK: - Category 7: Advanced Tracheostomy Support & Airway Clearing
+			RoutineTask(
+				taskName: "Tracheostomy Suctioning Protocol",
+				taskDescription: "Using a mechanical suction machine to clear thick mucus blockages when the patient cannot cough them out effectively.",
+				howTo: [
+					"Wash your hands thoroughly and don sterile medical gloves. Turn on the suction machine and verify the pressure gauge is set safely between 80 and 120 mmHg.",
+					"Open the sterile suction catheter package. Connect the catheter line to the suction machine tubing without letting the tip touch any unsterile surfaces.",
+					"Gently insert the catheter into the tracheostomy tube opening without applying suction (keep your thumb off the control valve) until you feel mild resistance or the patient coughs.",
+					"Place your thumb over the control valve to activate suction, and slowly pull the catheter out using a continuous, rotating motion.",
+					"**The 10-Second Speed Limit:** Never keep the suction active inside the airway for longer than 10 to 15 seconds, as you are pulling out their breathing oxygen. Flush the catheter with sterile saline water before repeating if needed."
+				],
+				isDefault: true,
+				category: trach
+			),
+			RoutineTask(
+				taskName: "Inner Cannula Cleaning & Inspections",
+				taskDescription: "Removing and sanitizing the inner lining tube of the tracheostomy to prevent crusty mucus buildup from sealing the airway shut.",
+				howTo: [
+					"Wash hands and steady the outer neck plate of the tracheostomy tube with your non-dominant hand.",
+					"Unlock the inner cannula by gently twisting or pinching the locking clips on the front connector.",
+					"Pull the inner cannula out toward you smoothly, following the natural downward curve of the neck line.",
+					"Drop the cannula into a sterile basin filled with half hydrogen peroxide and half sterile water. Use a small nylon trach brush to scrub away any dried, sticky mucus plugs.",
+					"Rinse the tube thoroughly in a separate basin of pure sterile saline, shake off excess moisture, and slide it gently back into the outer neck plate until you hear it distinctly snap lock into place."
+				],
+				isDefault: true,
+				category: trach
+			),
+			RoutineTask(
+				taskName: "Emergency Trach Tube Dislodgement Response",
+				taskDescription: "Immediate emergency actions to take if the entire tracheostomy tube accidentally slips out of the neck stoma (hole).",
+				howTo: [
+					"**Do not panic.** Call emergency services immediately or yell for help while staying directly beside the patient.",
+					"Tilt the patient’s head back slightly to extend the neck line and fully expose the open stoma hole.",
+					"Locate the emergency replacement tracheostomy tube (which must always be taped to the wall above the patient's bed).",
+					"Insert the guide tool (obturator) into the new inner tube, apply a tiny drop of water-soluble lubricant to the tip, and guide it gently back into the neck hole at a straight 90-degree angle.",
+					"Remove the internal guide tool immediately after insertion so the patient can draw air through the tube, and secure the neck ties tightly."
+				],
+				isDefault: true,
+				category: trach
 			)
 		]
 	}

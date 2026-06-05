@@ -12,5 +12,5 @@ enum Screen: Hashable {
 	case learn
 	case routineDetail(routine: Routine, day: Date)
 	case taskSelection
-	case taskDetail
+	case taskDetail(task: RoutineTask)
 }

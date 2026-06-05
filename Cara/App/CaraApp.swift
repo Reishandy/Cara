@@ -23,14 +23,14 @@ struct CaraApp: App {
 			container.mainContext.insert(dummyRoutine2)
 			
 			let dummyTasks = [
-				RoutineTask(taskName: "dummy", taskIcon: "circle.fill", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory)
+				RoutineTask(taskName: "dummy", taskDescription: "Desc", taskIcon: "circle.fill", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
+				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
+				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
+				RoutineTask(taskName: "dummy", taskDescription: "Desc", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory)
 			]
 			
 			for task in dummyTasks {
@@ -88,8 +88,6 @@ struct CaraApp: App {
 	@State private var homeViewModel = HomeViewModel(modelContext: sharedContainer.mainContext)
 	@State private var learnViewModel = LearnViewModel(modelContext: sharedContainer.mainContext)
 	@State private var routineDetailViewModel = RoutineDetailViewModel(modelContext: sharedContainer.mainContext)
-	@State private var routineAddViewModel = RoutineAddViewModel(modelContext: sharedContainer.mainContext)
-	@State private var taskAddViewModel = TaskAddViewModel(modelContext: sharedContainer.mainContext)
 	
 	var body: some Scene {
 		WindowGroup {
@@ -97,8 +95,6 @@ struct CaraApp: App {
 				.environment(homeViewModel)
 				.environment(learnViewModel)
 				.environment(routineDetailViewModel)
-				.environment(routineAddViewModel)
-				.environment(taskAddViewModel)
 		}
 	}
 }

@@ -20,13 +20,15 @@ struct ContentView: View {
 	// FIXME: TODO List
 	//	- Routine detail and interactivity (routine desc)
 	//	- Search and filter for tasks
-	//	- Task detail
+	//	- Task detail (also fix back button and from other place)
 	//	- Home crud routine
 	//	- Routine edit
 	//	- Task Detail edit
 	//	- Toolbar in contentview
 	//	- Match padding sketch
 	//	- Do tabview color and chek dark mode
+	//	- Check large text accessability again
+	//	- Animation
 	
 	var body: some View {
 		NavigationStack(path: $router.path) {
@@ -60,8 +62,8 @@ struct ContentView: View {
 					RoutineDetailView(routine: routine, selectedDay: day)
 				case .taskSelection:
 					Text("This is task selection for add")
-				case .taskDetail:
-					Text("This is task detail")
+				case .taskDetail(let task):
+					TaskDetailView(task: task)
 				}
 			}
 		}
@@ -75,13 +77,9 @@ struct ContentView: View {
 	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
 	let learnViewModel = LearnViewModel(modelContext: container.mainContext)
 	let routineDetailViewModel = RoutineDetailViewModel(modelContext: container.mainContext)
-	let routineAddViewModel = RoutineAddViewModel(modelContext: container.mainContext)
-	let taskAddViewModel = TaskAddViewModel(modelContext: container.mainContext)
-	
+
 	ContentView()
 		.environment(homeViewModel)
 		.environment(learnViewModel)
 		.environment(routineDetailViewModel)
-		.environment(routineAddViewModel)
-		.environment(taskAddViewModel)
 }

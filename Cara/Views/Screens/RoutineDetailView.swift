@@ -25,11 +25,6 @@ struct RoutineDetailView: View {
 	
 	@State private var currentElement: RoutineDetailElement = .task
 	
-	@State private var noteText: String = ""
-	@State private var lastEditedDate: Date? = nil
-	
-	@State private var checkedTasks: [UUID: Date] = [:]
-	
 	private let vitalColumns = [GridItem(.adaptive(minimum: 120), spacing: 8)]
 	
 	var body: some View {
@@ -182,18 +177,22 @@ struct RoutineDetailView: View {
 			} else {
 				VStack(spacing: 12) {
 					ForEach(routine.tasks) { task in
-						TaskCardView(
-							taskName: task.taskName,
-							style: checkedTasks[task.id] != nil ? .checked : .uncheckedCircle,
-							onButtonClick: {
-								if checkedTasks[task.id] != nil {
-									checkedTasks[task.id] = nil
-								} else {
-									checkedTasks[task.id] = Date()
-								}
-							},
-							clickTime: checkedTasks[task.id]
-						)
+						NavigationLink(
+							value: Screen.taskDetail(task: task)
+						) {
+							TaskCardView(
+								taskName: task.taskName,
+								style: routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle,
+								onButtonClick: {
+									if routineDetailViewModel.taskProgress[task.id] != nil {
+										routineDetailViewModel.taskProgress[task.id] = nil
+									} else {
+										routineDetailViewModel.taskProgress[task.id] = Date()
+									}
+								},
+								clickTime: routineDetailViewModel.taskProgress[task.id]
+							)
+						}
 					}
 				}
 			}
@@ -201,7 +200,9 @@ struct RoutineDetailView: View {
 	}
 	
 	private var noteSection: some View {
-		VStack(spacing: 24) {
+		@Bindable var routineDetailViewModel = self.routineDetailViewModel
+		
+		return VStack(spacing: 24) {
 			Text("Describe what happened")
 				.font(.title2)
 				.foregroundStyle(Color.appPrimary)
@@ -214,15 +215,12 @@ struct RoutineDetailView: View {
 					.fill(Color.selected.opacity(0.8))
 				
 				VStack(alignment: .leading, spacing: 0) {
-					TextEditor(text: $noteText)
+					TextEditor(text: $routineDetailViewModel.note)
 						.foregroundStyle(.appPrimary)
 						.scrollContentBackground(.hidden)
 						.padding(16)
-						.onChange(of: noteText) {
-							lastEditedDate = Date()
-						}
 					
-					if let date = lastEditedDate {
+					if let date = routineDetailViewModel.noteFilledDate {
 						Text("✓ Last edited at: \(date.formatted(date: .omitted, time: .shortened))")
 							.font(.caption)
 							.foregroundStyle(.secondary)
@@ -357,9 +355,9 @@ struct RoutineDetailView: View {
 				routineName: "Morning Routine",
 				routineDescription: "Every Morning",
 				tasks: [
-					RoutineTask(taskName: "Assisted Hip & Knee Flexion", howTo: []),
-					RoutineTask(taskName: "Scheduled Medication", howTo: []),
-					RoutineTask(taskName: "Tongue In-and-Outs", howTo: [])
+					RoutineTask(taskName: "Assisted Hip & Knee Flexion", taskDescription: "Desc", howTo: []),
+					RoutineTask(taskName: "Scheduled Medication", taskDescription: "Desc", howTo: []),
+					RoutineTask(taskName: "Tongue In-and-Outs", taskDescription: "Desc", howTo: [])
 				]
 			),
 			selectedDay: .now

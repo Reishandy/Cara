@@ -31,11 +31,11 @@ struct RoutineDetailEditView: View {
                 
                 ScrollView(.vertical, showsIndicators: true) {
                     ForEach (0..<10, id: \.self) { _ in
-                        NavigationLink(
-                            value: Screen.taskDetail
-                        ) {
+//                        NavigationLink(
+//                            value: Screen.taskDetail
+//                        ) {
                             TaskCardView(style: .noButton)
-                        }
+//                        }
                     }
                 }
             }
