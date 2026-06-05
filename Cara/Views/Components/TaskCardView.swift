@@ -14,6 +14,9 @@ struct TaskCardView: View {
         case noButton
     }
     
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .body) private var buttonIconSize = 30
+    
     let taskName: String
     let taskDesc: String
     let taskIconEach: String
@@ -36,48 +39,77 @@ struct TaskCardView: View {
         self.onButtonClick = onButtonClick
         self.clickTime = clickTime
     }
+    
     var body: some View {
-        HStack(spacing: 20){
-            TaskIconView(taskIcon: taskIconEach)
-            VStack (alignment: .leading, spacing: 5){
-                Text(taskName)
-                    .multilineTextAlignment(.leading)
-                    .foregroundStyle(Color("AppPrimaryColor"))
-                    .font(.system(size: 17, weight: .medium, design: .default))
-                    .frame(maxWidth: 170, alignment: .leading)
-                    .lineLimit(3)
-                    .truncationMode(.tail)
-                if let clickTime = clickTime {
-                    HStack{
-                        Image(systemName: "clock")
-                        Text(clickTime.formatted(date: .omitted, time: .shortened))
-                    }
-                    .font(Font.system(size: 12, weight: .regular, design: .default))
-                    .foregroundStyle(Color(.systemGray))
-                   
-                }
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                accessibilityLayout
+            } else {
+                regularLayout
             }
-            
-            Spacer()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(backgroundColor)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+    
+    private var regularLayout: some View {
+        HStack(alignment: .center, spacing: 20) {
+            TaskIconView(taskIcon: taskIconEach)
+            taskContent
+            Spacer(minLength: 12)
+            buttonView
+        }
+    }
+    
+    private var accessibilityLayout: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
+                TaskIconView(taskIcon: taskIconEach)
+                taskContent
+            }
             
             if style != .noButton {
-                Button {
-                    onButtonClick?()
-                } label: {
-                    Image(systemName: buttonIconName)
-                        .font(.system(size: 30))
-                        .foregroundStyle(Color("AppThirdColor"))
-                }
-                .buttonStyle(.plain)
+                buttonView
+                    .frame(maxWidth: .infinity, alignment: .trailing)
             }
-            
         }
-        .frame(maxWidth: .infinity,
-               minHeight: 30,
-               alignment: .leading)
-        .padding()
-        .background(Color("CapsuleColor"))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+    }
+    
+    private var taskContent: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(taskName)
+                .multilineTextAlignment(.leading)
+                .foregroundStyle(Color("AppPrimaryColor"))
+                .font(.headline)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if let clickTime = clickTime {
+                HStack(alignment: .top, spacing: 4) {
+                    Image(systemName: "clock")
+                    Text(clickTime.formatted(date: .omitted, time: .shortened))
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .font(.subheadline)
+                .foregroundStyle(Color("AppPrimaryColor").opacity(0.7))
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+    
+    @ViewBuilder
+    private var buttonView: some View {
+        if style != .noButton {
+            Button {
+                onButtonClick?()
+            } label: {
+                Image(systemName: buttonIconName)
+                    .font(.system(size: buttonIconSize))
+                    .foregroundStyle(Color("AppThirdColor"))
+            }
+            .buttonStyle(.plain)
+        }
     }
     
     private var backgroundColor: Color {
@@ -100,4 +132,24 @@ struct TaskCardView: View {
     TaskCardView(style: .checked)
     TaskCardView(style: .uncheckedCircle)
     TaskCardView(style: .noButton)
+}
+
+#Preview("Accessibility Text Scale") {
+    VStack {
+        TaskCardView(
+            taskName: "Scheduled Medication with a longer task name",
+            style: .plus
+        )
+        TaskCardView(
+            taskName: "Assisted Hip & Knee Flexion",
+            style: .checked,
+            clickTime: .now
+        )
+        TaskCardView(
+            taskName: "Tongue In-and-Outs",
+            style: .noButton
+        )
+    }
+    .padding()
+    .environment(\.dynamicTypeSize, .accessibility3)
 }

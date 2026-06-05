@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct VitalPillView: View {
+    @ScaledMetric(relativeTo: .body) private var spacing = 10
+    @ScaledMetric(relativeTo: .body) private var padding = 12
+    
 	let unit: String
 	let systemIcon: String
 	
@@ -15,7 +18,7 @@ struct VitalPillView: View {
 	@Binding var value: String
 	
 	var body: some View {
-        VStack(alignment: .center, spacing: 10) {
+        VStack(alignment: .center, spacing: spacing) {
             Image(systemName: systemIcon)
                 .font(.title2)
                 .foregroundStyle(.appPrimary)
@@ -30,10 +33,11 @@ struct VitalPillView: View {
             Text(unit)
                 .font(.caption)
                 .foregroundStyle(.appPrimary)
+                .fixedSize(horizontal: false, vertical: true)
             
         }
         .frame(maxWidth: .infinity)
-        .padding(12)
+        .padding(padding)
         .background(Color.appThird.opacity(0.2))
         .cornerRadius(12)
         
@@ -50,4 +54,12 @@ struct VitalPillView: View {
 		unit: "celcius", systemIcon: "thermometer.variable", value: .constant("")
 	)
 	.padding()
+}
+
+#Preview("Accessibility Text Scale") {
+    VitalPillView(
+        unit: "celcius", systemIcon: "thermometer.variable", value: .constant("36.5")
+    )
+    .padding()
+    .environment(\.dynamicTypeSize, .accessibility3)
 }
