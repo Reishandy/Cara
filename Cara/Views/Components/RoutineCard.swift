@@ -134,33 +134,45 @@ struct RoutineCard: View {
 	@ViewBuilder
 	private var vitalsGrid: some View {
 		if !(history.vital?.isEmty ?? false) {
-			LazyVGrid(columns: vitalColumns, spacing: 8) {
-				VitalRoutineView(
-					systemIcon: "blood.pressure.cuff",
-					value: bpString,
-					unit: "mm Hg"
-				)
-
-				VitalRoutineView(
-					systemIcon: "waveform.path.ecg",
-					value: hrString,
-					unit: "bpm"
-				)
-
-				VitalRoutineView(
-					systemIcon: "thermometer.variable",
-					value: tempString,
-					unit: "℃"
-				)
-
-				VitalRoutineView(
-					systemIcon: "lungs",
-					value: o2String,
-					unit: "%"
-				)
+			if dynamicTypeSize.isAccessibilitySize {
+				LazyVGrid(columns: vitalColumns, spacing: 8) {
+					vitalCards
+				}
+				.frame(maxWidth: .infinity)
+			} else {
+				HStack(spacing: 8) {
+					vitalCards
+				}
+				.frame(maxWidth: .infinity)
 			}
-			.frame(maxWidth: .infinity)
 		}
+	}
+	
+	@ViewBuilder
+	private var vitalCards: some View {
+		VitalRoutineView(
+			systemIcon: "blood.pressure.cuff",
+			value: bpString,
+			unit: "mm Hg"
+		)
+
+		VitalRoutineView(
+			systemIcon: "waveform.path.ecg",
+			value: hrString,
+			unit: "bpm"
+		)
+
+		VitalRoutineView(
+			systemIcon: "thermometer.variable",
+			value: tempString,
+			unit: "℃"
+		)
+
+		VitalRoutineView(
+			systemIcon: "lungs",
+			value: o2String,
+			unit: "%"
+		)
 	}
 
 	@ViewBuilder
