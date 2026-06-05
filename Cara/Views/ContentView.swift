@@ -17,12 +17,12 @@ struct ContentView: View {
 	@State private var selectedTab: Tab = .routine
 	
 	// FIXME: TODO List
-	//	- Routine detail and interactivity (routine desc)
-	//	- Search and filter for tasks
-	//	- Task detail revamp (also fix back button and from other place)
+	//	- Edit routine deail, including reorder
 	//	- Home crud routine
 	//	- Routine edit
-	//	- Task Detail edit
+	// FIXME: TODO List
+	//	- Task detail revamp (also fix back button and from other place)
+	//	- Task Detail add and edit
 	//	- Match padding sketch
 	//	- Do tabview color and chek dark mode
 	//	- Check large text accessability again
@@ -61,9 +61,11 @@ struct ContentView: View {
 	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
 	let learnViewModel = LearnViewModel(modelContext: container.mainContext)
 	let routineDetailViewModel = RoutineDetailViewModel(modelContext: container.mainContext)
+	let taskSelectViewModel = TaskSelectViewModel(modelContext: container.mainContext)
 	
 	ContentView()
 		.environment(homeViewModel)
 		.environment(learnViewModel)
 		.environment(routineDetailViewModel)
+		.environment(taskSelectViewModel)
 }

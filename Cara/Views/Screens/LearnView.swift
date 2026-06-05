@@ -22,7 +22,15 @@ struct LearnView: View {
         
         VStack {
             ScrollView(.vertical, showsIndicators: true) {
-                ForEach(learnViewModel.groupedTasks.keys.sorted(), id: \.self) { categoryName in
+				ForEach(learnViewModel.groupedTasks.keys.sorted(), id: \.self) { categoryName in
+					Text(categoryName)
+						.font(.title2)
+						.bold()
+						.foregroundStyle(.appPrimary)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding(.bottom, 4)
+						.padding(.top, 10)
+					
                     ForEach(learnViewModel.groupedTasks[categoryName] ?? [], id: \.id) { task in
 						NavigationLink {
 							TaskDetailView(task: task)
@@ -81,7 +89,7 @@ struct LearnView: View {
         }
         .navigationTitle("Learn")
 		.toolbarTitleDisplayMode(.inlineLarge)
-        .padding(.horizontal)
+        .padding(.horizontal, 20)
         .task {
             learnViewModel.fetchData()
         }

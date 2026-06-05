@@ -90,6 +90,7 @@ struct CaraApp: App {
 	@State private var homeViewModel = HomeViewModel(modelContext: sharedContainer.mainContext)
 	@State private var learnViewModel = LearnViewModel(modelContext: sharedContainer.mainContext)
 	@State private var routineDetailViewModel = RoutineDetailViewModel(modelContext: sharedContainer.mainContext)
+	@State private var taskSelectViewModel = TaskSelectViewModel(modelContext: sharedContainer.mainContext)
 	
 	var body: some Scene {
 		WindowGroup {
@@ -97,6 +98,7 @@ struct CaraApp: App {
 				.environment(homeViewModel)
 				.environment(learnViewModel)
 				.environment(routineDetailViewModel)
+				.environment(taskSelectViewModel)
 		}
 	}
 }

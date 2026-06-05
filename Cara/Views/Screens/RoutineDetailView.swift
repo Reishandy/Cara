@@ -67,12 +67,18 @@ struct RoutineDetailView: View {
 			
 			ToolbarItem(placement: .bottomBar) {
 				if currentElement == .task && routine.tasks.isEmpty {
-					Button {
-						///
+					NavigationLink {
+						TaskSelectionView(
+							initialTasks: routine.tasks,
+							onSaveAction: { tasks in
+								routine.tasks = tasks
+							}
+						)
 					} label: {
 						Text("Add Task")
 							.font(.headline)
 							.foregroundStyle(.white)
+							.multilineTextAlignment(.center)
 					}
 					.frame(maxWidth: .infinity)
 					.buttonStyle(.borderedProminent)
