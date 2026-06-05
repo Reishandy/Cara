@@ -34,7 +34,7 @@ struct HomeView: View {
                         Image(systemName: "chevron.down")
                     }
                     .padding(16)
-                    .background(.secondaryBackground)
+                    .background(.capsule)
                     .cornerRadius(26)
                     .foregroundStyle(.appPrimary)
                     
@@ -81,7 +81,7 @@ struct HomeHeaderView: View {
             Text("Caregiving")
                 .font(.largeTitle)
                 .bold()
-                .foregroundStyle(.appSecondary)
+                .foregroundStyle(.appPrimary)
             
             Spacer()
             
@@ -90,7 +90,7 @@ struct HomeHeaderView: View {
             ) {
                 Image(systemName: "plus")
                     .font(.system(size: 24, weight: .regular))
-                    .foregroundStyle(.appPrimary)
+                    .foregroundStyle(.appSecondary)
                     .frame(width: 48, height: 48)
                     .background(Color.background)
                     .clipShape(Circle())

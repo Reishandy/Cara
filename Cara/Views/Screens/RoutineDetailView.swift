@@ -13,7 +13,7 @@ enum RoutineDetailElement {
 }
 
 struct RoutineDetailView: View {
-
+    
     @Bindable var routine: Routine
     let selectedDay: Date
     
@@ -53,13 +53,13 @@ struct RoutineDetailView: View {
                 VStack(spacing: 24) {
                     VStack(alignment: .leading) {
                         HStack(spacing: 8) {
-                                ZStack{
-                                    Circle()
-                                        .fill(Color("AppPrimaryColor"))
-                                        .frame(width: 44, height: 44)
-                                    Image(systemName:"waveform.path.ecg.text.clipboard.fill")
-                                        .foregroundStyle(Color("BackgroundColor"))
-                                        .font(.system(size: 22))
+                            ZStack{
+                                Circle()
+                                    .fill(Color.secondaryBackground)
+                                    .frame(width: 44, height: 44)
+                                Image(systemName:"waveform.path.ecg.text.clipboard.fill")
+                                    .foregroundStyle(Color("BackgroundColor"))
+                                    .font(.system(size: 22))
                                 
                             }
                             Text("Vitals Check")
@@ -117,7 +117,7 @@ struct RoutineDetailView: View {
                         }
                     }
                     .padding(12)
-                    .background(Color.gray.opacity(0.1))
+                    .background(Color.capsule)
                     .cornerRadius(12)
                 }
                 
@@ -145,16 +145,16 @@ struct RoutineDetailView: View {
                     else {
                         VStack(spacing: 12) {
                             ForEach(routine.tasks) { task in
-                            TaskCardView(
-                                taskName: task.taskName,
-                                style: checkedTasks[task.id] != nil ? .checked : .uncheckedCircle, onButtonClick: {
-                                    if checkedTasks[task.id] != nil {
-                                        checkedTasks[task.id] = nil
-                                    } else {
-                                        checkedTasks[task.id] = Date()
-                                    }
-                                },
-                                clickTime: checkedTasks[task.id]
+                                TaskCardView(
+                                    taskName: task.taskName,
+                                    style: checkedTasks[task.id] != nil ? .checked : .uncheckedCircle, onButtonClick: {
+                                        if checkedTasks[task.id] != nil {
+                                            checkedTasks[task.id] = nil
+                                        } else {
+                                            checkedTasks[task.id] = Date()
+                                        }
+                                    },
+                                    clickTime: checkedTasks[task.id]
                                 )
                             }
                         }
@@ -169,7 +169,6 @@ struct RoutineDetailView: View {
                     .foregroundStyle(Color.appPrimary)
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
                 ZStack(alignment: .bottomTrailing) {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.background.opacity(0.8))
@@ -216,8 +215,8 @@ struct RoutineDetailView: View {
             
             // Add Task button
             
-                ToolbarItem(placement: .bottomBar) {
-                    if currentElement == .task && routine.tasks.isEmpty {
+            ToolbarItem(placement: .bottomBar) {
+                if currentElement == .task && routine.tasks.isEmpty {
                     Button {
                         ///
                     } label: {
@@ -230,11 +229,11 @@ struct RoutineDetailView: View {
                     .tint(Color("AppThirdColor"))
                 }
             }
-           
+            
             // Edit button
             
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    if currentElement == .task && !routine.tasks.isEmpty {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if currentElement == .task && !routine.tasks.isEmpty {
                     Button {
                         ///
                     } label: {
@@ -246,7 +245,7 @@ struct RoutineDetailView: View {
                 }
             }
             
-
+            
         }
         .navigationBarTitleDisplayMode(.inline)
         .onAppear{
@@ -259,7 +258,7 @@ struct RoutineDetailView: View {
             UISegmentedControl.appearance().setTitleTextAttributes(
                 [.foregroundColor: UIColor.appPrimary],
                 for: .normal
-                )
+            )
         }
     }
 }
@@ -268,10 +267,10 @@ struct RoutineDetailView: View {
     NavigationStack {
         RoutineDetailView(
             routine: Routine(
-            routineName: "Morning Routine",
-            routineDescription: "Every Morning"
+                routineName: "Morning Routine",
+                routineDescription: "Every Morning"
             ), selectedDay: .now
-            )
+        )
     }
 }
 
