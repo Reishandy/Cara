@@ -13,7 +13,7 @@ nonisolated struct TaskProgress: Codable {
 }
 
 @Model
-final class History: Seedable { // FIXME: Remove placeholder
+class History {
 	var id: UUID
 	
 	var date: Date
@@ -32,33 +32,6 @@ final class History: Seedable { // FIXME: Remove placeholder
 		self.note = note
 		self.vital = vital
 		self.routine = routine
-	}
-	
-	static var defaultData: [History] {
-		// FIXME: Remove dummy routine
-		let dummyCategory = TaskCategory(categoryName: "Dummy", isDefault: true)
-		let dummyTasks = [
-			RoutineTask(taskName: "dummy", taskIcon: "circle.fill", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-			RoutineTask(taskName: "dummy", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory)
-		]
-		let dummyRoutine = Routine(routineName: "Dummy", routineDescription: "Dummy Routine", tasks: dummyTasks)
-		let dummyVital = Vital(bloodPressure: BloodPressure(systolic: 1, diastolic: 1), temperature: 10.2)
-		let dummyHistory = History(
-			date: .now,
-			taskProgress: TaskProgress(
-				filledAt: [
-					dummyTasks[0].id: .now,
-					dummyTasks[1].id: .now
-				]
-			),
-			note: "This is a dummy note",
-			vital: dummyVital,
-			routine: dummyRoutine
-		)
-		
-		return [dummyHistory]
 	}
 	
 	var validCompletedTask: [UUID: Date] {

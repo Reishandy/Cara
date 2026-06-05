@@ -8,11 +8,9 @@
 import Foundation
 
 enum Screen: Hashable {
-	// FIXME: Check list of navigation later
 	case home
 	case learn
 	case routineDetail(routine: Routine, day: Date)
-	case routineAdd
+	case taskSelection
 	case taskDetail
-	case taskAdd
 }

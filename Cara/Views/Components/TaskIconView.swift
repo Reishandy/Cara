@@ -8,16 +8,19 @@
 import SwiftUI
 
 struct TaskIconView: View {
+    @ScaledMetric(relativeTo: .body) private var circleSize = 44
+    @ScaledMetric(relativeTo: .body) private var iconSize = 26
+    
     var taskIcon: String = "pill.circle.fill"
 
     var body: some View {
         ZStack{
             Circle()
                 .fill(Color("AppSecondaryColor"))
-                .frame(width: 44, height: 44)
+                .frame(width: circleSize, height: circleSize)
             Image(systemName:taskIcon)
                 .foregroundStyle(Color("BackgroundColor"))
-                .font(.system(size: 26))
+                .font(.system(size: iconSize))
         }
     }
 }
