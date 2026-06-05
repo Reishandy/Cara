@@ -23,7 +23,6 @@ struct ContentView: View {
 	//	- Home crud routine
 	//	- Routine edit
 	//	- Task Detail edit
-	//	- Toolbar in contentview
 	//	- Match padding sketch
 	//	- Do tabview color and chek dark mode
 	//	- Check large text accessability again

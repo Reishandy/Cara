@@ -43,22 +43,41 @@ struct LearnView: View {
             )
         }
         .toolbar{
-            ToolbarItem(placement: .topBarTrailing){
-                Menu {
-                    Button("All") {
-                        learnViewModel.categoryFilter = []
-                    }
-                    
-                    ForEach(learnViewModel.categories, id: \.id) { category in
-                        Button(category.categoryName) {
-                            learnViewModel.categoryFilter = [category]
-                        }
-                    }
-                } label: {
-                    Label("Filter", systemImage: "line.3.horizontal.decrease")
-                }
-                
-            }
+			ToolbarItem(placement: .topBarTrailing) {
+				Menu {
+					Section("Categories") {
+						Button {
+							learnViewModel.categoryFilter = []
+						} label: {
+							if learnViewModel.categoryFilter.isEmpty {
+								Label("All", systemImage: "checkmark")
+							} else {
+								Text("All")
+							}
+						}
+						
+						ForEach(learnViewModel.categories, id: \.id) { category in
+							let isSelected = learnViewModel.categoryFilter.contains(where: { $0.id == category.id })
+							
+							Button {
+								if isSelected {
+									learnViewModel.categoryFilter.removeAll { $0.id == category.id }
+								} else {
+									learnViewModel.categoryFilter.append(category)
+								}
+							} label: {
+								if isSelected {
+									Label(category.categoryName, systemImage: "checkmark")
+								} else {
+									Text(category.categoryName)
+								}
+							}
+						}
+					}
+				} label: {
+					Label("Filter", systemImage: "line.3.horizontal.decrease")
+				}
+			}
         }
         .navigationTitle("Learn")
 		.toolbarTitleDisplayMode(.inlineLarge)
