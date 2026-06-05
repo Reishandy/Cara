@@ -24,50 +24,56 @@ struct HomeView: View {
     var body: some View {
 		ZStack(alignment: .top) {
             ScrollView {
-                // FIXME: Consider putting it in a menu
-                Button {
-                    showDatePicker = true
-                } label: {
-                    HStack {
-                        Text(formattedDateString)
-                        Spacer()
-                        Image(systemName: "chevron.down")
-                    }
-                    .padding(16)
-                    .background(.secondaryBackground)
-                    .cornerRadius(26)
-                    .foregroundStyle(.appPrimary)
-                    
-                }
-                .sheet(isPresented: $showDatePicker) {
-                    DatePicker(
-                        "Select Date",
-                        selection: Binding(
-                            get: { homeViewModel.routineDay },
-                            set: { homeViewModel.selectedDay = $0 }
-                        ),
-						in: homeViewModel.earliestHistoryDate...Date.now,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.graphical)
-                    .padding()
-                    .presentationDetents([.medium])
-                    .presentationDragIndicator(.visible)
-                }
-                
-                ForEach(homeViewModel.routines, id: \.self) { routine in
-                    if let history = homeViewModel.historiesDict[routine.id] {
-                        RoutineCard(routine: routine, history: history)
-                    }
-                }
+				VStack(alignment: .leading) {
+					Button {
+						showDatePicker = true
+					} label: {
+						HStack {
+							Text(formattedDateString)
+							Spacer()
+							Image(systemName: "chevron.down")
+						}
+						.padding(16)
+						.background(.secondaryBackground)
+						.cornerRadius(26)
+						.foregroundStyle(.appPrimary)
+						
+					}
+					.sheet(isPresented: $showDatePicker) {
+						DatePicker(
+							"Select Date",
+							selection: Binding(
+								get: { homeViewModel.routineDay },
+								set: { homeViewModel.selectedDay = $0 }
+							),
+							in: homeViewModel.earliestHistoryDate...Date.now,
+							displayedComponents: .date
+						)
+						.datePickerStyle(.graphical)
+						.padding()
+						.presentationDetents([.medium])
+						.presentationDragIndicator(.visible)
+					}
+					
+					Text("Routines")
+						.font(.title)
+						.bold()
+						.foregroundStyle(.appPrimary)
+					
+					ForEach(homeViewModel.routines, id: \.self) { routine in
+						if let history = homeViewModel.historiesDict[routine.id] {
+							RoutineCard(routine: routine, history: history, selectedDay: homeViewModel.selectedDay)
+						}
+					}
+				}
+				.padding(.horizontal, 20)
             }
 			.padding(.top, 70)
 			
 			HomeHeaderView()
+				.padding(.horizontal, 20)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 16)
-        .padding(.top, 12)
         .task {
             homeViewModel.fetchData()
         }

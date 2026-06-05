@@ -11,30 +11,7 @@ import SwiftData
 struct RoutineCard: View {
 	let routine: Routine
 	let history: History
-	
-	var body: some View {
-		VStack(alignment: .leading, spacing: 16) {
-			// FIXME: Do we need this?
-			Text(routine.routineName)
-				.font(.title)
-				.bold()
-				.foregroundStyle(.appPrimary)
-			
-			RoutineBody(routine: routine, history: history)
-		}
-	}
-}
-
-private struct RoutineBody: View {
-	@Environment(HomeViewModel.self) var homeViewModel
-	
-	let routine: Routine
-	let history: History
-	
-	// FIXME: Do we need this?
-	var bestTime: String {
-		"Best time: 05:00 - 11:59"
-	}
+	let selectedDay: Date
 	
 	private var bpString: String {
 		history.vital?.bloodPressure.map { "\($0.systolic)/\($0.diastolic)" } ?? "-/-"
@@ -51,7 +28,7 @@ private struct RoutineBody: View {
 	
 	var body: some View {
 		NavigationLink(
-			value: Screen.routineDetail(routine: routine, day: homeViewModel.selectedDay)
+			value: Screen.routineDetail(routine: routine, day: selectedDay)
 		) {
 			VStack(alignment: .leading) {
 				HStack {
@@ -69,9 +46,11 @@ private struct RoutineBody: View {
 									.font(.title2)
 									.bold()
 									.foregroundStyle(.appPrimary)
-								Text(bestTime)
+								Text(routine.routineDescription)
 									.font(.subheadline)
 									.foregroundStyle(.appThird)
+									.lineLimit(1)
+									.truncationMode(.tail)
 							}
 							
 							Spacer()
@@ -81,7 +60,7 @@ private struct RoutineBody: View {
 						}
 						
 						HStack {
-							ForEach(routine.tasks, id: \.self) { task in
+							ForEach(routine.tasks[1...5], id: \.self) { task in
 								ZStack {
 									Circle()
 										.foregroundStyle(.appThird)
@@ -107,34 +86,35 @@ private struct RoutineBody: View {
 				
 				Spacer().frame(height: 16)
 				
-				HStack {
-					VitalRoutineView(
-						systemIcon: "blood.pressure.cuff",
-						value: bpString,
-						unit: "mm Hg"
-					)
-					
-					VitalRoutineView(
-						systemIcon: "waveform.path.ecg",
-						value: hrString,
-						unit: "bpm"
-					)
-					
-					VitalRoutineView(
-						systemIcon: "thermometer.variable",
-						value: tempString,
-						unit: "℃"
-					)
-					
-					VitalRoutineView(
-						systemIcon: "lungs",
-						value: o2String,
-						unit: "%"
-					)
+				if !(history.vital?.isEmty ?? false) {
+					HStack {
+						VitalRoutineView(
+							systemIcon: "blood.pressure.cuff",
+							value: bpString,
+							unit: "mm Hg"
+						)
+						
+						VitalRoutineView(
+							systemIcon: "waveform.path.ecg",
+							value: hrString,
+							unit: "bpm"
+						)
+						
+						VitalRoutineView(
+							systemIcon: "thermometer.variable",
+							value: tempString,
+							unit: "℃"
+						)
+						
+						VitalRoutineView(
+							systemIcon: "lungs",
+							value: o2String,
+							unit: "%"
+						)
+					}
+					.frame(maxWidth: .infinity)
+					.padding(.bottom, 16)
 				}
-				.frame(maxWidth: .infinity)
-				
-				Spacer().frame(height: 16)
 				
 				if !history.note.isEmpty {
 					HStack {
@@ -216,11 +196,6 @@ struct CircularProgressRing: View {
 }
 
 #Preview {
-	let container = try! ModelContainer(
-		for: Routine.self, RoutineTask.self, TaskCategory.self, History.self, Vital.self,
-		configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-	)
-	
 	let routine = Routine(
 		routineName: "Taking care of my heart",
 		routineDescription: "Take care of your heart",
@@ -228,21 +203,14 @@ struct CircularProgressRing: View {
 	)
 	
 	let history = History(
-		date: Date.now,
+		date: .now,
 		taskProgress: TaskProgress(filledAt: [UUID(): Date.now]),
 		note: "Mama is here",
 		vital: Vital(),
 		routine: routine
 	)
 	
-	container.mainContext.insert(routine)
-	container.mainContext.insert(history)
-	
-	let homeViewModel = HomeViewModel(modelContext: container.mainContext)
-	
-	return NavigationStack {
-		RoutineCard(routine: routine, history: history)
+	NavigationStack {
+		RoutineCard(routine: routine, history: history, selectedDay: .now)
 	}
-	.environment(homeViewModel)
-	.modelContainer(container)
 }

@@ -32,4 +32,8 @@ class Vital {
 		self.temperature = temperature
 		self.history = history
 	}
+	
+	var isEmty: Bool {
+		return self.bloodPressure == nil && self.heartRate == nil && self.oxygenSaturation == nil && self.temperature == nil
+	}
 }
