@@ -215,7 +215,7 @@ struct VitalRoutineView: View {
 		}
 		.frame(maxWidth: .infinity)
 		.padding(cardPadding)
-		.background(.appFourth)
+		.background(.selected)
 		.clipShape(RoundedRectangle(cornerRadius: 8))
 	}
 }
