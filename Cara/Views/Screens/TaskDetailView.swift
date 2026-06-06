@@ -8,10 +8,13 @@
 import SwiftUI
 
 struct TaskDetailView: View {
+	@Environment(\.colorScheme) var colorScheme
+	
     @State private var showAppBarTitle = false
     
 	let task: RoutineTask
     
+	// FIXME: Check this again, the layour and stuff
     var body: some View {
         ZStack(alignment: .top) {
             headerImage
@@ -35,26 +38,25 @@ struct TaskDetailView: View {
             }
         }
         .ignoresSafeArea(edges: .top)
-		.navigationTitle(task.taskName)
 		.toolbar(.hidden, for: .tabBar)
     }
     
-	// FIXME: Actually use the image data
-    let imageUrl = "https://www.seniorlivingarrangements.com/wp-content/uploads/2018/08/Senior-Care-Centre.jpg"
-    
     private var headerImage: some View {
         ZStack(alignment: .bottomLeading) {
-            AsyncImage(url: URL(string: imageUrl)) { image in
-                image
-                    .resizable()
-                    .frame(height: 430)
-                    .clipped()
-            } placeholder: {
-                Color.gray
-            }
+			if let imageSystemName = task.imageSystemName {
+				Image(imageSystemName)
+					.resizable()
+					.clipped()
+			}
+			
+			if let image = UIImage(data: task.image ?? Data()) {
+				Image(uiImage: image)
+			}
+			
+			Color.gray
             
             LinearGradient(
-                colors: [.clear, .black],
+				colors: [.clear, colorScheme == .dark ? .black : .white],
                 startPoint: .center,
                 endPoint: .bottom
             )
@@ -64,7 +66,6 @@ struct TaskDetailView: View {
     
     private var contentView: some View {
         VStack(alignment: .leading) {
-            
             if !showAppBarTitle {
 				Text(task.taskName)
                     .font(.title2)
@@ -72,6 +73,7 @@ struct TaskDetailView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 4)
+					.shadow(color: .black.opacity(0.8), radius: 10, x: 0, y: 2)
             } else {
                 Spacer().frame(height: 60)
             }

@@ -18,17 +18,19 @@ final class RoutineTask: Seedable {
 	var howTo: [String]
 	var isDefault: Bool
 	
+	var imageSystemName: String?
 	@Attribute(.externalStorage) var image: Data?
 	
 	var category: TaskCategory?
 	var routines: [Routine] = []
 	
-	init(taskName: String, taskDescription: String, taskIcon: String = "cross.fill", howTo: [String], isDefault: Bool = false, image: Data? = nil, category: TaskCategory? = nil) {
+	init(taskName: String, taskDescription: String, taskIcon: String = "cross.fill", howTo: [String], isDefault: Bool = false, imageSystemName: String? = nil, image: Data? = nil, category: TaskCategory? = nil) {
 		self.id = UUID()
 		self.taskName = taskName
 		self.taskDescription = taskDescription
 		self.taskIcon = taskIcon
 		self.howTo = howTo
+		self.imageSystemName = imageSystemName
 		self.image = image
 		self.isDefault = isDefault
 		self.category = category
@@ -58,6 +60,7 @@ final class RoutineTask: Seedable {
 					"Hold at the highest comfortable point for 5 seconds, then slowly lower it back down."
 				],
 				isDefault: true,
+				imageSystemName: "task1",
 				category: physical
 			),
 			RoutineTask(

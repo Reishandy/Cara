@@ -17,12 +17,7 @@ struct ContentView: View {
 	@State private var selectedTab: Tab = .routine
 	
 	// FIXME: TODO List
-	//	- Home crud routine
-	//	- Routine edit
-	// FIXME: TODO List
-	//	- Task detail revamp (also fix back button and from other place)
-	//	- Task Detail add and edit
-	//	- Match padding sketch
+	//	- Task Detail add and edit?
 	//	- Do tabview color and chek dark mode
 	//	- Check large text accessability again
 	//	- Animation
