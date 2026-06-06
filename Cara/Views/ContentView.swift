@@ -17,7 +17,6 @@ struct ContentView: View {
 	@State private var selectedTab: Tab = .routine
 	
 	// FIXME: TODO List
-	//	- Edit routine deail, including reorder
 	//	- Home crud routine
 	//	- Routine edit
 	// FIXME: TODO List
