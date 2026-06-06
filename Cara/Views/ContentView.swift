@@ -18,7 +18,6 @@ struct ContentView: View {
 	
 	// FIXME: TODO List
 	//	- Task Detail add and edit?
-	//	- Do tabview color and chek dark mode
 	//	- Check large text accessability again
 	//	- Animation
 	
@@ -46,6 +45,7 @@ struct ContentView: View {
 				}
 			}
 		}
+		.tint(.appSecondary)
 	}
 }
 

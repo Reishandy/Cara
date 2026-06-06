@@ -173,7 +173,7 @@ struct HomeHeaderView: View {
 			} label: {
 				Image(systemName: "plus")
 					.font(.system(size: iconSize, weight: .regular))
-					.foregroundStyle(.appPrimary)
+					.foregroundStyle(.appSecondary)
 					.frame(width: buttonSize, height: buttonSize)
 					.background(Color.background)
 					.clipShape(Circle())

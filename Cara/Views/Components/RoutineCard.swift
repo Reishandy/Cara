@@ -124,7 +124,6 @@ struct RoutineCard: View {
 		}
 	}
 	
-	// FIXME: This somehow makes the content scrollable like in a canvas?
 	@ViewBuilder
 	private var vitalsGrid: some View {
 		if !(history.vital?.isEmty ?? false) {
