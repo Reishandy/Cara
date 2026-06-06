@@ -86,14 +86,17 @@ struct TaskSelectionView: View {
 		if dynamicTypeSize.isAccessibilitySize {
 			VStack(spacing: 2) {
 				Text("\(taskSelectViewModel.selectedTasks.count) Selected")
+					.foregroundStyle(.white)
 				Text("Save")
 					.font(.headline)
+					.foregroundStyle(.white)
 			}
 			.multilineTextAlignment(.center)
 		} else {
 			Text("\(taskSelectViewModel.selectedTasks.count) Selected • Save")
 				.font(.headline)
 				.multilineTextAlignment(.center)
+				.foregroundStyle(.white)
 		}
 	}
 }

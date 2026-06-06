@@ -89,7 +89,7 @@ struct RoutineDetailView: View {
 			}
 			
 			ToolbarItem(placement: .navigationBarTrailing) {
-				if currentElement == .task && (!routine.tasks.isEmpty || isEdit) {
+				if currentElement == .task {
 					EditButton()
 				}
 			}
@@ -127,6 +127,13 @@ struct RoutineDetailView: View {
 		List {
 			if !isEdit {
 				vitalsSection
+					.listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 12, trailing: 20))
+					.listRowSeparator(.hidden)
+					.listRowBackground(Color.clear)
+			}
+			
+			if isEdit {
+				RoutineFormView(name: $routine.routineName, description: $routine.routineDescription)
 					.listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 12, trailing: 20))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
