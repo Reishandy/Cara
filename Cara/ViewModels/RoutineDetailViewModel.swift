@@ -66,6 +66,8 @@ class RoutineDetailViewModel {
 		self.currentHistory?.noteFilledAt
 	}
 	
+	private var routine: Routine?
+	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
 	}
@@ -90,8 +92,33 @@ class RoutineDetailViewModel {
 			let fetchedHistories = try modelContext.fetch(FetchDescriptor<History>(predicate: currentHistoryPredicate))
 			
 			self.currentHistory = fetchedHistories.first(where: { $0.routine.id == routine.id })
+			self.routine = routine
 		} catch {
 			print("ERROR > Failed populating routine history: \(error)")
+		}
+	}
+	
+	/// Function to sort tasks
+	func moveTasks(from source: IndexSet, to destination: Int) {
+		guard let routine = self.routine else { return }
+		
+		routine.taskOrder.move(fromOffsets: source, toOffset: destination)
+	}
+	
+	/// Function to remove tasks
+	func removeTasks(at offsets: IndexSet) {
+		guard let routine = self.routine else { return }
+		
+		for index in offsets {
+			let taskToRemove = routine.orderedTasks[index]
+			
+			if let orderIndex = routine.taskOrder.firstIndex(of: taskToRemove.id) {
+				routine.taskOrder.remove(at: orderIndex)
+			}
+			
+			if let relationshipIndex = routine.tasks.firstIndex(of: taskToRemove) {
+				routine.tasks.remove(at: relationshipIndex)
+			}
 		}
 	}
 }

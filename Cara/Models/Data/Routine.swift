@@ -15,6 +15,7 @@ final class Routine: Seedable {
 	
 	var routineName: String
 	var routineDescription: String
+	var taskOrder: [UUID] = []
 	
 	@Relationship(inverse: \RoutineTask.routines)
 	var tasks: [RoutineTask] = []
@@ -28,6 +29,12 @@ final class Routine: Seedable {
 		self.routineName = routineName
 		self.routineDescription = routineDescription
 		self.tasks = tasks
+	}
+	
+	var orderedTasks: [RoutineTask] {
+		taskOrder.compactMap { uuid in
+			tasks.first { $0.id == uuid }
+		}
 	}
 	
 	static var defaultData: [Routine] {

@@ -79,6 +79,22 @@ class HomeViewModel {
 		}
 	}
 	
+	/// Function to remove routine
+	///
+	/// Only remove non default routine
+	func removeRoutine(at offsets: IndexSet) {
+		// FIXME: Implement
+		
+		for index in offsets {
+			let routineToRemove = routines[index]
+			
+			if let routineIndex = routines.firstIndex(of: routineToRemove) {
+				self.modelContext.delete(routines[routineIndex])
+				self.routines.remove(at: routineIndex)
+			}
+		}
+	}
+	
 	private func fetchRoutines() throws -> [Routine] {
 		return try modelContext.fetch(FetchDescriptor<Routine>(
 			sortBy: [SortDescriptor(\.timestamp, order: .forward)]

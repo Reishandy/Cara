@@ -14,6 +14,7 @@ enum RoutineDetailElement {
 }
 
 struct RoutineDetailView: View {
+	@Environment(\.editMode) private var editMode
 	@Environment(RoutineDetailViewModel.self) var routineDetailViewModel
 	@Environment(\.dynamicTypeSize) private var dynamicTypeSize
 	
@@ -24,35 +25,38 @@ struct RoutineDetailView: View {
 	@ScaledMetric(relativeTo: .body) private var vitalHeaderIconSize = 22
 	
 	@State private var currentElement: RoutineDetailElement = .task
-	@State private var isEdit: Bool = false
+	@State private var showTaskSelection = false
+	
+	private var isEdit: Bool {
+		editMode?.wrappedValue == .active
+	}
 	
 	private let vitalColumns = [GridItem(.adaptive(minimum: 120), spacing: 8)]
 	
 	var body: some View {
-		ScrollView {
-			VStack(spacing: 24) {
-				if !isEdit {
-					Picker("Routine Detail Element", selection: $currentElement) {
-						Text("Task")
-							.tag(RoutineDetailElement.task)
-						
-						Text("Note")
-							.tag(RoutineDetailElement.note)
-					}
-					.pickerStyle(.segmented)
-					.padding(.top, 16)
+		VStack(spacing: 24) {
+			if !isEdit {
+				Picker("Routine Detail Element", selection: $currentElement) {
+					Text("Task")
+						.tag(RoutineDetailElement.task)
+					
+					Text("Note")
+						.tag(RoutineDetailElement.note)
 				}
-				
-				switch currentElement {
-				case .task:
-					taskSection
-				case .note:
-					noteSection
-				}
-				
-				Spacer()
+				.pickerStyle(.segmented)
+				.padding(.top, 16)
+				.padding(.horizontal, 20)
 			}
-			.padding(.horizontal, 20)
+			
+			switch currentElement {
+			case .task:
+				taskSection
+			case .note:
+				noteSection
+					.padding(.horizontal, 20)
+			}
+			
+			Spacer()
 		}
 		.toolbar {
 			ToolbarItem(placement: .principal) {
@@ -70,17 +74,10 @@ struct RoutineDetailView: View {
 			
 			ToolbarItem(placement: .bottomBar) {
 				if currentElement == .task && (routine.tasks.isEmpty || isEdit) {
-					NavigationLink {
-						TaskSelectionView(
-							initialTasks: routine.tasks,
-							onSaveAction: { tasks in
-								routine.tasks = tasks
-							},
-							isEdit: isEdit
-						)
+					Button {
+						showTaskSelection = true
 					} label: {
-						// FIXME: This align to leading after changing nav or back from taskselection
-						Text(routine.tasks.isEmpty ? "Add Task" : "Modoify Task")
+						Text(routine.tasks.isEmpty ? "Add Task" : "Modify Task")
 							.font(.headline)
 							.foregroundStyle(.white)
 							.multilineTextAlignment(.center)
@@ -93,12 +90,7 @@ struct RoutineDetailView: View {
 			
 			ToolbarItem(placement: .navigationBarTrailing) {
 				if currentElement == .task && (!routine.tasks.isEmpty || isEdit) {
-					Button {
-						isEdit.toggle()
-					} label: {
-						Text(isEdit ? "Done" : "Edit")
-							.foregroundColor(.appPrimary)
-					}
+					EditButton()
 				}
 			}
 		}
@@ -119,15 +111,30 @@ struct RoutineDetailView: View {
 		.task {
 			routineDetailViewModel.fetchData(routine: routine, day: selectedDay)
 		}
+		.navigationDestination(isPresented: $showTaskSelection) {
+			TaskSelectionView(
+				initialTasks: routine.tasks,
+				onSaveAction: { tasks in
+					routine.tasks = tasks
+					routine.taskOrder = tasks.map { $0.id }
+				},
+				isEdit: isEdit
+			)
+		}
 	}
 	
 	private var taskSection: some View {
-		VStack(spacing: 24) {
+		List {
 			if !isEdit {
 				vitalsSection
+					.listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 12, trailing: 20))
+					.listRowSeparator(.hidden)
+					.listRowBackground(Color.clear)
 			}
+			
 			tasksList
 		}
+		.listStyle(.plain)
 	}
 	
 	private var vitalsSection: some View {
@@ -173,50 +180,55 @@ struct RoutineDetailView: View {
 	
 	@ViewBuilder
 	private var tasksList: some View {
-		VStack(spacing: 24) {
-			if routine.tasks.isEmpty {
-				VStack(spacing: 8) {
-					Text("No Tasks")
-						.font(.title2)
-						.bold()
-						.foregroundStyle(.secondary)
-						.fixedSize(horizontal: false, vertical: true)
-					Text("Start by adding a task")
-						.font(.subheadline)
-						.foregroundStyle(.secondary)
-						.fixedSize(horizontal: false, vertical: true)
-				}
-				.frame(maxWidth: .infinity)
-				.padding(.vertical, 90)
-			} else {
-				VStack(spacing: 12) {
-					ForEach(routine.tasks) { task in
-						NavigationLink {
-							TaskDetailView(task: task)
-						} label: {
-							TaskCardView(
-								taskName: task.taskName,
-								style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle),
-								onButtonClick: {
-									if routineDetailViewModel.taskProgress[task.id] != nil {
-										routineDetailViewModel.taskProgress[task.id] = nil
-									} else {
-										routineDetailViewModel.taskProgress[task.id] = Date()
-									}
-								},
-								clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
-							)
-						}
+		if routine.tasks.isEmpty {
+			VStack(spacing: 8) {
+				Text("No Tasks")
+					.font(.title2)
+					.bold()
+					.foregroundStyle(.secondary)
+					.fixedSize(horizontal: false, vertical: true)
+				Text("Start by adding a task")
+					.font(.subheadline)
+					.foregroundStyle(.secondary)
+					.fixedSize(horizontal: false, vertical: true)
+			}
+			.frame(maxWidth: .infinity)
+			.padding(.vertical, 90)
+		} else {
+			ForEach(routine.orderedTasks) { task in
+				ZStack {
+					NavigationLink {
+						TaskDetailView(task: task)
+					} label: {
+						EmptyView()
 					}
+					.opacity(0)
+					
+					TaskCardView(
+						taskName: task.taskName,
+						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle),
+						onButtonClick: {
+							if routineDetailViewModel.taskProgress[task.id] != nil {
+								routineDetailViewModel.taskProgress[task.id] = nil
+							} else {
+								routineDetailViewModel.taskProgress[task.id] = Date()
+							}
+						},
+						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
+					)
 				}
 			}
+			.onDelete(perform: routineDetailViewModel.removeTasks)
+			.onMove(perform: routineDetailViewModel.moveTasks)
+			.listRowSeparator(.hidden)
+			.listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
 		}
 	}
 	
 	private var noteSection: some View {
 		@Bindable var routineDetailViewModel = self.routineDetailViewModel
 		
-		return VStack(spacing: 24) {
+		return VStack(spacing: 12) {
 			Text("Describe what happened")
 				.font(.title2)
 				.foregroundStyle(Color.appPrimary)
