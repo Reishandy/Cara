@@ -14,6 +14,7 @@ struct HomeView: View {
 	@Environment(HomeViewModel.self) var homeViewModel
 	
 	@State private var showDatePicker = false
+	@State private var showAddRoutineSheet = false
 	
 	private var formattedDateString: String {
 		let formatter = DateFormatter()
@@ -25,6 +26,8 @@ struct HomeView: View {
 	// FIXME: Currently we can delete any routine soo...
 	//			^ thankfully the action is hidden, maybe a confirmation dialog is good?
 	var body: some View {
+		@Bindable var homeViewModel = self.homeViewModel
+		
 		ZStack(alignment: .top) {
 			List {
 				VStack(alignment: .leading, spacing: 16) {
@@ -99,12 +102,51 @@ struct HomeView: View {
 			.listStyle(.plain)
 			.padding(.top, 70)
 			
-			HomeHeaderView()
-				.padding(.horizontal, 20)
+			HomeHeaderView {
+				showAddRoutineSheet = true
+			}
+			.padding(.horizontal, 20)
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.task {
 			homeViewModel.fetchData()
+		}
+		.sheet(isPresented: $showAddRoutineSheet) {
+			VStack(spacing: 36) {
+				HStack {
+					Button {
+						showAddRoutineSheet = false
+					} label: {
+						Text("Cancel")
+							.font(.title3)
+							.frame(width: 80)
+					}
+					.buttonStyle(.glass)
+					
+					Spacer()
+					
+					Button {
+						showAddRoutineSheet = false
+						homeViewModel.addRoutine()
+					} label: {
+						Text("Save")
+							.font(.title3)
+							.frame(width: 80)
+					}
+					.buttonStyle(.glassProminent)
+					.disabled(homeViewModel.addRoutineName.isEmpty || homeViewModel.addRoutineDescription.isEmpty)
+				}
+				
+				RoutineFormView(
+					name: $homeViewModel.addRoutineName,
+					description: $homeViewModel.addRoutineDescription
+				)
+				
+				Spacer()
+			}
+			.padding(20)
+			.presentationDetents([.medium])
+			.interactiveDismissDisabled()
 		}
 	}
 	
@@ -113,6 +155,8 @@ struct HomeView: View {
 struct HomeHeaderView: View {
 	@ScaledMetric(relativeTo: .body) private var buttonSize = 48
 	@ScaledMetric(relativeTo: .body) private var iconSize = 24
+	
+	var onAddButtonClick: () -> Void
 	
 	var body: some View {
 		HStack(alignment: .center) {
@@ -125,7 +169,7 @@ struct HomeHeaderView: View {
 			Spacer(minLength: 12)
 			
 			Button {
-				// FIXME: Open add sheet
+				onAddButtonClick()
 			} label: {
 				Image(systemName: "plus")
 					.font(.system(size: iconSize, weight: .regular))

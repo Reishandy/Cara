@@ -38,8 +38,14 @@ class HomeViewModel {
 	/// Practically the first time the user opens the app.
 	var earliestHistoryDate: Date = .now
 	
-	/// Fetch counter for SwiftUI update
+	/// Fetch counter for SwiftUI update.
 	var fetchCounter: Int = 0
+	
+	/// Variable to store routine name to add.
+	var addRoutineName: String = ""
+	
+	/// Variable to store routine description to add.
+	var addRoutineDescription: String = ""
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
@@ -89,6 +95,15 @@ class HomeViewModel {
 				routines.remove(at: routineIndex)
 			}
 		}
+	}
+	
+	/// Function to add routine from the stord variables.
+	func addRoutine() {
+		modelContext.insert( Routine(routineName: self.addRoutineName, routineDescription: self.addRoutineDescription))
+		fetchData()
+		
+		self.addRoutineName = ""
+		self.addRoutineDescription = ""
 	}
 	
 	private func fetchRoutines() throws -> [Routine] {
