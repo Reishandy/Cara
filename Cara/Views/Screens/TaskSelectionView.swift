@@ -18,6 +18,8 @@ struct TaskSelectionView: View {
 	var onSaveAction: (([RoutineTask]) -> Void)? = nil
 	var isEdit: Bool = false
 	
+	@State private var hasInitialized: Bool = false
+	
 	var body: some View {
 		@Bindable var taskSelectViewModel = taskSelectViewModel
 		
@@ -77,7 +79,11 @@ struct TaskSelectionView: View {
 		.padding(.horizontal, 20)
 		.task {
 			self.taskSelectViewModel.fetchData()
-			self.taskSelectViewModel.selectedTasks = initialTasks ?? []
+			
+			if !hasInitialized {
+				self.taskSelectViewModel.selectedTasks = initialTasks ?? []
+				hasInitialized = true
+			}
 		}
 	}
 	
