@@ -47,6 +47,7 @@ struct ContentView: View {
 			}
 		}
 		.tint(.appSecondary)
+		.hideKeyboardWhenTappedAround()
 	}
 }
 
