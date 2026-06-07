@@ -121,4 +121,9 @@ class RoutineDetailViewModel {
 			}
 		}
 	}
+	
+	/// Function to remove routine
+	func removeRoutine(routine: Routine) {
+		modelContext.delete(routine)
+	}
 }

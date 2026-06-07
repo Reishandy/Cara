@@ -13,6 +13,9 @@ import UIKit
 struct HomeView: View {
 	@Environment(HomeViewModel.self) var homeViewModel
 	
+	@ScaledMetric(relativeTo: .body) private var buttonSize = 48
+	@ScaledMetric(relativeTo: .body) private var iconSize = 24
+	
 	@State private var showDatePicker = false
 	@State private var showAddRoutineSheet = false
 	
@@ -22,95 +25,104 @@ struct HomeView: View {
 		return formatter.string(from: homeViewModel.selectedDay)
 	}
 	
-	// FIXME: Consider changing to toolbar for the caregiver and add button?
-	// FIXME: Currently we can delete any routine soo...
-	//			^ thankfully the action is hidden, maybe a confirmation dialog is good?
 	var body: some View {
 		@Bindable var homeViewModel = self.homeViewModel
 		
-		ZStack(alignment: .top) {
-			List {
-				VStack(alignment: .leading, spacing: 16) {
-					Button {
-						showDatePicker.toggle()
-					} label: {
-						HStack {
-							Text(formattedDateString)
-								.font(.body)
-								.fixedSize(horizontal: false, vertical: true)
-							Spacer()
-							Image(systemName: "chevron.down")
-								.imageScale(.medium)
-								.rotationEffect(.degrees(showDatePicker ? -180 : 0))
-								.animation(.snappy, value: showDatePicker)
-						}
-						.padding(16)
-						.background(.capsule)
-						.cornerRadius(26)
-						.foregroundStyle(.appPrimary)
+		ScrollView {
+			VStack(alignment: .leading, spacing: 16) {
+				Button {
+					showDatePicker.toggle()
+				} label: {
+					HStack {
+						Text(formattedDateString)
+							.font(.body)
+							.fixedSize(horizontal: false, vertical: true)
+						Spacer()
+						Image(systemName: "chevron.down")
+							.imageScale(.medium)
+							.rotationEffect(.degrees(showDatePicker ? -180 : 0))
+							.animation(.snappy, value: showDatePicker)
 					}
-					.popover(isPresented: $showDatePicker, arrowEdge: .top) {
-						DatePicker(
-							"Select Date",
-							selection: Binding(
-								get: { homeViewModel.routineDay },
-								set: { homeViewModel.selectedDay = $0 }
-							),
-							in: homeViewModel.earliestHistoryDate...Date.now,
-							displayedComponents: .date
-						)
-						.datePickerStyle(.graphical)
-						.padding()
-						.frame(width: 360, height: 340)
-						.presentationCompactAdaptation(.popover)
-					}
-					
-					Text("Routines")
-						.font(.title)
-						.bold()
-						.foregroundStyle(.appPrimary)
-						.fixedSize(horizontal: false, vertical: true)
+					.padding(16)
+					.background(.capsule)
+					.cornerRadius(26)
+					.foregroundStyle(.appPrimary)
 				}
-				.listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 12, trailing: 20))
-				.listRowSeparator(.hidden)
-				.listRowBackground(Color.clear)
+				.popover(isPresented: $showDatePicker, arrowEdge: .top) {
+					DatePicker(
+						"Select Date",
+						selection: Binding(
+							get: { homeViewModel.routineDay },
+							set: { homeViewModel.selectedDay = $0 }
+						),
+						in: homeViewModel.earliestHistoryDate...Date.now,
+						displayedComponents: .date
+					)
+					.datePickerStyle(.graphical)
+					.padding()
+					.frame(width: 360, height: 340)
+					.presentationCompactAdaptation(.popover)
+				}
 				
+				Text("Routines")
+					.font(.title)
+					.bold()
+					.foregroundStyle(.appPrimary)
+					.fixedSize(horizontal: false, vertical: true)
 				
-				ForEach(homeViewModel.routines, id: \.self) { routine in
-					if let history = homeViewModel.historiesDict[routine.id] {
-						ZStack {
-							NavigationLink {
-								RoutineDetailView(routine: routine, selectedDay: homeViewModel.selectedDay)
-							} label: {
-								EmptyView()
+				if homeViewModel.routines.isEmpty {
+					VStack(spacing: 8) {
+						Text("No Routines")
+							.font(.title2)
+							.bold()
+							.foregroundStyle(.secondary)
+							.fixedSize(horizontal: false, vertical: true)
+						Text("Start by adding a routine")
+							.font(.subheadline)
+							.foregroundStyle(.secondary)
+							.fixedSize(horizontal: false, vertical: true)
+					}
+					.frame(maxWidth: .infinity)
+					.padding(.top, 230)
+				} else {
+					ForEach(homeViewModel.routines, id: \.self) { routine in
+						if let history = homeViewModel.historiesDict[routine.id] {
+							ZStack {
+								NavigationLink {
+									RoutineDetailView(routine: routine, selectedDay: homeViewModel.selectedDay)
+								} label: {
+									RoutineCard(
+										routine: routine,
+										history: history
+									)
+									.id("\(routine.id)-\(homeViewModel.fetchCounter)")
+									// Using this to force the component to update it's reference
+								}
 							}
-							.opacity(0)
-							
-							RoutineCard(
-								routine: routine,
-								history: history
-							)
-							.id("\(routine.id)-\(homeViewModel.fetchCounter)")
-							// Using this to force the component to update it's reference
 						}
 					}
 				}
-				.onDelete(perform: homeViewModel.removeRoutine)
-				.listRowSeparator(.hidden)
-				.listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
 			}
-			.listStyle(.plain)
-			.padding(.top, 70)
-			
-			HomeHeaderView {
-				showAddRoutineSheet = true
-			}
-			.padding(.horizontal, 20)
+			.padding(20)
 		}
 		.frame(maxWidth: .infinity, alignment: .leading)
-		.task {
-			homeViewModel.fetchData()
+		.toolbar {
+			ToolbarItem(placement: .topBarTrailing) {
+				Button {
+					showAddRoutineSheet = true
+				} label: {
+					Image(systemName: "plus")
+						.font(.system(size: iconSize, weight: .regular))
+						.foregroundStyle(.appSecondary)
+						.frame(width: buttonSize, height: buttonSize)
+						.background(Color.background)
+						.clipShape(Circle())
+				}
+			}
+			.sharedBackgroundVisibility(.hidden)
 		}
+		.navigationTitle("Caregiving")
+		.toolbarTitleDisplayMode(.inlineLarge)
 		.sheet(isPresented: $showAddRoutineSheet) {
 			VStack(spacing: 36) {
 				HStack {
@@ -146,42 +158,13 @@ struct HomeView: View {
 			}
 			.padding(20)
 			.presentationDetents([.medium])
-			.interactiveDismissDisabled()
+		}
+		.task {
+			homeViewModel.fetchData()
 		}
 	}
 	
 }
-
-struct HomeHeaderView: View {
-	@ScaledMetric(relativeTo: .body) private var buttonSize = 48
-	@ScaledMetric(relativeTo: .body) private var iconSize = 24
-	
-	var onAddButtonClick: () -> Void
-	
-	var body: some View {
-		HStack(alignment: .center) {
-			Text("Caregiving")
-				.font(.largeTitle)
-				.bold()
-				.foregroundStyle(.appPrimary)
-				.fixedSize(horizontal: false, vertical: true)
-			
-			Spacer(minLength: 12)
-			
-			Button {
-				onAddButtonClick()
-			} label: {
-				Image(systemName: "plus")
-					.font(.system(size: iconSize, weight: .regular))
-					.foregroundStyle(.appSecondary)
-					.frame(width: buttonSize, height: buttonSize)
-					.background(Color.background)
-					.clipShape(Circle())
-			}
-		}
-	}
-}
-
 
 #Preview {
 	let container = CaraApp.previewSharedContainer

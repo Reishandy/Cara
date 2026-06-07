@@ -15,8 +15,10 @@ enum RoutineDetailElement {
 
 struct RoutineDetailView: View {
 	@Environment(\.editMode) private var editMode
-	@Environment(RoutineDetailViewModel.self) var routineDetailViewModel
+	@Environment(\.dismiss) private var dismiss
 	@Environment(\.dynamicTypeSize) private var dynamicTypeSize
+	
+	@Environment(RoutineDetailViewModel.self) var routineDetailViewModel
 	
 	@Bindable var routine: Routine
 	let selectedDay: Date
@@ -26,6 +28,7 @@ struct RoutineDetailView: View {
 	
 	@State private var currentElement: RoutineDetailElement = .task
 	@State private var showTaskSelection = false
+	@State private var isDeleteConfirmationPresented = false
 	
 	private var isEdit: Bool {
 		editMode?.wrappedValue == .active
@@ -85,6 +88,29 @@ struct RoutineDetailView: View {
 					.frame(maxWidth: .infinity)
 					.buttonStyle(.borderedProminent)
 					.tint(Color("AppThirdColor"))
+				}
+			}
+			
+			ToolbarItem(placement: .topBarTrailing) {
+				if isEdit {
+					Button {
+						isDeleteConfirmationPresented = true
+					} label: {
+						Image(systemName: "trash")
+							.foregroundStyle(.red)
+					}
+					.confirmationDialog(
+						"Delete",
+						isPresented: $isDeleteConfirmationPresented
+					) {
+						Button("Delete Routine", role: .destructive) {
+							dismiss()
+							routineDetailViewModel.removeRoutine(routine: routine)
+						}
+						.buttonStyle(.bordered)
+					} message: {
+						Text("This action will remove this routine alongside its associated vitals recording, notes, and task progresion. Are you sure? this action cannot be undone.")
+					}
 				}
 			}
 			
