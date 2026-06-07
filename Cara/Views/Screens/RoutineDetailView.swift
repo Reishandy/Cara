@@ -215,10 +215,12 @@ struct RoutineDetailView: View {
 						taskName: task.taskName,
 						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle),
 						onButtonClick: {
-							if routineDetailViewModel.taskProgress[task.id] != nil {
-								routineDetailViewModel.taskProgress[task.id] = nil
-							} else {
-								routineDetailViewModel.taskProgress[task.id] = Date()
+							withAnimation {
+								if routineDetailViewModel.taskProgress[task.id] != nil {
+									routineDetailViewModel.taskProgress[task.id] = nil
+								} else {
+									routineDetailViewModel.taskProgress[task.id] = Date()
+								}
 							}
 						},
 						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
