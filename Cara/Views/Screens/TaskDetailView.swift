@@ -14,7 +14,7 @@ struct TaskDetailView: View {
     
 	let task: RoutineTask
     
-	// FIXME: Check this again, the layour and stuff
+	// FIXME: Check this again, the layout and stuff
     var body: some View {
         ZStack(alignment: .top) {
             headerImage

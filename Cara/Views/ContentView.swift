@@ -19,6 +19,7 @@ struct ContentView: View {
 	// FIXME: TODO List
 	//	- Task Detail add and edit?
 	//	- Check large text accessability again
+	//	- Make sure every scrollbar is at the edge of the screen (check learn, task select, routine detail, home)
 	//	- Animation
 	
 	var body: some View {

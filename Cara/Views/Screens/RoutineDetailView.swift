@@ -37,7 +37,18 @@ struct RoutineDetailView: View {
 	private let vitalColumns = [GridItem(.adaptive(minimum: 120), spacing: 8)]
 	
 	var body: some View {
-		VStack(spacing: 24) {
+		ZStack(alignment: .top) {
+			switch currentElement {
+			case .task:
+				taskSection
+					.padding(.top, isEdit ? 0 : 70)
+					.padding(.horizontal, 20)
+			case .note:
+				noteSection
+					.padding(.top, 70)
+					.padding(.horizontal, 20)
+			}
+			
 			if !isEdit {
 				Picker("Routine Detail Element", selection: $currentElement) {
 					Text("Task")
@@ -50,16 +61,6 @@ struct RoutineDetailView: View {
 				.padding(.top, 16)
 				.padding(.horizontal, 20)
 			}
-			
-			switch currentElement {
-			case .task:
-				taskSection
-			case .note:
-				noteSection
-					.padding(.horizontal, 20)
-			}
-			
-			Spacer()
 		}
 		.toolbar {
 			ToolbarItem(placement: .principal) {
@@ -153,14 +154,14 @@ struct RoutineDetailView: View {
 		List {
 			if !isEdit {
 				vitalsSection
-					.listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 12, trailing: 20))
+					.listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
 			}
 			
 			if isEdit {
 				RoutineFormView(name: $routine.routineName, description: $routine.routineDescription)
-					.listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 12, trailing: 20))
+					.listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
 			}
@@ -226,7 +227,7 @@ struct RoutineDetailView: View {
 					.fixedSize(horizontal: false, vertical: true)
 			}
 			.frame(maxWidth: .infinity)
-			.padding(.vertical, 90)
+			.padding(.top, 120)
 		} else {
 			ForEach(routine.orderedTasks) { task in
 				ZStack {
@@ -256,7 +257,7 @@ struct RoutineDetailView: View {
 			.onDelete(perform: routineDetailViewModel.removeTasks)
 			.onMove(perform: routineDetailViewModel.moveTasks)
 			.listRowSeparator(.hidden)
-			.listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+			.listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
 		}
 	}
 	
