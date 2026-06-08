@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TaskDetailView: View {
 	@Environment(\.editMode) private var editMode
@@ -208,7 +209,12 @@ private struct TaskInstructionView: View {
 }
 
 #Preview {
+	let container = CaraApp.previewSharedContainer
+	
+	let taskDetailViewModel = TaskDetailViewModel(modelContext: container.mainContext)
+	
 	NavigationStack {
 		TaskDetailView(task: RoutineTask.defaultData.first!)
+			.environment(taskDetailViewModel)
 	}
 }
