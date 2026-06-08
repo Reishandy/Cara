@@ -218,3 +218,7 @@ private struct TaskInstructionView: View {
 			.environment(taskDetailViewModel)
 	}
 }
+
+#Preview {
+	TaskDetailView(task: RoutineTask.defaultData.first!)
+}

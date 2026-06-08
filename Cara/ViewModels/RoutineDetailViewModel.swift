@@ -39,6 +39,20 @@ class RoutineDetailViewModel {
 		}
 	}
 	
+	/// The date vitals is filled
+	///
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
+	var vitalFilledDate: Date? {
+		self.currentHistory?.vitalFilledAt
+	}
+	
+	/// The date note is filled
+	///
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
+	var noteFilledDate: Date? {
+		self.currentHistory?.noteFilledAt
+	}
+	
 	/// The note of the current Routine.
 	///
 	/// You can directly modify this data and SwiftData will automatically save it.
