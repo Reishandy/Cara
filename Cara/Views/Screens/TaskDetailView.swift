@@ -96,6 +96,7 @@ struct TaskDetailView: View {
                     )
                 }
             }
+			.frame(maxWidth: .infinity, alignment: .leading)
             .padding(28)
             .background(Color.appBackground)
             .clipShape(

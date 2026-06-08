@@ -51,19 +51,6 @@ class HomeViewModel {
 		self.modelContext = modelContext
 	}
 	
-	/// Delete a routine.
-	///
-	/// Use this to delete a routine, by passing the Routine object to this function.
-	///
-	/// > Warning: It is advisable to provide a confirmation dialog to delete, by calling this function inside that confirmation dialog's confirm button.
-	///
-	/// - Parameters:
-	///   * routine: The Routine object to be deleted
-	func deleteRoutine(routine: Routine) {
-		self.modelContext.delete(routine)
-		self.fetchData()
-	}
-	
 	/// Populate viewmodel with data.
 	///
 	/// Use this function to populate data for this viewmodel.

@@ -19,6 +19,7 @@ struct TaskSelectionView: View {
 	var isEdit: Bool = false
 	
 	@State private var hasInitialized: Bool = false
+	@State private var showAddTaskSheet = false
 	
 	var body: some View {
 		@Bindable var taskSelectViewModel = taskSelectViewModel
@@ -73,10 +74,57 @@ struct TaskSelectionView: View {
 				.buttonStyle(.borderedProminent)
 				.tint(Color("AppThirdColor"))
 			}
+			
+			ToolbarItem(placement: .topBarTrailing) {
+				Button {
+					showAddTaskSheet = true
+				} label: {
+					Image(systemName: "plus")
+				}
+			}
 		}
 		.navigationTitle(isEdit ? "Modify Tasks" : "Add Tasks")
 		.navigationBarTitleDisplayMode(.inline)
 		.padding(.horizontal, 20)
+		.sheet(isPresented: $showAddTaskSheet) {
+			VStack {
+				HStack {
+					Button {
+						showAddTaskSheet = false
+					} label: {
+						Text("Cancel")
+							.font(.title3)
+							.frame(width: 80)
+					}
+					.buttonStyle(.glass)
+					
+					Spacer()
+					
+					Button {
+						showAddTaskSheet = false
+						taskSelectViewModel.addTask()
+					} label: {
+						Text("Save")
+							.font(.title3)
+							.frame(width: 80)
+					}
+					.buttonStyle(.glassProminent)
+					.disabled(taskSelectViewModel.addTaskName.isEmpty || taskSelectViewModel.addTaskDescription.isEmpty)
+				}
+				
+				ItemFormView(
+					isTask: true,
+					name: $taskSelectViewModel.addTaskName,
+					description: $taskSelectViewModel.addTaskDescription,
+					categories: taskSelectViewModel.categories,
+					category: $taskSelectViewModel.addTaskCategory
+				)
+				
+				Spacer()
+			}
+			.padding(20)
+			.presentationDetents([.medium])
+		}
 		.task {
 			self.taskSelectViewModel.fetchData()
 			

@@ -28,7 +28,7 @@ struct RoutineDetailView: View {
 	
 	@State private var currentElement: RoutineDetailElement = .task
 	@State private var showTaskSelection = false
-	@State private var isDeleteConfirmationPresented = false
+	@State private var showDeleteConfirmation = false
 	
 	private var isEdit: Bool {
 		editMode?.wrappedValue == .active
@@ -95,18 +95,18 @@ struct RoutineDetailView: View {
 			ToolbarItem(placement: .topBarTrailing) {
 				if isEdit {
 					Button {
-						isDeleteConfirmationPresented = true
+						showDeleteConfirmation = true
 					} label: {
 						Image(systemName: "trash")
 							.foregroundStyle(.red)
 					}
 					.confirmationDialog(
 						"Delete",
-						isPresented: $isDeleteConfirmationPresented
+						isPresented: $showDeleteConfirmation
 					) {
 						Button("Delete Routine", role: .destructive) {
 							dismiss()
-							routineDetailViewModel.removeRoutine(routine: routine)
+							routineDetailViewModel.deleteRoutine(routine: routine)
 						}
 						.buttonStyle(.bordered)
 					} message: {
@@ -160,7 +160,7 @@ struct RoutineDetailView: View {
 			}
 			
 			if isEdit {
-				RoutineFormView(name: $routine.routineName, description: $routine.routineDescription)
+				ItemFormView(name: $routine.routineName, description: $routine.routineDescription)
 					.listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
@@ -228,6 +228,8 @@ struct RoutineDetailView: View {
 			}
 			.frame(maxWidth: .infinity)
 			.padding(.top, 120)
+			.listRowSeparator(.hidden)
+			.listRowBackground(Color.clear)
 		} else {
 			ForEach(routine.orderedTasks) { task in
 				ZStack {
