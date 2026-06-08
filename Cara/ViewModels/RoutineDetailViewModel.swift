@@ -37,6 +37,24 @@ class RoutineDetailViewModel {
 			currentHistory?.vital = newValue
 			currentHistory?.vitalFilledAt = Date.now
 		}
+		set {
+			currentHistory?.note = newValue
+			currentHistory?.noteFilledAt = Date.now
+		}
+	}
+	
+	/// The date vitals is filled
+	///
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
+	var vitalFilledDate: Date? {
+		self.currentHistory?.vitalFilledAt
+	}
+	
+	/// The date note is filled
+	///
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
+	var noteFilledDate: Date? {
+		self.currentHistory?.noteFilledAt
 	}
 	
 	/// The note of the current Routine.
