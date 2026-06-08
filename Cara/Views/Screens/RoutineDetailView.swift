@@ -15,8 +15,10 @@ enum RoutineDetailElement {
 
 struct RoutineDetailView: View {
 	@Environment(\.editMode) private var editMode
-	@Environment(RoutineDetailViewModel.self) var routineDetailViewModel
+	@Environment(\.dismiss) private var dismiss
 	@Environment(\.dynamicTypeSize) private var dynamicTypeSize
+	
+	@Environment(RoutineDetailViewModel.self) var routineDetailViewModel
 	
 	@Bindable var routine: Routine
 	let selectedDay: Date
@@ -26,6 +28,7 @@ struct RoutineDetailView: View {
 	
 	@State private var currentElement: RoutineDetailElement = .task
 	@State private var showTaskSelection = false
+	@State private var isDeleteConfirmationPresented = false
 	
 	private var isEdit: Bool {
 		editMode?.wrappedValue == .active
@@ -34,7 +37,18 @@ struct RoutineDetailView: View {
 	private let vitalColumns = [GridItem(.adaptive(minimum: 120), spacing: 8)]
 	
 	var body: some View {
-		VStack(spacing: 24) {
+		ZStack(alignment: .top) {
+			switch currentElement {
+			case .task:
+				taskSection
+					.padding(.top, isEdit ? 0 : 70)
+					.padding(.horizontal, 20)
+			case .note:
+				noteSection
+					.padding(.top, 70)
+					.padding(.horizontal, 20)
+			}
+			
 			if !isEdit {
 				Picker("Routine Detail Element", selection: $currentElement) {
 					Text("Task")
@@ -47,16 +61,6 @@ struct RoutineDetailView: View {
 				.padding(.top, 16)
 				.padding(.horizontal, 20)
 			}
-			
-			switch currentElement {
-			case .task:
-				taskSection
-			case .note:
-				noteSection
-					.padding(.horizontal, 20)
-			}
-			
-			Spacer()
 		}
 		.toolbar {
 			ToolbarItem(placement: .principal) {
@@ -85,6 +89,29 @@ struct RoutineDetailView: View {
 					.frame(maxWidth: .infinity)
 					.buttonStyle(.borderedProminent)
 					.tint(Color("AppThirdColor"))
+				}
+			}
+			
+			ToolbarItem(placement: .topBarTrailing) {
+				if isEdit {
+					Button {
+						isDeleteConfirmationPresented = true
+					} label: {
+						Image(systemName: "trash")
+							.foregroundStyle(.red)
+					}
+					.confirmationDialog(
+						"Delete",
+						isPresented: $isDeleteConfirmationPresented
+					) {
+						Button("Delete Routine", role: .destructive) {
+							dismiss()
+							routineDetailViewModel.removeRoutine(routine: routine)
+						}
+						.buttonStyle(.bordered)
+					} message: {
+						Text("This action will remove this routine alongside its associated vitals recording, notes, and task progresion. Are you sure? this action cannot be undone.")
+					}
 				}
 			}
 			
@@ -127,14 +154,14 @@ struct RoutineDetailView: View {
 		List {
 			if !isEdit {
 				vitalsSection
-					.listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 12, trailing: 20))
+					.listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
 			}
 			
 			if isEdit {
 				RoutineFormView(name: $routine.routineName, description: $routine.routineDescription)
-					.listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 12, trailing: 20))
+					.listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
 			}
@@ -200,7 +227,7 @@ struct RoutineDetailView: View {
 					.fixedSize(horizontal: false, vertical: true)
 			}
 			.frame(maxWidth: .infinity)
-			.padding(.vertical, 90)
+			.padding(.top, 120)
 		} else {
 			ForEach(routine.orderedTasks) { task in
 				ZStack {
@@ -215,10 +242,12 @@ struct RoutineDetailView: View {
 						taskName: task.taskName,
 						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle),
 						onButtonClick: {
-							if routineDetailViewModel.taskProgress[task.id] != nil {
-								routineDetailViewModel.taskProgress[task.id] = nil
-							} else {
-								routineDetailViewModel.taskProgress[task.id] = Date()
+							withAnimation {
+								if routineDetailViewModel.taskProgress[task.id] != nil {
+									routineDetailViewModel.taskProgress[task.id] = nil
+								} else {
+									routineDetailViewModel.taskProgress[task.id] = Date()
+								}
 							}
 						},
 						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
@@ -228,7 +257,7 @@ struct RoutineDetailView: View {
 			.onDelete(perform: routineDetailViewModel.removeTasks)
 			.onMove(perform: routineDetailViewModel.moveTasks)
 			.listRowSeparator(.hidden)
-			.listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+			.listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
 		}
 	}
 	

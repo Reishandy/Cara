@@ -85,18 +85,6 @@ class HomeViewModel {
 		}
 	}
 	
-	/// Function to remove routine
-	func removeRoutine(at offsets: IndexSet) {
-		for index in offsets {
-			let routineToRemove = routines[index]
-			
-			if let routineIndex = routines.firstIndex(of: routineToRemove) {
-				self.modelContext.delete(routines[routineIndex])
-				routines.remove(at: routineIndex)
-			}
-		}
-	}
-	
 	/// Function to add routine from the stord variables.
 	func addRoutine() {
 		modelContext.insert( Routine(routineName: self.addRoutineName, routineDescription: self.addRoutineDescription))
