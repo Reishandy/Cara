@@ -65,11 +65,12 @@ struct RoutineDetailView: View {
 		.toolbar {
 			ToolbarItem(placement: .principal) {
 				VStack(spacing: 2) {
-					TextField("Routine name", text: $routine.routineName)
+					Text(routine.routineName)
 						.font(.title3)
 						.bold()
 						.multilineTextAlignment(.center)
 						.foregroundStyle(Color.appPrimary)
+					
 					Text(selectedDay.formatted(date: .long, time: .omitted))
 						.font(.caption)
 						.foregroundStyle(.appThird)
@@ -254,6 +255,7 @@ struct RoutineDetailView: View {
 						},
 						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
 					)
+					.padding(.horizontal, isEdit ? 10 : 0)
 				}
 			}
 			.onDelete(perform: routineDetailViewModel.removeTasks)

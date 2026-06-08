@@ -14,7 +14,7 @@ struct TaskDetailView: View {
     
 	let task: RoutineTask
     
-	// FIXME: Check this again, the layout and stuff
+	// FIXME: IsEdit and also add instruction
     var body: some View {
         ZStack(alignment: .top) {
             headerImage
@@ -89,6 +89,7 @@ struct TaskDetailView: View {
                     .foregroundStyle(.appPrimary)
                     .padding(.bottom, 8)
                 
+				// FIXME: Empty state
 				ForEach(Array(task.howTo.enumerated()), id: \.offset) { index, step in
                     TaskInstructionView(
                         number: index + 1,
