@@ -111,7 +111,7 @@ struct RoutineDetailView: View {
 						}
 						.buttonStyle(.bordered)
 					} message: {
-						Text("This action will remove this routine alongside its associated vitals recording, notes, and task progresion. Are you sure? this action cannot be undone.")
+						Text("This action will delete this routine alongside its associated vitals recording, notes, and task progresion. Are you sure? this action cannot be undone.")
 					}
 				}
 			}

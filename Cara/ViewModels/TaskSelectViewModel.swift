@@ -41,7 +41,6 @@ class TaskSelectViewModel {
 	
 	/// Variable to store task category to add.
 	var addTaskCategory: TaskCategory? = nil
-
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
@@ -78,10 +77,5 @@ class TaskSelectViewModel {
 		self.addTaskName = ""
 		self.addTaskDescription = ""
 		self.addTaskCategory = nil
-	}
-	
-	/// Function to remove task
-	func deleteTask(task: RoutineTask) {
-		modelContext.delete(task)
 	}
 }

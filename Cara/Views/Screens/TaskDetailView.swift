@@ -8,41 +8,82 @@
 import SwiftUI
 
 struct TaskDetailView: View {
+	@Environment(\.editMode) private var editMode
+	@Environment(\.dismiss) private var dismiss
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(TaskDetailViewModel.self) private var taskDetailViewModel
 	
-    @State private var showAppBarTitle = false
-    
-	let task: RoutineTask
-    
-	// FIXME: IsEdit and also add instruction
-    var body: some View {
-        ZStack(alignment: .top) {
-            headerImage
-            
-            ScrollView {
-                VStack(spacing: 0) {
-                    Spacer()
-                        .frame(height: 160)
-                    
-                    contentView
-                }
-            }
-            .onScrollGeometryChange(for: CGFloat.self) { geometry in
-                geometry.contentOffset.y
-            } action: { oldOffset, newOffset in
-                if newOffset > 100 {
-                    showAppBarTitle = true
-                } else {
-                    showAppBarTitle = false
-                }
-            }
-        }
-        .ignoresSafeArea(edges: .top)
+	@Bindable var task: RoutineTask
+	
+	@State private var showAppBarTitle = false
+	@State private var showDeleteConfirmation = false
+	
+	private var isEdit: Bool {
+		editMode?.wrappedValue == .active
+	}
+	
+	var body: some View {
+		ZStack(alignment: .top) {
+			headerImage
+			
+			ScrollView {
+				VStack(spacing: 0) {
+					Spacer()
+						.frame(height: 160)
+					
+					contentView
+				}
+			}
+			.onScrollGeometryChange(for: CGFloat.self) { geometry in
+				geometry.contentOffset.y
+			} action: { oldOffset, newOffset in
+				if newOffset > 100 {
+					showAppBarTitle = true
+				} else {
+					showAppBarTitle = false
+				}
+			}
+		}
+		.ignoresSafeArea(edges: .top)
 		.toolbar(.hidden, for: .tabBar)
-    }
-    
-    private var headerImage: some View {
-        ZStack(alignment: .bottomLeading) {
+		.toolbar {
+			if isEdit {
+				ToolbarItem(placement: .topBarTrailing) {
+					
+					Button {
+						showDeleteConfirmation = true
+					} label: {
+						Image(systemName: "trash")
+							.foregroundStyle(.red)
+					}
+					.confirmationDialog(
+						"Delete",
+						isPresented: $showDeleteConfirmation
+					) {
+						Button("Delete Task", role: .destructive) {
+							dismiss()
+							taskDetailViewModel.deleteTask(task: task)
+						}
+						.buttonStyle(.bordered)
+					} message: {
+						Text("This action will delete this task across all routines. Are you sure? this action cannot be undone.")
+					}
+				}
+			}
+			
+			if !task.isDefault {
+				ToolbarItem(placement: .navigationBarTrailing) {
+					EditButton()
+				}
+			}
+		}
+		.task {
+			taskDetailViewModel.fetchData()
+		}
+	}
+	
+	private var headerImage: some View {
+		ZStack(alignment: .bottomLeading) {
 			if let imageSystemName = task.imageSystemName {
 				Image(imageSystemName)
 					.resizable()
@@ -54,90 +95,120 @@ struct TaskDetailView: View {
 			}
 			
 			Color.gray
-            
-            LinearGradient(
+			
+			LinearGradient(
 				colors: [.clear, colorScheme == .dark ? .black : .white],
-                startPoint: .center,
-                endPoint: .bottom
-            )
-        }
-        .frame(height: 280)
-    }
-    
-    private var contentView: some View {
-        VStack(alignment: .leading) {
-            if !showAppBarTitle {
+				startPoint: .center,
+				endPoint: .bottom
+			)
+		}
+		.frame(height: 280)
+	}
+	
+	private var contentView: some View {
+		VStack(alignment: .leading) {
+			if !showAppBarTitle && !isEdit {
 				Text(task.taskName)
-                    .font(.title2)
-                    .bold()
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 4)
+					.font(.title2)
+					.bold()
+					.foregroundStyle(.white)
+					.padding(.horizontal, 16)
+					.padding(.bottom, 4)
 					.shadow(color: .black.opacity(0.8), radius: 10, x: 0, y: 2)
-            } else {
-                Spacer().frame(height: 60)
-            }
-            
-            VStack(alignment: .leading) {
-				Text(task.taskDescription)
-                .font(.subheadline)
-                .foregroundStyle(.appPrimary)
-                .padding(.bottom, 8)
-                
-                Text("Instruction")
-                    .font(.title.bold())
-                    .foregroundStyle(.appPrimary)
-                    .padding(.bottom, 8)
-                
-				// FIXME: Empty state
-				ForEach(Array(task.howTo.enumerated()), id: \.offset) { index, step in
-                    TaskInstructionView(
-                        number: index + 1,
-                        content: step
-                    )
-                }
-            }
+			} else {
+				Spacer().frame(height: 60)
+			}
+			
+			VStack(alignment: .leading) {
+				if isEdit {
+					ItemFormView(
+						isTask: true,
+						name: $task.taskName,
+						description: $task.taskDescription,
+						categories: taskDetailViewModel.categories,
+						category: $task.category
+					)
+					.padding(.bottom, 8)
+				} else {
+					Text(task.taskDescription)
+						.font(.subheadline)
+						.foregroundStyle(.appPrimary)
+						.padding(.bottom, 8)
+				}
+				
+				Text("Instruction")
+					.font(isEdit ? .title2 : .title)
+					.bold()
+					.foregroundStyle(.appPrimary)
+					.padding(.bottom, 8)
+				
+				// FIXME: add, edit, delete instruction
+				if task.howTo.isEmpty {
+					VStack(spacing: 8) {
+						Text("No Instructions")
+							.font(.title2)
+							.bold()
+							.foregroundStyle(.secondary)
+							.fixedSize(horizontal: false, vertical: true)
+						Text("No instructions are available for this task")
+							.font(.subheadline)
+							.foregroundStyle(.secondary)
+							.fixedSize(horizontal: false, vertical: true)
+					}
+					.frame(maxWidth: .infinity)
+					.padding(.top, 60)
+				} else {
+					ForEach(Array(task.howTo.enumerated()), id: \.offset) { index, step in
+						TaskInstructionView(
+							number: index + 1,
+							content: step
+						)
+					}
+				}
+			}
 			.frame(maxWidth: .infinity, alignment: .leading)
-            .padding(28)
-            .background(Color.appBackground)
-            .clipShape(
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 36,
-                    topTrailingRadius: 36
-                )
-            )
-        }
-    }
+			.padding(28)
+			.background(Color.appBackground)
+			.clipShape(
+				UnevenRoundedRectangle(
+					topLeadingRadius: 36,
+					topTrailingRadius: 36
+				)
+			)
+		}
+	}
 }
 
 private struct TaskInstructionView: View {
-    let number: Int
-    let content: String
-    
-    var body: some View {
-        ZStack(alignment: .leading) {
-            Text(content)
-                .padding()
-                .padding(.leading, 20)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color.capsule)
-                .foregroundStyle(.appPrimary)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            
-            Text("\(number)")
-                .font(.title3)
-                .bold()
-                .foregroundStyle(Color.background)
-                .padding()
-                .background(.appSecondary)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .offset(x: -16)
-        }
-        
-        Spacer().frame(height: 12)
-    }
+	let number: Int
+	let content: String
+	
+	var body: some View {
+		ZStack(alignment: .leading) {
+			Text(content)
+				.padding()
+				.padding(.leading, 20)
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.background(Color.capsule)
+				.foregroundStyle(.appPrimary)
+				.clipShape(RoundedRectangle(cornerRadius: 12))
+			
+			Text("\(number)")
+				.font(.title3)
+				.bold()
+				.foregroundStyle(Color.background)
+				.padding()
+				.background(.appSecondary)
+				.clipShape(RoundedRectangle(cornerRadius: 12))
+				.offset(x: -16)
+		}
+		
+		Spacer().frame(height: 12)
+	}
 }
 
 #Preview {
-	TaskDetailView(task: RoutineTask.defaultData.first!)
+	NavigationStack {
+		TaskDetailView(task: RoutineTask.defaultData.first!)
+	}
 }
