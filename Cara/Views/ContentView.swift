@@ -17,10 +17,10 @@ struct ContentView: View {
 	@State private var selectedTab: Tab = .routine
 	
 	// FIXME: TODO List
-	//	- Task Detail add and edit?
+	//	- Category add and edit?
 	//	- Check large text accessability again
 	//	- Make sure every scrollbar is at the edge of the screen (check learn, task select, routine detail, home)
-	//	- Animation
+	//	- Animation and bux fixes
 	
 	var body: some View {
 		TabView(selection: $selectedTab) {
@@ -41,7 +41,7 @@ struct ContentView: View {
 			}
 		}
 		.tint(.appSecondary)
-		.hideKeyboardWhenTappedAround()
+		.scrollDismissesKeyboard(.interactively)
 	}
 }
 
@@ -52,10 +52,12 @@ struct ContentView: View {
 	let learnViewModel = LearnViewModel(modelContext: container.mainContext)
 	let routineDetailViewModel = RoutineDetailViewModel(modelContext: container.mainContext)
 	let taskSelectViewModel = TaskSelectViewModel(modelContext: container.mainContext)
+	let taskDetailViewModel = TaskDetailViewModel(modelContext: container.mainContext)
 	
 	ContentView()
 		.environment(homeViewModel)
 		.environment(learnViewModel)
 		.environment(routineDetailViewModel)
 		.environment(taskSelectViewModel)
+		.environment(taskDetailViewModel)
 }

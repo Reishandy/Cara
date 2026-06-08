@@ -85,6 +85,7 @@ struct RoutineCard: View {
 						.foregroundStyle(.appThird)
 						.fixedSize(horizontal: false, vertical: true)
 						.multilineTextAlignment(.leading)
+                        .lineLimit(1)
 				}
 				
 				Spacer(minLength: 8)
@@ -175,6 +176,7 @@ struct RoutineCard: View {
 				Image(systemName: "text.pad.header")
 				Text(history.note)
 					.fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(1)
 			}
 			.font(.body)
 			.foregroundStyle(.appThird)
@@ -183,6 +185,8 @@ struct RoutineCard: View {
 }
 
 struct VitalRoutineView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    
 	@ScaledMetric(relativeTo: .body) private var iconSize = 20
 	@ScaledMetric(relativeTo: .body) private var cardPadding = 8
 	
@@ -211,6 +215,7 @@ struct VitalRoutineView: View {
 				.fixedSize(horizontal: false, vertical: true)
 		}
 		.frame(maxWidth: .infinity)
+        .frame(minHeight: dynamicTypeSize.isAccessibilitySize ? 240 : nil)
 		.padding(cardPadding)
 		.background(.selected)
 		.clipShape(RoundedRectangle(cornerRadius: 8))
@@ -257,14 +262,14 @@ struct CircularProgressRing: View {
 #Preview {
 	let routine = Routine(
 		routineName: "Taking care of my heart",
-		routineDescription: "Take care of your heart",
+        routineDescription: "Take care of your heart\nasdasd asdasd asdasdas asdasdas asdasd vew",
 		tasks: Array(RoutineTask.defaultData.prefix(4))
 	)
 	
 	let history = History(
 		date: .now,
 		taskProgress: TaskProgress(filledAt: [UUID(): Date.now]),
-		note: "Mama is here",
+        note: "Mama is here with a longer note to test wrapping at larger text sizes asdasd asdasd asdasd.",
 		vital: Vital(),
 		routine: routine
 	)
@@ -282,14 +287,14 @@ struct CircularProgressRing: View {
 	
 	let routine = Routine(
 		routineName: "Taking care of my heart with a longer routine name",
-		routineDescription: "Take care of your heart",
+		routineDescription: "Take care of your heart\nasdasd asdasd asdasdas asdasdas asdasd vew",
 		tasks: Array(RoutineTask.defaultData.prefix(6))
 	)
 	
 	let history = History(
 		date: Date.now,
 		taskProgress: TaskProgress(filledAt: [UUID(): Date.now]),
-		note: "Mama is here with a longer note to test wrapping at larger text sizes.",
+		note: "Mama is here with a longer note to test wrapping at larger text sizes asdasd asdasd asdasd.",
 		vital: Vital(),
 		routine: routine
 	)
