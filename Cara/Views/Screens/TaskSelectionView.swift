@@ -33,6 +33,7 @@ struct TaskSelectionView: View {
 						.frame(maxWidth: .infinity, alignment: .leading)
 						.padding(.bottom, 4)
 						.padding(.top, 10)
+                        .padding(.horizontal, 20)
 					
 					ForEach(taskSelectViewModel.groupedTasks[categoryName] ?? [], id: \.id) { task in
 						NavigationLink {
@@ -50,6 +51,7 @@ struct TaskSelectionView: View {
 									}
 								}
 							)
+                            .padding(.horizontal, 20)
 						}
 					}
 				}
@@ -76,7 +78,6 @@ struct TaskSelectionView: View {
 		}
 		.navigationTitle(isEdit ? "Modify Tasks" : "Add Tasks")
 		.navigationBarTitleDisplayMode(.inline)
-		.padding(.horizontal, 20)
 		.task {
 			self.taskSelectViewModel.fetchData()
 			
