@@ -80,6 +80,19 @@ class RoutineDetailViewModel {
 		self.currentHistory?.noteFilledAt
 	}
 	
+	/// The note of the current Routine.
+	///
+	/// You can directly modify this data and SwiftData will automatically save it.
+	var note: String {
+		get {
+			currentHistory?.note ?? ""
+		}
+		set {
+			currentHistory?.note = newValue
+			currentHistory?.noteFilledAt = Date.now
+		}
+	}
+	
 	private var routine: Routine?
 	
 	init(modelContext: ModelContext) {
