@@ -257,7 +257,6 @@ struct RoutineDetailView: View {
 						},
 						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
 					)
-					.padding(.horizontal, isEdit ? 10 : 0)
 				}
 			}
 			.onDelete(perform: routineDetailViewModel.removeTasks)
