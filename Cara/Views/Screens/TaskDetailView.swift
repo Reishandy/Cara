@@ -143,8 +143,7 @@ struct TaskDetailView: View {
 					.foregroundStyle(.appPrimary)
 					.padding(.bottom, 8)
 				
-				// FIXME: add, edit, delete instruction
-				if task.howTo.isEmpty {
+				if task.howTo.isEmpty && !isEdit {
 					VStack(spacing: 8) {
 						Text("No Instructions")
 							.font(.title2)
@@ -159,11 +158,38 @@ struct TaskDetailView: View {
 					.frame(maxWidth: .infinity)
 					.padding(.top, 60)
 				} else {
-					ForEach(Array(task.howTo.enumerated()), id: \.offset) { index, step in
+					ForEach(Array(task.howTo.enumerated()), id: \.offset) { index, _ in
 						TaskInstructionView(
 							number: index + 1,
-							content: step
+							content: $task.howTo[index],
+							isEdit: isEdit,
+							onDeleteClick: {
+								withAnimation {
+									_ = task.howTo.remove(at: index)
+								}
+							}
 						)
+					}
+					
+					if isEdit {
+						Button {
+							withAnimation {
+								task.howTo.append("")
+							}
+						} label: {
+							HStack {
+								Image(systemName: "plus")
+								
+								Text("Add a step")
+							}
+						}
+						.padding()
+						.foregroundStyle(.appPrimary)
+						.overlay(
+							RoundedRectangle(cornerRadius: 12)
+								.strokeBorder(.appSecondary.opacity(0.8), lineWidth: 2)
+						)
+						.frame(maxWidth: .infinity)
 					}
 				}
 			}
@@ -182,29 +208,58 @@ struct TaskDetailView: View {
 
 private struct TaskInstructionView: View {
 	let number: Int
-	let content: String
+	@Binding var content: String
+	let isEdit: Bool
+	let onDeleteClick: () -> Void
 	
 	var body: some View {
 		ZStack(alignment: .leading) {
-			Text(content)
-				.padding()
-				.padding(.leading, 20)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.background(Color.capsule)
-				.foregroundStyle(.appPrimary)
-				.clipShape(RoundedRectangle(cornerRadius: 12))
+			if isEdit {
+				TextField("Input an instruction", text: $content, axis: .vertical)
+					.padding()
+					.padding(.horizontal, 20)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.background(Color.capsule)
+					.foregroundStyle(.appPrimary)
+					.clipShape(RoundedRectangle(cornerRadius: 12))
+			} else {
+				Text(content)
+					.padding()
+					.padding(.leading, 20)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.background(Color.capsule)
+					.foregroundStyle(.appPrimary)
+					.clipShape(RoundedRectangle(cornerRadius: 12))
+			}
 			
-			Text("\(number)")
-				.font(.title3)
-				.bold()
-				.foregroundStyle(Color.background)
-				.padding()
-				.background(.appSecondary)
-				.clipShape(RoundedRectangle(cornerRadius: 12))
-				.offset(x: -16)
+			HStack {
+				Text("\(number)")
+					.font(.title3)
+					.bold()
+					.foregroundStyle(Color.background)
+					.padding()
+					.background(.appSecondary)
+					.clipShape(RoundedRectangle(cornerRadius: 12))
+					.offset(x: -16)
+				
+				Spacer()
+				
+				if isEdit {
+					Button {
+						onDeleteClick()
+					} label: {
+						Image(systemName: "trash")
+							.font(.title3)
+					}
+					.padding(.vertical)
+					.padding(.horizontal, 10)
+					.background(.red)
+					.foregroundStyle(.white)
+					.clipShape(RoundedRectangle(cornerRadius: 12))
+					.offset(x: 16)
+				}
+			}
 		}
-		
-		Spacer().frame(height: 12)
 	}
 }
 
