@@ -28,7 +28,7 @@ struct RoutineDetailView: View {
 	
 	@State private var currentElement: RoutineDetailElement = .task
 	@State private var showTaskSelection = false
-	@State private var isDeleteConfirmationPresented = false
+	@State private var showDeleteConfirmation = false
 	
 	private var isEdit: Bool {
 		editMode?.wrappedValue == .active
@@ -64,11 +64,12 @@ struct RoutineDetailView: View {
 		.toolbar {
 			ToolbarItem(placement: .principal) {
 				VStack(spacing: 2) {
-					TextField("Routine name", text: $routine.routineName)
+					Text(routine.routineName)
 						.font(.title3)
 						.bold()
 						.multilineTextAlignment(.center)
 						.foregroundStyle(Color.appPrimary)
+					
 					Text(selectedDay.formatted(date: .long, time: .omitted))
 						.font(.caption)
 						.foregroundStyle(.appThird)
@@ -94,22 +95,22 @@ struct RoutineDetailView: View {
 			ToolbarItem(placement: .topBarTrailing) {
 				if isEdit {
 					Button {
-						isDeleteConfirmationPresented = true
+						showDeleteConfirmation = true
 					} label: {
 						Image(systemName: "trash")
 							.foregroundStyle(.red)
 					}
 					.confirmationDialog(
 						"Delete",
-						isPresented: $isDeleteConfirmationPresented
+						isPresented: $showDeleteConfirmation
 					) {
 						Button("Delete Routine", role: .destructive) {
 							dismiss()
-							routineDetailViewModel.removeRoutine(routine: routine)
+							routineDetailViewModel.deleteRoutine(routine: routine)
 						}
 						.buttonStyle(.bordered)
 					} message: {
-						Text("This action will remove this routine alongside its associated vitals recording, notes, and task progresion. Are you sure? this action cannot be undone.")
+						Text("This action will delete this routine alongside its associated vitals recording, notes, and task progresion. Are you sure? this action cannot be undone.")
 					}
 				}
 			}
@@ -160,7 +161,7 @@ struct RoutineDetailView: View {
 			}
 			
 			if isEdit {
-				RoutineFormView(name: $routine.routineName, description: $routine.routineDescription)
+				ItemFormView(name: $routine.routineName, description: $routine.routineDescription)
 					.listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
@@ -230,6 +231,8 @@ struct RoutineDetailView: View {
 			}
 			.frame(maxWidth: .infinity)
 			.padding(.top, 120)
+			.listRowSeparator(.hidden)
+			.listRowBackground(Color.clear)
 		} else {
 			ForEach(routine.orderedTasks) { task in
 				ZStack {
@@ -254,6 +257,7 @@ struct RoutineDetailView: View {
 						},
 						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
 					)
+					.padding(.horizontal, isEdit ? 10 : 0)
 				}
 			}
 			.onDelete(perform: routineDetailViewModel.removeTasks)

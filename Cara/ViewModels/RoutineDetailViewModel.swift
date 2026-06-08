@@ -123,7 +123,7 @@ class RoutineDetailViewModel {
 	}
 	
 	/// Function to remove routine
-	func removeRoutine(routine: Routine) {
+	func deleteRoutine(routine: Routine) {
 		modelContext.delete(routine)
 	}
 }

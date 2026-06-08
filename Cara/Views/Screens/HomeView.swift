@@ -149,7 +149,7 @@ struct HomeView: View {
 					.disabled(homeViewModel.addRoutineName.isEmpty || homeViewModel.addRoutineDescription.isEmpty)
 				}
 				
-				RoutineFormView(
+				ItemFormView(
 					name: $homeViewModel.addRoutineName,
 					description: $homeViewModel.addRoutineDescription
 				)
