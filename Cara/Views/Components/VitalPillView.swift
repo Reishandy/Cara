@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct VitalPillView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    
     @ScaledMetric(relativeTo: .body) private var spacing = 10
     @ScaledMetric(relativeTo: .body) private var padding = 12
     
@@ -51,10 +53,10 @@ struct VitalPillView: View {
             
         }
         .frame(maxWidth: .infinity)
+        .frame(minHeight: dynamicTypeSize.isAccessibilitySize ? 420 : nil)
         .padding(padding)
         .background(Color.selected)
         .cornerRadius(12)
-		.frame(maxWidth: .infinity)
 		.onTapGesture {
 			isCardFocused = true
 		}

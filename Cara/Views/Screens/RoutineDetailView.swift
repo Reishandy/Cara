@@ -42,7 +42,6 @@ struct RoutineDetailView: View {
 			case .task:
 				taskSection
 					.padding(.top, isEdit ? 0 : 70)
-					.padding(.horizontal, 20)
 			case .note:
 				noteSection
 					.padding(.top, 70)
@@ -157,6 +156,7 @@ struct RoutineDetailView: View {
 					.listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
+                    .padding(.horizontal, 20)
 			}
 			
 			if isEdit {
@@ -164,9 +164,11 @@ struct RoutineDetailView: View {
 					.listRowInsets(EdgeInsets(top: 10, leading: 0, bottom: 12, trailing: 0))
 					.listRowSeparator(.hidden)
 					.listRowBackground(Color.clear)
+                    .padding(.horizontal, 20)
 			}
 			
 			tasksList
+                .padding(.horizontal, 20)
 		}
 		.listStyle(.plain)
 	}
