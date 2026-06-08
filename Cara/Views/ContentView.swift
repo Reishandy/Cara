@@ -29,10 +29,7 @@ struct ContentView: View {
 			}
 			.tag(Tab.routine)
 			.tabItem {
-				VStack {
 					Image(systemName: "accessibility")
-					Text("Routine")
-				}
 			}
 			
 			NavigationStack {
@@ -40,10 +37,7 @@ struct ContentView: View {
 			}
 			.tag(Tab.learn)
 			.tabItem {
-				VStack {
 					Image(systemName: "book.pages")
-					Text("Learn")
-				}
 			}
 		}
 		.tint(.appSecondary)
