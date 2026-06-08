@@ -89,15 +89,13 @@ struct TaskDetailView: View {
 				Image(imageSystemName)
 					.resizable()
 					.clipped()
-			}
-			
-			if let image = UIImage(data: task.image ?? Data()) {
+			} else if let image = UIImage(data: task.image ?? Data()) {
 				Image(uiImage: image)
-			}
-			
-			Color.gray
-			
-			LinearGradient(
+            } else {
+                Color.gray
+            }
+            
+            LinearGradient(
 				colors: [.clear, colorScheme == .dark ? .black : .white],
 				startPoint: .center,
 				endPoint: .bottom
