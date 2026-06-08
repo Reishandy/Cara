@@ -10,60 +10,6 @@ struct CaraApp: App {
 			let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
 			let container = try ModelContainer(for: schema, configurations: [configuration])
 			
-			// FIXME: Remove history dummy
-			let dummyCategory = TaskCategory(categoryName: "Dummy", isDefault: true)
-			container.mainContext.insert(dummyCategory)
-            let dummyCategory2 = TaskCategory(categoryName: "Dummy2", isDefault: true)
-            container.mainContext.insert(dummyCategory2)
-			
-			let dummyVital = Vital(bloodPressure: BloodPressure(systolic: 1, diastolic: 1), temperature: 10.2)
-			container.mainContext.insert(dummyVital)
-			
-			let dummyRoutine = Routine(routineName: "Dummy", routineDescription: "Dummy Routine")
-			let dummyRoutine2 = Routine(routineName: "Dummy2", routineDescription: "Dummy Routine2 That is slightly long description and such")
-			container.mainContext.insert(dummyRoutine)
-			container.mainContext.insert(dummyRoutine2)
-			
-			let dummyTasks = [
-				RoutineTask(taskName: "dummy1", taskIcon: "circle.fill", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-				RoutineTask(taskName: "dummy2", howTo: ["1", "2", "3"], isDefault: true, category: dummyCategory),
-				RoutineTask(taskName: "dummy3", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy4", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy5", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy6", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy7", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory),
-				RoutineTask(taskName: "dummy8", howTo: ["1", "2", "3"], isDefault: false, category: dummyCategory2)
-			]
-			
-			for task in dummyTasks {
-				container.mainContext.insert(task)
-				dummyRoutine.tasks.append(task)
-			}
-			
-			let dummyHistory = History(
-				date: .now,
-				taskProgress: TaskProgress(
-					filledAt: [
-						dummyTasks[0].id: .now,
-						dummyTasks[1].id: .now
-					]
-				),
-				note: "This is a dummy note",
-				vital: dummyVital,
-				routine: dummyRoutine
-			)
-			
-			let dummyHistory2 = History(
-				date: .now,
-				taskProgress: TaskProgress(filledAt: [:]),
-				note: "This is a dummy note",
-				vital: Vital(),
-				routine: dummyRoutine2
-			)
-			
-			container.mainContext.insert(dummyHistory)
-			container.mainContext.insert(dummyHistory2)
-			
 			let seeder = DatabaseSeederService(modelContext: container.mainContext)
 			seeder.seedIfEmpty([Routine.self, RoutineTask.self])
 			
@@ -90,8 +36,7 @@ struct CaraApp: App {
 	@State private var homeViewModel = HomeViewModel(modelContext: sharedContainer.mainContext)
 	@State private var learnViewModel = LearnViewModel(modelContext: sharedContainer.mainContext)
 	@State private var routineDetailViewModel = RoutineDetailViewModel(modelContext: sharedContainer.mainContext)
-	@State private var routineAddViewModel = RoutineAddViewModel(modelContext: sharedContainer.mainContext)
-	@State private var taskAddViewModel = TaskAddViewModel(modelContext: sharedContainer.mainContext)
+	@State private var taskSelectViewModel = TaskSelectViewModel(modelContext: sharedContainer.mainContext)
 	
 	var body: some Scene {
 		WindowGroup {
@@ -99,8 +44,7 @@ struct CaraApp: App {
 				.environment(homeViewModel)
 				.environment(learnViewModel)
 				.environment(routineDetailViewModel)
-				.environment(routineAddViewModel)
-				.environment(taskAddViewModel)
+				.environment(taskSelectViewModel)
 		}
 	}
 }

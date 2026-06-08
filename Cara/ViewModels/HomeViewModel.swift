@@ -28,17 +28,27 @@ class HomeViewModel {
 	/// By default it will be today, change this value to update the historiesDict with the selected date.
 	var selectedDay: Date = .now { didSet { self.fetchData(isOnlyHistories: true) } }
 	
+	/// Read only selected day for display
+	var routineDay: Date {
+		selectedDay
+	}
+	
 	/// The earlieast recorded history.
 	///
 	/// Practically the first time the user opens the app.
 	var earliestHistoryDate: Date = .now
 	
+	/// Fetch counter for SwiftUI update.
+	var fetchCounter: Int = 0
+	
+	/// Variable to store routine name to add.
+	var addRoutineName: String = ""
+	
+	/// Variable to store routine description to add.
+	var addRoutineDescription: String = ""
+	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
-	}
-	
-	var routineDay:  Date {
-		selectedDay
 	}
 	
 	/// Delete a routine.
@@ -69,13 +79,37 @@ class HomeViewModel {
 				self.earliestHistoryDate = try fetchEarliestHistoryDate()
 			}
 			self.historiesDict = try fetchHistoriesDict()
+			self.fetchCounter += 1
 		} catch {
 			print("ERROR > Failed to fetch routines or histories: \(error)")
 		}
 	}
 	
+	/// Function to remove routine
+	func removeRoutine(at offsets: IndexSet) {
+		for index in offsets {
+			let routineToRemove = routines[index]
+			
+			if let routineIndex = routines.firstIndex(of: routineToRemove) {
+				self.modelContext.delete(routines[routineIndex])
+				routines.remove(at: routineIndex)
+			}
+		}
+	}
+	
+	/// Function to add routine from the stord variables.
+	func addRoutine() {
+		modelContext.insert( Routine(routineName: self.addRoutineName, routineDescription: self.addRoutineDescription))
+		fetchData()
+		
+		self.addRoutineName = ""
+		self.addRoutineDescription = ""
+	}
+	
 	private func fetchRoutines() throws -> [Routine] {
-		return try modelContext.fetch(FetchDescriptor<Routine>())
+		return try modelContext.fetch(FetchDescriptor<Routine>(
+			sortBy: [SortDescriptor(\.timestamp, order: .forward)]
+		))
 	}
 	
 	private func fetchHistoriesDict() throws -> [UUID: History] {

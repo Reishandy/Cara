@@ -29,13 +29,44 @@ class RoutineDetailViewModel {
 	/// The vitals of the current Routine.
 	///
 	/// You can directly modify this data and SwiftData will automatically save it.
-	var vital: Vital? {
-		get { currentHistory?.vital }
+	var vital: Vital {
+		get {
+			currentHistory?.vital ?? Vital()
+		}
 		set {
 			currentHistory?.vital = newValue
-			currentHistory?.vitalFilledAt = (newValue != nil) ? Date.now : nil
+			currentHistory?.vitalFilledAt = Date.now
 		}
 	}
+	
+	/// The note of the current Routine.
+	///
+	/// You can directly modify this data and SwiftData will automatically save it.
+	var note: String {
+		get {
+			currentHistory?.note ?? ""
+		}
+		set {
+			currentHistory?.note = newValue
+			currentHistory?.noteFilledAt = Date.now
+		}
+	}
+	
+	/// The date vitals is filled
+	///
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
+	var vitalFilledDate: Date? {
+		self.currentHistory?.vitalFilledAt
+	}
+	
+	/// The date note is filled
+	///
+	/// > Tip: This property can be read from anywhere, but can only be modified internally.
+	var noteFilledDate: Date? {
+		self.currentHistory?.noteFilledAt
+	}
+	
+	private var routine: Routine?
 	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
@@ -61,8 +92,33 @@ class RoutineDetailViewModel {
 			let fetchedHistories = try modelContext.fetch(FetchDescriptor<History>(predicate: currentHistoryPredicate))
 			
 			self.currentHistory = fetchedHistories.first(where: { $0.routine.id == routine.id })
+			self.routine = routine
 		} catch {
 			print("ERROR > Failed populating routine history: \(error)")
+		}
+	}
+	
+	/// Function to sort tasks
+	func moveTasks(from source: IndexSet, to destination: Int) {
+		guard let routine = self.routine else { return }
+		
+		routine.taskOrder.move(fromOffsets: source, toOffset: destination)
+	}
+	
+	/// Function to remove tasks
+	func removeTasks(at offsets: IndexSet) {
+		guard let routine = self.routine else { return }
+		
+		for index in offsets {
+			let taskToRemove = routine.orderedTasks[index]
+			
+			if let orderIndex = routine.taskOrder.firstIndex(of: taskToRemove.id) {
+				routine.taskOrder.remove(at: orderIndex)
+			}
+			
+			if let relationshipIndex = routine.tasks.firstIndex(of: taskToRemove) {
+				routine.tasks.remove(at: relationshipIndex)
+			}
 		}
 	}
 }

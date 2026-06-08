@@ -20,6 +20,7 @@ class History {
 	var taskProgress: TaskProgress
 	var note: String
 	var vitalFilledAt: Date?
+	var noteFilledAt: Date?
 	
 	@Relationship(deleteRule: .cascade, inverse: \Vital.history)
 	var vital: Vital?

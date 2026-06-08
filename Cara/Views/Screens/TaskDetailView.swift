@@ -8,27 +8,13 @@
 import SwiftUI
 
 struct TaskDetailView: View {
-    @Environment(\.dismiss) private var dismiss
+	@Environment(\.colorScheme) var colorScheme
+	
     @State private var showAppBarTitle = false
     
-    private let steps = [
-        "Hold the patient's weak forearm just above the wrist with one hand to keep it steady.",
-        "Open your other hand and interlace your fingers with the patient's fingers, flattening their hand against yours.",
-        "Slowly pull their fingers back to open the hand, and gently pull the entire hand backward at the wrist joint.",
-        "Hold this open, stretched position for 15 to 30 seconds.",
-        "Slowly release the stretch; never let the hand snap back rapidly.",
-        "Hold the patient's weak forearm just above the wrist with one hand to keep it steady.",
-        "Open your other hand and interlace your fingers with the patient's fingers, flattening their hand against yours.",
-        "Hold the patient's weak forearm just above the wrist with one hand to keep it steady.",
-        "Open your other hand and interlace your fingers with the patient's fingers, flattening their hand against yours."
-    ]
+	let task: RoutineTask
     
-    private let subtitle: String = """
-                Opens the wrist and fingers to counteract "flexor spasticity" \
-                (the natural tendency for a stroke-affected hand to curl into a tight fist).
-                """
-    private let title = "Wrist & Finger Stretch\n(Passive ROM)"
-    
+	// FIXME: Check this again, the layour and stuff
     var body: some View {
         ZStack(alignment: .top) {
             headerImage
@@ -44,46 +30,33 @@ struct TaskDetailView: View {
             .onScrollGeometryChange(for: CGFloat.self) { geometry in
                 geometry.contentOffset.y
             } action: { oldOffset, newOffset in
-//                currentOffset = newOffset
                 if newOffset > 100 {
                     showAppBarTitle = true
                 } else {
                     showAppBarTitle = false
                 }
             }
-            
-//            closeButton
         }
         .ignoresSafeArea(edges: .top)
-        .navigationTitle(title)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "xmark")
-                }
-            }
-        }
+		.toolbar(.hidden, for: .tabBar)
     }
     
-    let imageUrl = "https://www.seniorlivingarrangements.com/wp-content/uploads/2018/08/Senior-Care-Centre.jpg"
-    
     private var headerImage: some View {
-        
         ZStack(alignment: .bottomLeading) {
-            AsyncImage(url: URL(string: imageUrl)) { image in
-                image
-                    .resizable()
-                    .frame(height: 430)
-                    .clipped()
-            } placeholder: {
-                Color.gray
-            }
+			if let imageSystemName = task.imageSystemName {
+				Image(imageSystemName)
+					.resizable()
+					.clipped()
+			}
+			
+			if let image = UIImage(data: task.image ?? Data()) {
+				Image(uiImage: image)
+			}
+			
+			Color.gray
             
             LinearGradient(
-                colors: [.clear, .black],
+				colors: [.clear, colorScheme == .dark ? .black : .white],
                 startPoint: .center,
                 endPoint: .bottom
             )
@@ -93,20 +66,20 @@ struct TaskDetailView: View {
     
     private var contentView: some View {
         VStack(alignment: .leading) {
-            
             if !showAppBarTitle {
-                Text(title)
+				Text(task.taskName)
                     .font(.title2)
                     .bold()
                     .foregroundStyle(.white)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 4)
+					.shadow(color: .black.opacity(0.8), radius: 10, x: 0, y: 2)
             } else {
                 Spacer().frame(height: 60)
             }
             
             VStack(alignment: .leading) {
-                Text(subtitle)
+				Text(task.taskDescription)
                 .font(.subheadline)
                 .foregroundStyle(.appPrimary)
                 .padding(.bottom, 8)
@@ -116,7 +89,7 @@ struct TaskDetailView: View {
                     .foregroundStyle(.appPrimary)
                     .padding(.bottom, 8)
                 
-                ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
+				ForEach(Array(task.howTo.enumerated()), id: \.offset) { index, step in
                     TaskInstructionView(
                         number: index + 1,
                         content: step
@@ -133,26 +106,6 @@ struct TaskDetailView: View {
             )
         }
     }
-    
-    private var closeButton: some View {
-        Button {
-            dismiss()
-        } label: {
-            Image(systemName: "xmark")
-                .font(.system(size: 26, weight: .medium))
-                .foregroundStyle(.black)
-                .frame(width: 64, height: 64)
-                .background(.ultraThinMaterial)
-                .clipShape(Circle())
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 64)
-        .padding(.leading, 28)
-    }
-}
-
-#Preview {
-    TaskDetailView()
 }
 
 private struct TaskInstructionView: View {
@@ -181,4 +134,8 @@ private struct TaskInstructionView: View {
         
         Spacer().frame(height: 12)
     }
+}
+
+#Preview {
+	TaskDetailView(task: RoutineTask.defaultData.first!)
 }

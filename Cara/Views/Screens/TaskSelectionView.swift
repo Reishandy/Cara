@@ -6,61 +6,107 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TaskSelectionView: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    
-    var taskCategory: String = "Task Category"
-    var taskAmount: Int = 0
-    @State private var searchTask = ""
-    
-    var body: some View {
-        VStack {
-            ScrollView(.vertical, showsIndicators: true) {
-                ForEach (0..<10, id: \.self) { _ in
-                    NavigationLink(
-                        value: Screen.taskDetail
-                    ) {
-                        TaskCardView()
-                    }
-                }
-            }
-            .searchable(text: $searchTask, prompt: "Search Task...")
-        }
-        .toolbar{
-            ToolbarItem(placement: .bottomBar) {
-                Button {
-                    // FIXME: need to route this to action
-                } label: {
-                    selectedTaskButtonLabel
-                }
-                .frame(maxWidth: .infinity)
-                .buttonStyle(.borderedProminent)
-                .tint(Color("AppThirdColor"))
-            }
-        }
-        .navigationTitle("Add Tasks")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-    
-    @ViewBuilder
-    private var selectedTaskButtonLabel: some View {
-        if dynamicTypeSize.isAccessibilitySize {
-            VStack(spacing: 2) {
-                Text("\(taskAmount) Selected")
-                Text("Save")
-                    .font(.headline)
-            }
-            .multilineTextAlignment(.center)
-        } else {
-            Text("\(taskAmount) Selected • Save")
-                .font(.headline)
-        }
-    }
+	@Environment(\.dismiss) private var dismiss
+	@Environment(TaskSelectViewModel.self) private var taskSelectViewModel
+	
+	@Environment(\.dynamicTypeSize) private var dynamicTypeSize
+	
+	var initialTasks: [RoutineTask]? = nil
+	var onSaveAction: (([RoutineTask]) -> Void)? = nil
+	var isEdit: Bool = false
+	
+	var body: some View {
+		@Bindable var taskSelectViewModel = taskSelectViewModel
+		
+		VStack {
+			ScrollView(.vertical, showsIndicators: true) {
+				ForEach(taskSelectViewModel.groupedTasks.keys.sorted(), id: \.self) { categoryName in
+					Text(categoryName)
+						.font(.title2)
+						.bold()
+						.foregroundStyle(.appPrimary)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding(.bottom, 4)
+						.padding(.top, 10)
+					
+					ForEach(taskSelectViewModel.groupedTasks[categoryName] ?? [], id: \.id) { task in
+						NavigationLink {
+							TaskDetailView(task: task)
+						} label: {
+							TaskCardView(
+								taskName: task.taskName,
+								taskIconEach: task.taskIcon,
+								style: self.taskSelectViewModel.selectedTasks.contains(task) ? .checked : .plus,
+								onButtonClick: {
+									if self.taskSelectViewModel.selectedTasks.contains(task) {
+										self.taskSelectViewModel.selectedTasks.removeAll { $0.id == task.id }
+									} else {
+										self.taskSelectViewModel.selectedTasks.append(task)
+									}
+								}
+							)
+						}
+					}
+				}
+			}
+			.searchable(
+				text: $taskSelectViewModel.searchTerm,
+				placement: .navigationBarDrawer(displayMode: .always),
+				prompt: "Search Task..."
+			)
+		}
+		.toolbar{
+			ToolbarItem(placement: .bottomBar) {
+				Button {
+					onSaveAction?(self.taskSelectViewModel.selectedTasks)
+					self.taskSelectViewModel.selectedTasks = []
+					dismiss()
+				} label: {
+					selectedTaskButtonLabel
+				}
+				.frame(maxWidth: .infinity)
+				.buttonStyle(.borderedProminent)
+				.tint(Color("AppThirdColor"))
+			}
+		}
+		.navigationTitle(isEdit ? "Modify Tasks" : "Add Tasks")
+		.navigationBarTitleDisplayMode(.inline)
+		.padding(.horizontal, 20)
+		.task {
+			self.taskSelectViewModel.fetchData()
+			self.taskSelectViewModel.selectedTasks = initialTasks ?? []
+		}
+	}
+	
+	@ViewBuilder
+	private var selectedTaskButtonLabel: some View {
+		if dynamicTypeSize.isAccessibilitySize {
+			VStack(spacing: 2) {
+				Text("\(taskSelectViewModel.selectedTasks.count) Selected")
+					.foregroundStyle(.white)
+				Text("Save")
+					.font(.headline)
+					.foregroundStyle(.white)
+			}
+			.multilineTextAlignment(.center)
+		} else {
+			Text("\(taskSelectViewModel.selectedTasks.count) Selected • Save")
+				.font(.headline)
+				.multilineTextAlignment(.center)
+				.foregroundStyle(.white)
+		}
+	}
 }
 
 #Preview {
-    NavigationStack{
-        TaskSelectionView()
-    }
+	let container = CaraApp.previewSharedContainer
+	let taskSelectViewModel = TaskSelectViewModel(modelContext: container.mainContext)
+	
+	NavigationStack {
+		TaskSelectionView()
+			.environment(taskSelectViewModel)
+	}
 }

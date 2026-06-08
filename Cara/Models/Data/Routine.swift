@@ -11,9 +11,11 @@ import SwiftData
 @Model
 final class Routine: Seedable {
 	var id: UUID
+	var timestamp: Date
 	
 	var routineName: String
 	var routineDescription: String
+	var taskOrder: [UUID] = []
 	
 	@Relationship(inverse: \RoutineTask.routines)
 	var tasks: [RoutineTask] = []
@@ -23,9 +25,16 @@ final class Routine: Seedable {
 	
 	init(routineName: String, routineDescription: String, tasks: [RoutineTask] = []) {
 		self.id = UUID()
+		self.timestamp = .now
 		self.routineName = routineName
 		self.routineDescription = routineDescription
 		self.tasks = tasks
+	}
+	
+	var orderedTasks: [RoutineTask] {
+		taskOrder.compactMap { uuid in
+			tasks.first { $0.id == uuid }
+		}
 	}
 	
 	static var defaultData: [Routine] {

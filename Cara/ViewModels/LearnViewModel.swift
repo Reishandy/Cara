@@ -13,8 +13,6 @@ import SwiftData
 class LearnViewModel {
 	private var modelContext: ModelContext
 	
-	// FIXME: ReEvaluate filters, add new field or delete
-	
 	/// Collection of stored tasks dictionary, grouped by its category name.
 	///
 	/// > Tip: This property can be read from anywhere, but can only be modified internally.
@@ -64,7 +62,9 @@ class LearnViewModel {
 			// A solution that works now because it is unrealistic to see a lot of tasks locally
 			// So what I did is just fetch all and fitler in memory instead of dealing with Predicate...
 			let search = self.searchTerm.trimmingCharacters(in: .whitespacesAndNewlines)
-			let fetchedTasks = try modelContext.fetch(FetchDescriptor<RoutineTask>())
+			let fetchedTasks = try modelContext.fetch(FetchDescriptor<RoutineTask>(
+				sortBy: [SortDescriptor(\.taskName, order: .forward)]
+			))
 			
 			let filteredTasks = fetchedTasks.filter { task in
 				let matchesSearch = search.isEmpty || task.taskName.localizedStandardContains(search)
@@ -74,7 +74,9 @@ class LearnViewModel {
 			}
 			
 			self.groupedTasks = Dictionary(grouping: filteredTasks, by: { $0.category?.categoryName ?? "Uncategorized" })
-			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>())
+			self.categories = try modelContext.fetch(FetchDescriptor<TaskCategory>(
+				sortBy: [SortDescriptor(\.categoryName, order: .forward)]
+			))
 		} catch {
 			print("ERROR > Failed to fetch tasks or categories: \(error)")
 		}
