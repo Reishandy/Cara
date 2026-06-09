@@ -619,7 +619,7 @@ final class RoutineTask: Seedable {
                         "Insert the guide tool (obturator) into the new inner tube, apply a tiny drop of water-soluble lubricant to the tip, and guide it gently back into the neck hole at a straight 90-degree angle.",
                         "Remove the internal guide tool immediately after insertion so the patient can draw air through the tube, and secure the neck ties tightly."
                     ],
-                    isDefault: false, //FIXME: CHange
+                    isDefault: true,
                     imageSystemName: "trach3",
                     category: trach
                 )

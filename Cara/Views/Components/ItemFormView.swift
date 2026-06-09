@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SFSymbolsPicker
 
 struct ItemFormView: View {
 	var isTask: Bool = false
@@ -13,19 +14,22 @@ struct ItemFormView: View {
 	@Binding var description: String
 	var categories: [TaskCategory] = []
 	@Binding var category: TaskCategory?
+	@Binding var icon: String
 	
 	init(
 		isTask: Bool = false,
 		name: Binding<String>,
 		description: Binding<String>,
 		categories: [TaskCategory] = [],
-		category: Binding<TaskCategory?> = .constant(nil)
+		category: Binding<TaskCategory?> = .constant(nil),
+		icon: Binding<String> = .constant("cross.fill")
 	) {
 		self.isTask = isTask
 		self._name = name
 		self._description = description
 		self.categories = categories
 		self._category = category
+		self._icon = icon
 	}
 	
 	var body: some View {
@@ -52,7 +56,7 @@ struct ItemFormView: View {
 			
 			TextEditor(text: $description)
 				.foregroundStyle(.appPrimary)
-				.padding(16)
+				.padding(10)
 				.background {
 					RoundedRectangle(cornerRadius: 16)
 						.fill(Color.selected.opacity(0.8))
@@ -60,7 +64,6 @@ struct ItemFormView: View {
 				.scrollContentBackground(.hidden)
 				.frame(height: 120)
 			
-			// FIXME: Icon selector
 			if isTask {
 				Text("Task Category")
 					.font(.title2)
@@ -95,6 +98,33 @@ struct ItemFormView: View {
 					RoundedRectangle(cornerRadius: 16)
 						.fill(Color.selected.opacity(0.8))
 				}
+				
+				HStack {
+					Text("Task Icon")
+						.font(.title2)
+						.bold()
+						.foregroundStyle(.appPrimary)
+						.frame(maxWidth: .infinity, alignment: .leading)
+					
+					SFSymbolsPicker(selection: $icon, autoDismiss: true) {
+						HStack {
+							Image(systemName: icon)
+								.padding(.trailing, 8)
+							
+							Image(systemName: "chevron.up.chevron.down")
+								.opacity(0.5)
+								.font(.subheadline)
+								.padding(.trailing, 1)
+						}
+						.foregroundStyle(.appPrimary)
+						.padding(16)
+						.background {
+							RoundedRectangle(cornerRadius: 16)
+								.fill(Color.selected.opacity(0.8))
+						}
+					}
+				}
+				.padding(.top, 6)
 			}
 		}
 	}

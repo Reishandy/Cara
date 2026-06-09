@@ -183,7 +183,8 @@ struct TaskDetailView: View {
 						name: $task.taskName,
 						description: $task.taskDescription,
 						categories: taskDetailViewModel.categories,
-						category: $task.category
+						category: $task.category,
+						icon: $task.taskIcon
 					)
 					.padding(.bottom, 8)
 				} else {
