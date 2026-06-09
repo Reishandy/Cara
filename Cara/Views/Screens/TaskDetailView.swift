@@ -32,7 +32,7 @@ struct TaskDetailView: View {
 			ScrollView {
 				VStack(spacing: 0) {
 					Spacer()
-						.frame(height: 160)
+						.frame(height: 260)
 					
 					contentView
 				}
@@ -105,7 +105,7 @@ struct TaskDetailView: View {
 				endPoint: .bottom
 			)
 		}
-		.frame(height: 280)
+		.frame(height: 300)
 	}
 	
 	private var photoPicker: some View {
@@ -173,7 +173,9 @@ struct TaskDetailView: View {
 			} else {
 				Spacer().frame(height: 60)
 				
-				photoPicker
+				if isEdit {
+					photoPicker
+				}
 			}
 			
 			VStack(alignment: .leading) {
