@@ -14,34 +14,41 @@ enum Tab {
 }
 
 struct ContentView: View {
+	@AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
 	@State private var selectedTab: Tab = .routine
 	
 	// FIXME: TODO List
-	//	- Category add and edit?
 	//	- Check large text accessability again
 	//	- Make sure every scrollbar is at the edge of the screen (check learn, task select, routine detail, home)
 	//	- Animation and bux fixes
 	
 	var body: some View {
-		TabView(selection: $selectedTab) {
-			NavigationStack {
-				HomeView()
-			}
-			.tag(Tab.routine)
-			.tabItem {
-					Image(systemName: "accessibility")
-			}
-			
-			NavigationStack {
-				LearnView()
-			}
-			.tag(Tab.learn)
-			.tabItem {
-					Image(systemName: "book.pages")
+		Group {
+			if hasSeenOnboarding {
+				TabView(selection: $selectedTab) {
+					NavigationStack {
+						HomeView()
+					}
+					.tag(Tab.routine)
+					.tabItem {
+						Image(systemName: "accessibility")
+					}
+					
+					NavigationStack {
+						LearnView()
+					}
+					.tag(Tab.learn)
+					.tabItem {
+						Image(systemName: "book.pages")
+					}
+				}
+				.tint(.appSecondary)
+				.scrollDismissesKeyboard(.interactively)
+			} else {
+				OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
 			}
 		}
-		.tint(.appSecondary)
-		.scrollDismissesKeyboard(.interactively)
+		.animation(.easeInOut, value: hasSeenOnboarding)
 	}
 }
 
