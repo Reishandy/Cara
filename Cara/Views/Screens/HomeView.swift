@@ -13,9 +13,6 @@ import UIKit
 struct HomeView: View {
 	@Environment(HomeViewModel.self) var homeViewModel
 	
-	@ScaledMetric(relativeTo: .body) private var buttonSize = 48
-	@ScaledMetric(relativeTo: .body) private var iconSize = 24
-	
 	@State private var showDatePicker = false
 	@State private var showAddRoutineSheet = false
 	
@@ -112,28 +109,13 @@ struct HomeView: View {
 					showAddRoutineSheet = true
 				} label: {
 					Image(systemName: "plus")
-						.font(.system(size: iconSize, weight: .regular))
 						.foregroundStyle(.appSecondary)
-						.frame(width: buttonSize, height: buttonSize)
-						.background(Color.background)
-						.clipShape(Circle())
-						.glassEffect()
 				}
+				.buttonStyle(.borderedProminent)
+				.tint(Color.background)
 			}
-			.sharedBackgroundVisibility(.hidden)
-			
-//			ToolbarItem(placement: .topBarTrailing) {
-//				Button {
-//					showAddRoutineSheet = true
-//				} label: {
-//					Image(systemName: "plus")
-//						.foregroundStyle(.appSecondary)
-//				}
-//				.buttonStyle(.borderedProminent)
-//				.tint(Color.background)
-//			}
 		}
-		.navigationTitle("Caregiving")
+		.navigationTitle("Cara")
 		.toolbarTitleDisplayMode(.inlineLarge)
 		.sheet(isPresented: $showAddRoutineSheet) {
 			VStack(spacing: 36) {
