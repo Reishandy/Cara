@@ -14,40 +14,41 @@ enum Tab {
 }
 
 struct ContentView: View {
+	@AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
 	@State private var selectedTab: Tab = .routine
 	
 	// FIXME: TODO List
-	//	- Task Detail add and edit?
 	//	- Check large text accessability again
 	//	- Make sure every scrollbar is at the edge of the screen (check learn, task select, routine detail, home)
-	//	- Animation
+	//	- Animation and bux fixes
 	
 	var body: some View {
-		TabView(selection: $selectedTab) {
-			NavigationStack {
-				HomeView()
-			}
-			.tag(Tab.routine)
-			.tabItem {
-				VStack {
-					Image(systemName: "accessibility")
-					Text("Routine")
+		Group {
+			if hasSeenOnboarding {
+				TabView(selection: $selectedTab) {
+					NavigationStack {
+						HomeView()
+					}
+					.tag(Tab.routine)
+					.tabItem {
+						Image(systemName: "accessibility")
+					}
+					
+					NavigationStack {
+						LearnView()
+					}
+					.tag(Tab.learn)
+					.tabItem {
+						Image(systemName: "book.pages")
+					}
 				}
-			}
-			
-			NavigationStack {
-				LearnView()
-			}
-			.tag(Tab.learn)
-			.tabItem {
-				VStack {
-					Image(systemName: "book.pages")
-					Text("Learn")
-				}
+				.tint(.appSecondary)
+				.scrollDismissesKeyboard(.interactively)
+			} else {
+				OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
 			}
 		}
-		.tint(.appSecondary)
-		.hideKeyboardWhenTappedAround()
+		.animation(.easeInOut, value: hasSeenOnboarding)
 	}
 }
 
@@ -58,10 +59,12 @@ struct ContentView: View {
 	let learnViewModel = LearnViewModel(modelContext: container.mainContext)
 	let routineDetailViewModel = RoutineDetailViewModel(modelContext: container.mainContext)
 	let taskSelectViewModel = TaskSelectViewModel(modelContext: container.mainContext)
+	let taskDetailViewModel = TaskDetailViewModel(modelContext: container.mainContext)
 	
 	ContentView()
 		.environment(homeViewModel)
 		.environment(learnViewModel)
 		.environment(routineDetailViewModel)
 		.environment(taskSelectViewModel)
+		.environment(taskDetailViewModel)
 }
