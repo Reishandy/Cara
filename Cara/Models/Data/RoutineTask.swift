@@ -467,7 +467,7 @@ final class RoutineTask: Seedable {
                         "Have them maintain this upright posture for 1 to 3 minutes, tracking whether they lean heavily toward their weak side (known as \"Pusher Syndrome\")."
                     ],
                     isDefault: true,
-                    imageSystemName: "mobility4",
+                    imageSystemName: "bed.double.fill",
                     category: mobility
                 ),
             
