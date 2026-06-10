@@ -44,25 +44,41 @@ struct TaskSelectionView: View {
 			prompt: "Search Task..."
 		)
 		.toolbar{
-			ToolbarItem(placement: .bottomBar) {
-				Button {
-					onSaveAction?(self.taskSelectViewModel.selectedTasks)
-					self.taskSelectViewModel.selectedTasks = []
-					dismiss()
-				} label: {
-					selectedTaskButtonLabel
-				}
-				.frame(maxWidth: .infinity)
-				.buttonStyle(.borderedProminent)
-				.tint(Color("AppThirdColor"))
-			}
-			
 			ToolbarItem(placement: .topBarTrailing) {
 				Button {
 					showAddTaskSheet = true
 				} label: {
 					Image(systemName: "plus")
 				}
+			}
+		}
+		.safeAreaInset(edge: .bottom, spacing: 0) {
+			VStack(spacing: 0) {
+				Button {
+					onSaveAction?(self.taskSelectViewModel.selectedTasks)
+					self.taskSelectViewModel.selectedTasks = []
+					dismiss()
+				} label: {
+					selectedTaskButtonLabel
+						.frame(maxWidth: .infinity)
+						.padding(.vertical, 14)
+				}
+				.background(Color("AppThirdColor"))
+				.clipShape(RoundedRectangle(cornerRadius: 18))
+				.padding(.horizontal, 20)
+				.padding(.top, 24)
+			}
+			.background {
+				LinearGradient(
+					colors: [
+						Color.clear,
+						Color.white.opacity(0.85),
+						Color.white
+					],
+					startPoint: .top,
+					endPoint: .bottom
+				)
+				.ignoresSafeArea(edges: .bottom)
 			}
 		}
 		.navigationTitle(isEdit ? "Modify Tasks" : "Add Tasks")
@@ -138,11 +154,11 @@ struct TaskSelectionView: View {
 }
 
 #Preview {
-	let container = CaraApp.previewSharedContainer
-	let taskSelectViewModel = TaskSelectViewModel(modelContext: container.mainContext)
-	
-	NavigationStack {
-		TaskSelectionView()
-			.environment(taskSelectViewModel)
-	}
+    let container = CaraApp.previewSharedContainer
+    let taskSelectViewModel = TaskSelectViewModel(modelContext: container.mainContext)
+    
+    NavigationStack {
+        TaskSelectionView()
+            .environment(taskSelectViewModel)
+    }
 }

@@ -61,6 +61,37 @@ struct RoutineDetailView: View {
 				.padding(.horizontal, 20)
 			}
 		}
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if currentElement == .task && (routine.tasks.isEmpty || isEdit) {
+                VStack(spacing: 0) {
+                    Button {
+                        showTaskSelection = true
+                    } label: {
+                        Text(routine.tasks.isEmpty ? "Add Task" : "Modify Task")
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                    }
+                    .background(Color("AppThirdColor"))
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .padding(.horizontal, 20)
+                    .padding(.top, 24)
+                }
+                .background {
+                    LinearGradient(
+                        colors: [
+                            Color.clear,
+                            Color.white.opacity(0.85),
+                            Color.white
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .ignoresSafeArea(edges: .bottom)
+                }
+            }
+        }
 		.toolbar {
 			ToolbarItem(placement: .principal) {
 				VStack(spacing: 2) {
@@ -73,22 +104,6 @@ struct RoutineDetailView: View {
 					Text(selectedDay.formatted(date: .long, time: .omitted))
 						.font(.caption)
 						.foregroundStyle(.appThird)
-				}
-			}
-			
-			ToolbarItem(placement: .bottomBar) {
-				if currentElement == .task && (routine.tasks.isEmpty || isEdit) {
-					Button {
-						showTaskSelection = true
-					} label: {
-						Text(routine.tasks.isEmpty ? "Add Task" : "Modify Task")
-							.font(.headline)
-							.foregroundStyle(.white)
-							.multilineTextAlignment(.center)
-					}
-					.frame(maxWidth: .infinity)
-					.buttonStyle(.borderedProminent)
-					.tint(Color("AppThirdColor"))
 				}
 			}
 			
