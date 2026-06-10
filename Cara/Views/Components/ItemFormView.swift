@@ -16,6 +16,14 @@ struct ItemFormView: View {
 	@Binding var category: TaskCategory?
 	@Binding var icon: String
 	
+	enum FocusField {
+		case name, description
+	}
+	@FocusState private var focusedField: FocusField?
+	
+	@State private var fallbackName: String = ""
+	@State private var fallbackDescription: String = ""
+	
 	init(
 		isTask: Bool = false,
 		name: Binding<String>,
@@ -41,6 +49,7 @@ struct ItemFormView: View {
 				.frame(maxWidth: .infinity, alignment: .leading)
 			
 			TextField("", text: $name)
+				.focused($focusedField, equals: .name)
 				.foregroundStyle(.appPrimary)
 				.padding(16)
 				.background {
@@ -55,6 +64,7 @@ struct ItemFormView: View {
 				.frame(maxWidth: .infinity, alignment: .leading)
 			
 			TextEditor(text: $description)
+				.focused($focusedField, equals: .description)
 				.foregroundStyle(.appPrimary)
 				.padding(10)
 				.background {
@@ -127,6 +137,27 @@ struct ItemFormView: View {
 				.padding(.top, 6)
 			}
 		}
+		.onAppear {
+			fallbackName = name
+			fallbackDescription = description
+		}
+		.onChange(of: focusedField) { oldValue, newValue in
+			if oldValue == .name && newValue != .name {
+				if name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+					name = fallbackName
+				} else {
+					fallbackName = name
+				}
+			}
+			
+			if oldValue == .description && newValue != .description {
+				if description.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+					description = fallbackDescription
+				} else {
+					fallbackDescription = description
+				}
+			}
+		}
 	}
 }
 
@@ -139,7 +170,7 @@ struct ItemFormView: View {
 		isTask: true,
 		name: .constant(""),
 		description: .constant(""),
-		categories: [TaskCategory(categoryName: "Category 1"), TaskCategory(categoryName: "Category 2")],
+		categories: [],
 		category: .constant(nil)
 	)
 }
