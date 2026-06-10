@@ -102,7 +102,7 @@ struct HomeView: View {
 					}
 				}
 			}
-			.padding(20)
+			.padding(.horizontal, 20)
 		}
 		.animation(.spring, value: homeViewModel.routines)
 		.frame(maxWidth: .infinity, alignment: .leading)
@@ -117,9 +117,21 @@ struct HomeView: View {
 						.frame(width: buttonSize, height: buttonSize)
 						.background(Color.background)
 						.clipShape(Circle())
+						.glassEffect()
 				}
 			}
 			.sharedBackgroundVisibility(.hidden)
+			
+//			ToolbarItem(placement: .topBarTrailing) {
+//				Button {
+//					showAddRoutineSheet = true
+//				} label: {
+//					Image(systemName: "plus")
+//						.foregroundStyle(.appSecondary)
+//				}
+//				.buttonStyle(.borderedProminent)
+//				.tint(Color.background)
+//			}
 		}
 		.navigationTitle("Caregiving")
 		.toolbarTitleDisplayMode(.inlineLarge)
