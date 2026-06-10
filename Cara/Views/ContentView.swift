@@ -17,11 +17,6 @@ struct ContentView: View {
 	@AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
 	@State private var selectedTab: Tab = .routine
 	
-	// FIXME: TODO List
-	//	- Check large text accessability again
-	//	- Make sure every scrollbar is at the edge of the screen (check learn, task select, routine detail, home)
-	//	- Animation and bux fixes
-	
 	var body: some View {
 		Group {
 			if hasSeenOnboarding {
