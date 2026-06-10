@@ -24,45 +24,25 @@ struct TaskSelectionView: View {
 	var body: some View {
 		@Bindable var taskSelectViewModel = taskSelectViewModel
 		
-		VStack {
-			ScrollView(.vertical, showsIndicators: true) {
-				ForEach(taskSelectViewModel.groupedTasks.keys.sorted(), id: \.self) { categoryName in
-					Text(categoryName)
-						.font(.title2)
-						.bold()
-						.foregroundStyle(.appPrimary)
-						.frame(maxWidth: .infinity, alignment: .leading)
-						.padding(.bottom, 4)
-						.padding(.top, 10)
-                        .padding(.horizontal, 20)
-					
-					ForEach(taskSelectViewModel.groupedTasks[categoryName] ?? [], id: \.id) { task in
-						NavigationLink {
-							TaskDetailView(task: task)
-						} label: {
-							TaskCardView(
-								taskName: task.taskName,
-								taskIconEach: task.taskIcon,
-								style: self.taskSelectViewModel.selectedTasks.contains(task) ? .checked : .plus,
-								onButtonClick: {
-									if self.taskSelectViewModel.selectedTasks.contains(task) {
-										self.taskSelectViewModel.selectedTasks.removeAll { $0.id == task.id }
-									} else {
-										self.taskSelectViewModel.selectedTasks.append(task)
-									}
-								}
-							)
-                            .padding(.horizontal, 20)
-						}
+		TaskListView(groupedTasks: taskSelectViewModel.groupedTasks) { task in
+			TaskCardView(
+				taskName: task.taskName,
+				taskIconEach: task.taskIcon,
+				style: self.taskSelectViewModel.selectedTasks.contains(task) ? .checked : .plus,
+				onButtonClick: {
+					if self.taskSelectViewModel.selectedTasks.contains(task) {
+						self.taskSelectViewModel.selectedTasks.removeAll { $0.id == task.id }
+					} else {
+						self.taskSelectViewModel.selectedTasks.append(task)
 					}
 				}
-			}
-			.searchable(
-				text: $taskSelectViewModel.searchTerm,
-				placement: .navigationBarDrawer(displayMode: .always),
-				prompt: "Search Task..."
 			)
 		}
+		.searchable(
+			text: $taskSelectViewModel.searchTerm,
+			placement: .navigationBarDrawer(displayMode: .always),
+			prompt: "Search Task..."
+		)
 		.toolbar{
 			ToolbarItem(placement: .bottomBar) {
 				Button {
@@ -87,7 +67,6 @@ struct TaskSelectionView: View {
 		}
 		.navigationTitle(isEdit ? "Modify Tasks" : "Add Tasks")
 		.navigationBarTitleDisplayMode(.inline)
-		.padding(.horizontal, 20)
 		.sheet(isPresented: $showAddTaskSheet) {
 			VStack {
 				HStack {

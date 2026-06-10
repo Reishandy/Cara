@@ -20,29 +20,12 @@ struct LearnView: View {
 	var body: some View {
 		@Bindable var learnViewModel = learnViewModel
 		
-		ScrollView {
-			ForEach(learnViewModel.groupedTasks.keys.sorted(), id: \.self) { categoryName in
-				Text(categoryName)
-					.font(.title2)
-					.bold()
-					.foregroundStyle(.appPrimary)
-					.frame(maxWidth: .infinity, alignment: .leading)
-					.padding(.bottom, 4)
-					.padding(.top, 10)
-				
-				ForEach(learnViewModel.groupedTasks[categoryName] ?? [], id: \.id) { task in
-					NavigationLink {
-						TaskDetailView(task: task)
-					} label: {
-						TaskCardView(
-							taskName: task.taskName,
-							taskIconEach: task.taskIcon,
-							style: .noButton
-						)
-					}
-				}
-			}
-			.padding(.horizontal, 20)
+		TaskListView(groupedTasks: learnViewModel.groupedTasks) { task in
+			TaskCardView(
+				taskName: task.taskName,
+				taskIconEach: task.taskIcon,
+				style: .noButton
+			)
 		}
 		.searchable(
 			text: $learnViewModel.searchTerm,
