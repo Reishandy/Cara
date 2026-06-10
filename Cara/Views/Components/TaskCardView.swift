@@ -10,6 +10,7 @@ struct TaskCardView: View {
     enum CardStyle {
         case plus
         case checked
+		case checkedOnly
         case uncheckedCircle
         case noButton
     }
@@ -120,6 +121,7 @@ struct TaskCardView: View {
         switch style {
         case .plus:            return "plus.circle"
         case .checked:         return "checkmark.circle.fill"
+        case .checkedOnly:     return "checkmark.circle.fill"
         case .uncheckedCircle: return "circle"
         case .noButton:        return ""
         }

@@ -245,7 +245,7 @@ struct RoutineDetailView: View {
 					
 					TaskCardView(
 						taskName: task.taskName,
-						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle),
+						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checkedOnly : .uncheckedCircle),
 						onButtonClick: {
 							withAnimation {
 								if routineDetailViewModel.taskProgress[task.id] != nil {
