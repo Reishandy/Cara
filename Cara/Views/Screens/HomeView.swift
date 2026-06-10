@@ -118,7 +118,7 @@ struct HomeView: View {
 		.navigationTitle("Cara")
 		.toolbarTitleDisplayMode(.inlineLarge)
 		.sheet(isPresented: $showAddRoutineSheet) {
-			VStack(spacing: 36) {
+			VStack {
 				HStack {
 					Button {
 						showAddRoutineSheet = false
@@ -151,7 +151,7 @@ struct HomeView: View {
 				Spacer()
 			}
 			.padding(20)
-			.presentationDetents([.medium])
+			.presentationDetents([.height(350)])
 		}
 		.task {
 			homeViewModel.fetchData()
