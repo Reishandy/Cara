@@ -42,6 +42,9 @@ class TaskSelectViewModel {
 	/// Variable to store task category to add.
 	var addTaskCategory: TaskCategory? = nil
 	
+	/// Variable to store task icon to add.
+	var addTaskIcon: String = "cross.fill"
+	
 	init(modelContext: ModelContext) {
 		self.modelContext = modelContext
 	}
@@ -71,11 +74,18 @@ class TaskSelectViewModel {
 	
 	/// Function to add task from the stord variables.
 	func addTask() {
-		modelContext.insert( RoutineTask(taskName: self.addTaskName, taskDescription: self.addTaskDescription, howTo: [], category: self.addTaskCategory))
+		modelContext.insert( RoutineTask(
+			taskName: self.addTaskName,
+			taskDescription: self.addTaskDescription,
+			taskIcon: self.addTaskIcon,
+			howTo: [],
+			category: self.addTaskCategory
+		))
 		fetchData()
 		
 		self.addTaskName = ""
 		self.addTaskDescription = ""
 		self.addTaskCategory = nil
+		self.addTaskIcon = ""
 	}
 }

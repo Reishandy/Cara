@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 struct TaskDetailView: View {
 	@Environment(\.editMode) private var editMode
@@ -18,6 +19,7 @@ struct TaskDetailView: View {
 	
 	@State private var showAppBarTitle = false
 	@State private var showDeleteConfirmation = false
+	@State private var selectedPhoto: PhotosPickerItem?
 	
 	private var isEdit: Bool {
 		editMode?.wrappedValue == .active
@@ -30,7 +32,7 @@ struct TaskDetailView: View {
 			ScrollView {
 				VStack(spacing: 0) {
 					Spacer()
-						.frame(height: 160)
+						.frame(height: 260)
 					
 					contentView
 				}
@@ -85,23 +87,77 @@ struct TaskDetailView: View {
 	
 	private var headerImage: some View {
 		ZStack(alignment: .bottomLeading) {
-			if let imageSystemName = task.imageSystemName {
+			if let image = UIImage(data: task.image ?? Data()) {
+				Image(uiImage: image)
+					.resizable()
+					.clipped()
+			} else if let imageSystemName = task.imageSystemName {
 				Image(imageSystemName)
 					.resizable()
 					.clipped()
-			} else if let image = UIImage(data: task.image ?? Data()) {
-				Image(uiImage: image)
-            } else {
-                Color.gray
-            }
-            
-            LinearGradient(
+			} else {
+				Color.gray
+			}
+			
+			LinearGradient(
 				colors: [.clear, colorScheme == .dark ? .black : .white],
 				startPoint: .center,
 				endPoint: .bottom
 			)
 		}
-		.frame(height: 280)
+		.frame(height: 300)
+	}
+	
+	private var photoPicker: some View {
+		HStack {
+			PhotosPicker(
+				selection: $selectedPhoto,
+				matching: .images,
+				photoLibrary: .shared()
+			) {
+				Text("Edit Image")
+					.foregroundStyle(.appPrimary)
+					.padding(16)
+					.background {
+						RoundedRectangle(cornerRadius: 16)
+							.fill(Color.selected.opacity(0.8))
+					}
+			}
+			.foregroundStyle(.secondary)
+			.onChange(of: selectedPhoto) { oldPhoto, newPhoto in
+				Task {
+					if let data = try? await newPhoto?.loadTransferable(
+						type: Data.self
+					) {
+						withAnimation {
+							task.image = data
+							selectedPhoto = nil
+						}
+					}
+				}
+			}
+			
+			if task.image != nil {
+				Spacer()
+				
+				Button {
+					withAnimation {
+						task.image = nil
+						selectedPhoto = nil
+					}
+				} label: {
+					Image(systemName: "trash")
+						.foregroundStyle(.white)
+						.padding()
+				}
+				.labelStyle(.iconOnly)
+				.background(.red)
+				.clipShape(RoundedRectangle(cornerRadius: 12))
+				.transition(.move(edge: .trailing).combined(with: .opacity))
+			}
+		}
+		.padding(.horizontal, 20)
+		.padding(.vertical, 10)
 	}
 	
 	private var contentView: some View {
@@ -116,6 +172,10 @@ struct TaskDetailView: View {
 					.shadow(color: .black.opacity(0.8), radius: 10, x: 0, y: 2)
 			} else {
 				Spacer().frame(height: 60)
+				
+				if isEdit {
+					photoPicker
+				}
 			}
 			
 			VStack(alignment: .leading) {
@@ -125,7 +185,8 @@ struct TaskDetailView: View {
 						name: $task.taskName,
 						description: $task.taskDescription,
 						categories: taskDetailViewModel.categories,
-						category: $task.category
+						category: $task.category,
+						icon: $task.taskIcon
 					)
 					.padding(.bottom, 8)
 				} else {

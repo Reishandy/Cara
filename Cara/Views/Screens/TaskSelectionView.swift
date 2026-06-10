@@ -117,13 +117,14 @@ struct TaskSelectionView: View {
 					name: $taskSelectViewModel.addTaskName,
 					description: $taskSelectViewModel.addTaskDescription,
 					categories: taskSelectViewModel.categories,
-					category: $taskSelectViewModel.addTaskCategory
+					category: $taskSelectViewModel.addTaskCategory,
+					icon: $taskSelectViewModel.addTaskIcon
 				)
 				
 				Spacer()
 			}
 			.padding(20)
-			.presentationDetents([.medium])
+			.presentationDetents([.height(520)])
 		}
 		.task {
 			self.taskSelectViewModel.fetchData()
