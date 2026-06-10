@@ -87,24 +87,24 @@ struct HomeView: View {
 				} else {
 					ForEach(homeViewModel.routines, id: \.self) { routine in
 						if let history = homeViewModel.historiesDict[routine.id] {
-							ZStack {
-								NavigationLink {
-									RoutineDetailView(routine: routine, selectedDay: homeViewModel.selectedDay)
-								} label: {
-									RoutineCard(
-										routine: routine,
-										history: history
-									)
-									.id("\(routine.id)-\(homeViewModel.fetchCounter)")
-									// Using this to force the component to update it's reference
-								}
+							NavigationLink {
+								RoutineDetailView(routine: routine, selectedDay: homeViewModel.selectedDay)
+							} label: {
+								RoutineCard(
+									routine: routine,
+									history: history
+								)
+								.id("\(routine.id)-\(homeViewModel.fetchCounter)")
+								// Using this to force the component to update it's reference
 							}
+							.transition(.scale(0.8).combined(with: .opacity))
 						}
 					}
 				}
 			}
 			.padding(20)
 		}
+		.animation(.spring, value: homeViewModel.routines)
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
