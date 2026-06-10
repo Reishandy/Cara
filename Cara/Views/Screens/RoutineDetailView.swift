@@ -73,8 +73,7 @@ struct RoutineDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                     }
-                    .background(Color("AppThirdColor"))
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
+					.glassEffect(.regular.tint(.appThird))
                     .padding(.horizontal, 20)
                     .padding(.top, 24)
                 }
