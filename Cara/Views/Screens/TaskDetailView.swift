@@ -17,7 +17,6 @@ struct TaskDetailView: View {
 	
 	@Bindable var task: RoutineTask
 	
-	@State private var showAppBarTitle = false
 	@State private var showDeleteConfirmation = false
 	@State private var selectedPhoto: PhotosPickerItem?
 	
@@ -35,15 +34,6 @@ struct TaskDetailView: View {
 						.frame(height: 260)
 					
 					contentView
-				}
-			}
-			.onScrollGeometryChange(for: CGFloat.self) { geometry in
-				geometry.contentOffset.y
-			} action: { oldOffset, newOffset in
-				if newOffset > 100 {
-					showAppBarTitle = true
-				} else {
-					showAppBarTitle = false
 				}
 			}
 		}
@@ -162,7 +152,9 @@ struct TaskDetailView: View {
 	
 	private var contentView: some View {
 		VStack(alignment: .leading) {
-			if !showAppBarTitle && !isEdit {
+			if isEdit {
+				photoPicker
+			} else  {
 				Text(task.taskName)
 					.font(.title2)
 					.bold()
@@ -170,12 +162,6 @@ struct TaskDetailView: View {
 					.padding(.horizontal, 16)
 					.padding(.bottom, 4)
 					.shadow(color: .black.opacity(0.8), radius: 10, x: 0, y: 2)
-			} else {
-				Spacer().frame(height: 60)
-				
-				if isEdit {
-					photoPicker
-				}
 			}
 			
 			VStack(alignment: .leading) {

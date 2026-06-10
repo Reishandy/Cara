@@ -13,9 +13,6 @@ import UIKit
 struct HomeView: View {
 	@Environment(HomeViewModel.self) var homeViewModel
 	
-	@ScaledMetric(relativeTo: .body) private var buttonSize = 48
-	@ScaledMetric(relativeTo: .body) private var iconSize = 24
-	
 	@State private var showDatePicker = false
 	@State private var showAddRoutineSheet = false
 	
@@ -87,24 +84,24 @@ struct HomeView: View {
 				} else {
 					ForEach(homeViewModel.routines, id: \.self) { routine in
 						if let history = homeViewModel.historiesDict[routine.id] {
-							ZStack {
-								NavigationLink {
-									RoutineDetailView(routine: routine, selectedDay: homeViewModel.selectedDay)
-								} label: {
-									RoutineCard(
-										routine: routine,
-										history: history
-									)
-									.id("\(routine.id)-\(homeViewModel.fetchCounter)")
-									// Using this to force the component to update it's reference
-								}
+							NavigationLink {
+								RoutineDetailView(routine: routine, selectedDay: homeViewModel.selectedDay)
+							} label: {
+								RoutineCard(
+									routine: routine,
+									history: history
+								)
+								.id("\(routine.id)-\(homeViewModel.fetchCounter)")
+								// Using this to force the component to update it's reference
 							}
+							.transition(.scale(0.8).combined(with: .opacity))
 						}
 					}
 				}
 			}
-			.padding(20)
+			.padding(.horizontal, 20)
 		}
+		.animation(.spring, value: homeViewModel.routines)
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
@@ -112,19 +109,16 @@ struct HomeView: View {
 					showAddRoutineSheet = true
 				} label: {
 					Image(systemName: "plus")
-						.font(.system(size: iconSize, weight: .regular))
 						.foregroundStyle(.appSecondary)
-						.frame(width: buttonSize, height: buttonSize)
-						.background(Color.background)
-						.clipShape(Circle())
 				}
+				.buttonStyle(.borderedProminent)
+				.tint(Color.background)
 			}
-			.sharedBackgroundVisibility(.hidden)
 		}
-		.navigationTitle("Caregiving")
+		.navigationTitle("Cara")
 		.toolbarTitleDisplayMode(.inlineLarge)
 		.sheet(isPresented: $showAddRoutineSheet) {
-			VStack(spacing: 36) {
+			VStack {
 				HStack {
 					Button {
 						showAddRoutineSheet = false
@@ -157,7 +151,7 @@ struct HomeView: View {
 				Spacer()
 			}
 			.padding(20)
-			.presentationDetents([.medium])
+			.presentationDetents([.height(350)])
 		}
 		.task {
 			homeViewModel.fetchData()

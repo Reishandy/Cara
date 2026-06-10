@@ -73,8 +73,7 @@ struct RoutineDetailView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
                     }
-                    .background(Color("AppThirdColor"))
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
+					.glassEffect(.regular.tint(.appThird))
                     .padding(.horizontal, 20)
                     .padding(.top, 24)
                 }
@@ -82,13 +81,14 @@ struct RoutineDetailView: View {
                     LinearGradient(
                         colors: [
                             Color.clear,
-                            Color.white.opacity(0.85),
-                            Color.white
+                            Color.primary.opacity(0.85),
+                            Color.primary
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                     .ignoresSafeArea(edges: .bottom)
+					.colorInvert()
                 }
             }
         }
@@ -249,7 +249,7 @@ struct RoutineDetailView: View {
 			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)
 		} else {
-			ForEach(routine.orderedTasks) { task in
+			ForEach(routine.orderedTasks, id: \.id) { task in
 				ZStack {
 					NavigationLink {
 						TaskDetailView(task: task)
@@ -261,14 +261,12 @@ struct RoutineDetailView: View {
 					TaskCardView(
 						taskName: task.taskName,
 						taskIconEach: task.taskIcon,
-						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checked : .uncheckedCircle),
+						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checkedOnly : .uncheckedCircle),
 						onButtonClick: {
-							withAnimation {
-								if routineDetailViewModel.taskProgress[task.id] != nil {
-									routineDetailViewModel.taskProgress[task.id] = nil
-								} else {
-									routineDetailViewModel.taskProgress[task.id] = Date()
-								}
+							if routineDetailViewModel.taskProgress[task.id] != nil {
+								routineDetailViewModel.taskProgress[task.id] = nil
+							} else {
+								routineDetailViewModel.taskProgress[task.id] = Date()
 							}
 						},
 						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]

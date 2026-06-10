@@ -48,10 +48,9 @@ struct OnboardingView: View {
 					.frame(maxWidth: .infinity)
 					.padding(.vertical, 16)
 			}
-			.background(.appThird)
-			.glassEffect()
-			.clipShape(Capsule())
+			.glassEffect(.regular.tint(.appThird))
 			.padding(.horizontal, 20)
+			.padding(.top, 24)
 		}
 		.multilineTextAlignment(.center)
 		.frame(maxWidth: .infinity, maxHeight: .infinity)
