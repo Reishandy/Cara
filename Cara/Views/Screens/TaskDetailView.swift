@@ -152,16 +152,16 @@ struct TaskDetailView: View {
 	
 	private var contentView: some View {
 		VStack(alignment: .leading) {
-			Text(task.taskName)
-				.font(.title2)
-				.bold()
-				.foregroundStyle(.white)
-				.padding(.horizontal, 16)
-				.padding(.bottom, 4)
-				.shadow(color: .black.opacity(0.8), radius: 10, x: 0, y: 2)
-			
 			if isEdit {
 				photoPicker
+			} else  {
+				Text(task.taskName)
+					.font(.title2)
+					.bold()
+					.foregroundStyle(.white)
+					.padding(.horizontal, 16)
+					.padding(.bottom, 4)
+					.shadow(color: .black.opacity(0.8), radius: 10, x: 0, y: 2)
 			}
 			
 			VStack(alignment: .leading) {
