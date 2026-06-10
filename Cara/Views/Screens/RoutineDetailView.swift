@@ -234,7 +234,7 @@ struct RoutineDetailView: View {
 			.listRowSeparator(.hidden)
 			.listRowBackground(Color.clear)
 		} else {
-			ForEach(routine.orderedTasks) { task in
+			ForEach(routine.orderedTasks, id: \.id) { task in
 				ZStack {
 					NavigationLink {
 						TaskDetailView(task: task)
@@ -247,11 +247,11 @@ struct RoutineDetailView: View {
 						taskName: task.taskName,
 						taskIconEach: task.taskIcon,
 						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checkedOnly : .uncheckedCircle),
-								if routineDetailViewModel.taskProgress[task.id] != nil {
-									routineDetailViewModel.taskProgress[task.id] = nil
-								} else {
-									routineDetailViewModel.taskProgress[task.id] = Date()
-								}
+						onButtonClick: {
+							if routineDetailViewModel.taskProgress[task.id] != nil {
+								routineDetailViewModel.taskProgress[task.id] = nil
+							} else {
+								routineDetailViewModel.taskProgress[task.id] = Date()
 							}
 						},
 						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
