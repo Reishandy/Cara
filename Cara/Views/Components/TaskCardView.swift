@@ -53,6 +53,8 @@ struct TaskCardView: View {
         .padding()
         .background(backgroundColor)
         .clipShape(RoundedRectangle(cornerRadius: 20))
+		.opacity(style == .checkedOnly ? 0.6 : 1.0)
+		.animation(.spring, value: style)
     }
     
     private var regularLayout: some View {
@@ -86,6 +88,7 @@ struct TaskCardView: View {
                 .font(.headline)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
+			
             if let clickTime = clickTime {
                 HStack(alignment: .top, spacing: 4) {
                     Image(systemName: "clock")
@@ -110,6 +113,7 @@ struct TaskCardView: View {
                     .foregroundStyle(Color("AppThirdColor"))
             }
             .buttonStyle(.plain)
+			.contentTransition(.symbolEffect(.replace))
         }
     }
     
