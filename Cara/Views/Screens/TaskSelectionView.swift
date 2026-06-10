@@ -124,13 +124,11 @@ struct TaskSelectionView: View {
 			.presentationDetents([.height(520)])
 		}
 		.task {
-			withAnimation(nil) {
-				self.taskSelectViewModel.fetchData()
-				
-				if !hasInitialized {
-					self.taskSelectViewModel.selectedTasks = initialTasks ?? []
-					hasInitialized = true
-				}
+			self.taskSelectViewModel.fetchData()
+			
+			if !hasInitialized {
+				self.taskSelectViewModel.selectedTasks = initialTasks ?? []
+				hasInitialized = true
 			}
 		}
 	}
@@ -156,11 +154,11 @@ struct TaskSelectionView: View {
 }
 
 #Preview {
-    let container = CaraApp.previewSharedContainer
-    let taskSelectViewModel = TaskSelectViewModel(modelContext: container.mainContext)
-    
-    NavigationStack {
-        TaskSelectionView()
-            .environment(taskSelectViewModel)
-    }
+	let container = CaraApp.previewSharedContainer
+	let taskSelectViewModel = TaskSelectViewModel(modelContext: container.mainContext)
+	
+	NavigationStack {
+		TaskSelectionView()
+			.environment(taskSelectViewModel)
+	}
 }
