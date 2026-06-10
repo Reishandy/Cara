@@ -245,9 +245,8 @@ struct RoutineDetailView: View {
 					
 					TaskCardView(
 						taskName: task.taskName,
+						taskIconEach: task.taskIcon,
 						style: isEdit ? .noButton : (routineDetailViewModel.taskProgress[task.id] != nil ? .checkedOnly : .uncheckedCircle),
-						onButtonClick: {
-							withAnimation {
 								if routineDetailViewModel.taskProgress[task.id] != nil {
 									routineDetailViewModel.taskProgress[task.id] = nil
 								} else {
@@ -257,7 +256,6 @@ struct RoutineDetailView: View {
 						},
 						clickTime: isEdit ? nil : routineDetailViewModel.taskProgress[task.id]
 					)
-					.padding(.horizontal, isEdit ? 10 : 0)
 				}
 			}
 			.onDelete(perform: routineDetailViewModel.removeTasks)

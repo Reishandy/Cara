@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "cara.jpeg",
+      "filename" : "Cara Icon 2-iOS-Default-1024x1024@1x.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "cara 1.jpeg",
+      "filename" : "Cara Icon 2-iOS-Dark-1024x1024@1x.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "cara 2.jpeg",
+      "filename" : "Cara Icon 2-iOS-ClearLight-1024x1024@1x.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
