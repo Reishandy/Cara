@@ -71,13 +71,14 @@ struct TaskSelectionView: View {
 				LinearGradient(
 					colors: [
 						Color.clear,
-						Color.white.opacity(0.85),
-						Color.white
+						Color.primary.opacity(0.85),
+						Color.primary
 					],
 					startPoint: .top,
 					endPoint: .bottom
 				)
 				.ignoresSafeArea(edges: .bottom)
+				.colorInvert()
 			}
 		}
 		.navigationTitle(isEdit ? "Modify Tasks" : "Add Tasks")
@@ -123,11 +124,13 @@ struct TaskSelectionView: View {
 			.presentationDetents([.height(520)])
 		}
 		.task {
-			self.taskSelectViewModel.fetchData()
-			
-			if !hasInitialized {
-				self.taskSelectViewModel.selectedTasks = initialTasks ?? []
-				hasInitialized = true
+			withAnimation(nil) {
+				self.taskSelectViewModel.fetchData()
+				
+				if !hasInitialized {
+					self.taskSelectViewModel.selectedTasks = initialTasks ?? []
+					hasInitialized = true
+				}
 			}
 		}
 	}

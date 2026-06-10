@@ -114,6 +114,7 @@ struct TaskCardView: View {
             }
             .buttonStyle(.plain)
 			.contentTransition(.symbolEffect(.replace))
+			.geometryGroup()
         }
     }
     

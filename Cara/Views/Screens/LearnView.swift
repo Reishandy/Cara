@@ -72,7 +72,9 @@ struct LearnView: View {
 		.navigationTitle("Learn")
 		.toolbarTitleDisplayMode(.inlineLarge)
 		.task {
-			learnViewModel.fetchData()
+			withAnimation(nil) {
+				learnViewModel.fetchData()
+			}
 		}
 	}
 }

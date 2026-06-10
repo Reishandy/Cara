@@ -154,7 +154,9 @@ struct HomeView: View {
 			.presentationDetents([.medium])
 		}
 		.task {
-			homeViewModel.fetchData()
+			withAnimation(nil) {
+				homeViewModel.fetchData()
+			}
 		}
 	}
 	

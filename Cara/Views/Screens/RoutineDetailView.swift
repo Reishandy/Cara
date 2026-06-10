@@ -81,13 +81,14 @@ struct RoutineDetailView: View {
                     LinearGradient(
                         colors: [
                             Color.clear,
-                            Color.white.opacity(0.85),
-                            Color.white
+                            Color.primary.opacity(0.85),
+                            Color.primary
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                     .ignoresSafeArea(edges: .bottom)
+					.colorInvert()
                 }
             }
         }
